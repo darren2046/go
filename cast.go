@@ -21,3 +21,11 @@ func Int(v interface{}) int {
 func Bool(v interface{}) bool {
 	return cast.ToBool(v)
 }
+
+func Uint(v interface{}) uint {
+	return cast.ToUint(v)
+}
+
+func Uint16(v interface{}) uint16 {
+	return cast.ToUint16(v)
+}

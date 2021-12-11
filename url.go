@@ -17,7 +17,7 @@ type urlStruct struct {
 	url string
 }
 
-func URL(url string) *urlStruct {
+func getUrl(url string) *urlStruct {
 	return &urlStruct{url: url}
 }
 

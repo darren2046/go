@@ -32,7 +32,7 @@ var databaseNetworkErrorStrings = []string{
 	"bad connection",
 }
 
-func MySQL(host string, port int, user string, password string, db string, cfg ...databaseConfig) *databaseStruct {
+func getMySQL(host string, port int, user string, password string, db string, cfg ...databaseConfig) *databaseStruct {
 	var timeoutt int
 	var chartsett string
 	var networkErrorRetryTimess int
@@ -110,7 +110,7 @@ func MySQL(host string, port int, user string, password string, db string, cfg .
 	return m
 }
 
-func SQLite(dbpath string) *databaseStruct {
+func getSQLite(dbpath string) *databaseStruct {
 	m := &databaseStruct{}
 	m.driver = "sqlite3"
 	m.dsn = dbpath

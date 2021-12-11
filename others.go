@@ -1,6 +1,8 @@
 package golanglibs
 
 import (
+	"crypto/tls"
+	"crypto/x509"
 	"reflect"
 	"unicode/utf8"
 
@@ -118,4 +120,20 @@ func Typeof(v interface{}) string {
 
 func fmtsize(num uint64) string {
 	return humanize.Bytes(num)
+}
+
+func getRemoteServerCert(host string, port ...int) []*x509.Certificate {
+	var p string
+	if len(port) == 0 {
+		p = "443"
+	} else {
+		p = Str(port[0])
+	}
+
+	conn, err := tls.Dial("tcp", host+":"+Str(p), nil)
+	if err != nil {
+		panic("Server doesn't support SSL certificate err: " + err.Error())
+	}
+
+	return conn.ConnectionState().PeerCertificates
 }

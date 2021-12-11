@@ -1,13 +1,21 @@
 package golanglibs
 
 type socketStruct struct {
-	Kcp kcpStruct
+	KCP  kcpStruct
+	Smux smuxStruct
+	SSL  sslStruct
+	TCP  tcpStruct
+	UDP  udpStruct
 }
 
 var Socket socketStruct
 
 func init() {
 	Socket = socketStruct{
-		Kcp: kcpstruct,
+		KCP:  kcpstruct,
+		Smux: smuxstruct,
+		SSL:  sslstruct,
+		TCP:  tcpstruct,
+		UDP:  udpstruct,
 	}
 }

@@ -2,41 +2,111 @@ package golanglibs
 
 import (
 	"context"
+	"crypto/x509"
 	"net"
 	"strings"
 	"time"
 
+	"github.com/cavaliercoder/grab"
 	"github.com/h2non/filetype"
+	"github.com/hpcloud/tail"
 	"github.com/icrowley/fake"
 	"github.com/miekg/dns"
+	ua "github.com/mileusna/useragent"
+	"github.com/mmcdole/gofeed"
 )
 
 type funcsStruct struct {
-	Nslookup              func(name string, querytype string, dnsService ...string) [][]string
-	FakeName              func() string
-	FileType              func(fpath string) string
-	Inotify               func(path string) chan *fsnotifyFileEventStruct
-	IPLocation            func(ip string, dbpath ...string) *ipLocationInfo
-	Gethostbyname         func(hostname string, dnsserver ...string) (res []string)
-	Getcname              func(hostname string, dnsserver ...string) (res string)
-	HightLightHTMLForCode func(code string, codeType ...string) (html string)
-	Markdown2html         func(md string) string
+	Nslookup               func(name string, querytype string, dnsService ...string) [][]string
+	FakeName               func() string
+	FileType               func(fpath string) string
+	Inotify                func(path string) chan *fsnotifyFileEventStruct
+	IPLocation             func(ip string, dbpath ...string) *ipLocationInfo
+	Gethostbyname          func(hostname string, dnsserver ...string) (res []string)
+	Getcname               func(hostname string, dnsserver ...string) (res string)
+	HightLightHTMLForCode  func(code string, codeType ...string) (html string)
+	Markdown2html          func(md string) string
+	CPUUsagePerProgress    func() (res map[int64]progressCPUUsageStruct)
+	ResizeImg              func(srcPath string, dstPath string, width int, height ...int)
+	GetRSS                 func(url string, config ...rssConfig) *gofeed.Feed
+	GbkToUtf8              func(s string) string
+	Utf8ToGbk              func(s string) string
+	GetSnowflakeID         func(nodeNumber ...int) int64
+	GetRemoteServerSSLCert func(host string, port ...int) []*x509.Certificate
+	Tailf                  func(path string, startFromEndOfFile ...bool) chan *tail.Line
+	BaiduTranslateAnyToZH  func(text string) string
+	ParseUserAgent         func(UserAgent string) ua.UserAgent
+	Wget                   func(url string, cfg ...WgetCfg) (filename string)
+	Whois                  func(s string, servers ...string) string
 }
 
 var Funcs funcsStruct
 
 func init() {
 	Funcs = funcsStruct{
-		Nslookup:              nslookup,
-		FakeName:              fakeName,
-		FileType:              fileType,
-		Inotify:               inotify,
-		IPLocation:            getIPLocation,
-		Gethostbyname:         gethostbyname,
-		Getcname:              getcname,
-		HightLightHTMLForCode: getHightLightHTML,
-		Markdown2html:         md2html,
+		Nslookup:               nslookup,
+		FakeName:               fakeName,
+		FileType:               fileType,
+		Inotify:                inotify,
+		IPLocation:             getIPLocation,
+		Gethostbyname:          gethostbyname,
+		Getcname:               getcname,
+		HightLightHTMLForCode:  getHightLightHTML,
+		Markdown2html:          md2html,
+		CPUUsagePerProgress:    getSystemProgressCPUUsage,
+		ResizeImg:              resizeImg,
+		GetRSS:                 getRSS,
+		GbkToUtf8:              gbkToUtf8,
+		Utf8ToGbk:              utf8ToGbk,
+		GetSnowflakeID:         getSnowflakeID,
+		GetRemoteServerSSLCert: getRemoteServerCert,
+		Tailf:                  tailf,
+		BaiduTranslateAnyToZH:  baiduTranslateAnyToZH,
+		ParseUserAgent:         parseUserAgent,
+		Wget:                   wget,
+		Whois:                  whois,
 	}
+}
+
+type WgetCfg struct {
+	savepath string // 保存的本地路径, 可以是目录或者完整文件路径
+	retry    int    // 出错尝试次数, -1为一直尝试直到成功
+}
+
+func wget(url string, cfg ...WgetCfg) (filename string) {
+	savepath := "."
+	retry := 0
+	if len(cfg) != 0 {
+		if cfg[0].savepath != "" {
+			savepath = cfg[0].savepath
+		}
+		retry = cfg[0].retry
+	}
+	if retry < 0 {
+		for {
+			resp, err := grab.Get(savepath, url)
+			if err == nil {
+				return resp.Filename
+			}
+		}
+	} else {
+		i := 0
+		for {
+			resp, err := grab.Get(savepath, url)
+			if err == nil {
+				return resp.Filename
+			}
+			i++
+
+			if i > retry && err != nil {
+				panicerr(err)
+			}
+		}
+	}
+}
+
+func parseUserAgent(UserAgent string) ua.UserAgent {
+	return ua.Parse(UserAgent)
 }
 
 func getcname(hostname string, dnsserver ...string) (res string) {
