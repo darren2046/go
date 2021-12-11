@@ -17,7 +17,7 @@ type databaseStruct struct {
 	networkErrorRetryTimes int // 网络错误重试次数
 }
 
-type databaseConfig struct {
+type DatabaseConfig struct {
 	timeout                int
 	charset                string
 	networkErrorRetryTimes int // 网络错误重试次数
@@ -32,7 +32,7 @@ var databaseNetworkErrorStrings = []string{
 	"bad connection",
 }
 
-func getMySQL(host string, port int, user string, password string, db string, cfg ...databaseConfig) *databaseStruct {
+func getMySQL(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *databaseStruct {
 	var timeoutt int
 	var chartsett string
 	var networkErrorRetryTimess int
