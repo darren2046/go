@@ -19,7 +19,7 @@ type toolsStruct struct {
 	Zh2PinYin     func(zh string) (ress []string)
 	ProgressBar   func(title string, total int64, showBytes ...bool) *progressBarStruct
 	Prometheus    func(url string) *prometheusStruct
-	MySQL         func(host string, port int, user string, password string, db string, cfg ...databaseConfig) *databaseStruct
+	MySQL         func(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *databaseStruct
 	SQLite        func(dbpath string) *databaseStruct
 	RabbitMQ      func(rabbitMQURL string, queueName string) *rabbitConnectionStruct
 	RateLimit     func(rate int) *rateLimitStruct
