@@ -3,6 +3,7 @@ package golanglibs
 import (
 	"math"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -11,6 +12,8 @@ type timeStruct struct {
 	TimeDuration   func(seconds interface{}) time.Duration
 	FormatDuration func(second int64) (result string)
 	Sleep          func(t interface{})
+	Strptime       func(format, strtime string) int64
+	Strftime       func(format string, timestamp interface{}) string
 }
 
 var Time timeStruct
@@ -21,7 +24,36 @@ func init() {
 		TimeDuration:   getTimeDuration,
 		FormatDuration: fmtTimeDuration,
 		Sleep:          sleep,
+		Strptime:       strptime,
+		Strftime:       strftime,
 	}
+}
+
+// datetime.datetime.strptime()
+func strptime(format, strtime string) int64 {
+	format = strings.ReplaceAll(format, "%Y", "2006")
+	format = strings.ReplaceAll(format, "%m", "01")
+	format = strings.ReplaceAll(format, "%d", "02")
+	format = strings.ReplaceAll(format, "%H", "15")
+	format = strings.ReplaceAll(format, "%M", "04")
+	format = strings.ReplaceAll(format, "%S", "05")
+	t, err := time.Parse(format, strtime)
+	panicerr(err)
+
+	_, offset := time.Now().Zone()
+	return t.Unix() - Int64(offset)
+}
+
+// 转换时间戳到时间字符串
+// datetime.datetime.strftime()
+func strftime(format string, timestamp interface{}) string {
+	format = strings.ReplaceAll(format, "%Y", "2006")
+	format = strings.ReplaceAll(format, "%m", "01")
+	format = strings.ReplaceAll(format, "%d", "02")
+	format = strings.ReplaceAll(format, "%H", "15")
+	format = strings.ReplaceAll(format, "%M", "04")
+	format = strings.ReplaceAll(format, "%S", "05")
+	return time.Unix(Int64(timestamp), 0).Format(format)
 }
 
 func sleep(t interface{}) {
@@ -74,15 +106,15 @@ func fmtTimeDuration(second int64) (result string) {
 
 func getTimeDuration(seconds interface{}) time.Duration {
 	var timeDuration time.Duration
-	if typeof(seconds) == "float64" {
+	if Typeof(seconds) == "float64" {
 		tt := seconds.(float64) * 1000
 		if tt < 0 {
 			tt = 0
 		}
 		timeDuration = time.Duration(tt) * time.Millisecond
 	}
-	if typeof(seconds) == "int" || typeof(seconds) == "int8" || typeof(seconds) == "int16" || typeof(seconds) == "int32" || typeof(seconds) == "int64" {
-		tt := toInt64(seconds)
+	if Typeof(seconds) == "int" || Typeof(seconds) == "int8" || Typeof(seconds) == "int16" || Typeof(seconds) == "int32" || Typeof(seconds) == "int64" {
+		tt := Int64(seconds)
 		if tt < 0 {
 			tt = 0
 		}
@@ -92,5 +124,5 @@ func getTimeDuration(seconds interface{}) time.Duration {
 }
 
 func timeNowInTimestamp() float64 {
-	return toFloat64(time.Now().UnixMicro()) / 1000000
+	return Float64(time.Now().UnixMicro()) / 1000000
 }

@@ -5,6 +5,7 @@ import (
 	"unicode/utf8"
 
 	reprlib "github.com/alecthomas/repr"
+	"github.com/dustin/go-humanize"
 	"github.com/k0kubun/pp"
 )
 
@@ -111,6 +112,10 @@ func Range(num ...int) []int {
 	return a
 }
 
-func typeof(v interface{}) string {
+func Typeof(v interface{}) string {
 	return reflect.TypeOf(v).String()
+}
+
+func fmtsize(num uint64) string {
+	return humanize.Bytes(num)
 }

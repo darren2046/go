@@ -3,14 +3,30 @@ package golanglibs
 import "sync"
 
 type toolsStruct struct {
-	Lock func() *lockStruct
+	Lock          func() *lockStruct
+	AliDNS        func(accessKeyID string, accessKeySecret string) *alidnsStruct
+	Chart         chartStruct
+	CloudflareDNS func(key string, email string) *cloudflareStruct
+	Compress      compressStruct
+	Crontab       func() *crontabStruct
+	GodaddyDNS    func(key string, secret string) *godaddyStruct
+	Ini           func(fpath ...string) *iniStruct
+	JavascriptVM  func() *javascriptVMStruct
 }
 
 var Tools toolsStruct
 
 func init() {
 	Tools = toolsStruct{
-		Lock: getLock,
+		Lock:          getLock,
+		AliDNS:        getAlidns,
+		Chart:         chartstruct,
+		CloudflareDNS: getCloudflare,
+		Compress:      compressstruct,
+		Crontab:       getCrontab,
+		GodaddyDNS:    getGodaddy,
+		Ini:           getIni,
+		JavascriptVM:  getJavascriptVM,
 	}
 }
 

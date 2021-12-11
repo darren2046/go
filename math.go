@@ -39,7 +39,7 @@ func ipInNet(ip string, Net string, mask ...string) bool {
 		ip := net.ParseIP(mask[0])
 		addr := ip.To4()
 		cidrsuffix, _ := net.IPv4Mask(addr[0], addr[1], addr[2], addr[3]).Size()
-		Net = Net + "/" + str(cidrsuffix)
+		Net = Net + "/" + Str(cidrsuffix)
 	}
 
 	_, ipnetA, _ := net.ParseCIDR(Net)
@@ -126,7 +126,7 @@ func decimalToAny(num, n int64) string {
 		if 76 > remainder && remainder > 9 {
 			remainder_string = tenToAny[remainder]
 		} else {
-			remainder_string = str(remainder)
+			remainder_string = Str(remainder)
 		}
 		new_num_str = remainder_string + new_num_str
 		num = num / n
@@ -156,7 +156,7 @@ func anyToDecimal(num string, n int64) int64 {
 			break
 		}
 	}
-	return toInt64(new_num)
+	return Int64(new_num)
 }
 
 func mathaverage(array interface{}) (avgresult float64) {
@@ -167,10 +167,10 @@ func mathaverage(array interface{}) (avgresult float64) {
 	}
 
 	for i := 0; i < arr.Len(); i++ {
-		avgresult += toFloat64(arr.Index(i).Interface())
+		avgresult += Float64(arr.Index(i).Interface())
 	}
 
-	avgresult = avgresult / toFloat64(arr.Len())
+	avgresult = avgresult / Float64(arr.Len())
 
 	return
 }
@@ -183,7 +183,7 @@ func mathsum(array interface{}) (sumresult float64) {
 	}
 
 	for i := 0; i < arr.Len(); i++ {
-		sumresult += toFloat64(arr.Index(i).Interface())
+		sumresult += Float64(arr.Index(i).Interface())
 	}
 
 	return

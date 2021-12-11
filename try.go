@@ -10,7 +10,7 @@ type exception struct {
 	Error error
 }
 
-type tryConfig struct {
+type TryConfig struct {
 	retry int // retry times while error occure
 	sleep int // sleep seconds between retry
 }
@@ -19,14 +19,14 @@ func throw() {
 	panic("_____rethrow")
 }
 
-func try(f func(), trycfg ...tryConfig) (e exception) {
+func try(f func(), trycfg ...TryConfig) (e exception) {
 	if len(trycfg) == 0 {
 		e = exception{nil}
 		defer func() {
 			if err := recover(); err != nil {
 				errmsg := fmt.Sprintf("%s", err)
 				if len(Re.FindAll(".+\\.go:[0-9]+ >> .+? >> \\(.+?\\)", errmsg)) == 0 {
-					e.Error = errors.New(fmtDebugStack(errmsg, str(debug.Stack())))
+					e.Error = errors.New(fmtDebugStack(errmsg, Str(debug.Stack())))
 				} else {
 					e.Error = errors.New(errmsg)
 				}

@@ -15,6 +15,8 @@ type stringStruct struct {
 	s string
 }
 
+var SS func(s string) *stringStruct = String
+
 func String(s string) *stringStruct {
 	return &stringStruct{s: s}
 }
@@ -28,6 +30,13 @@ func (s *stringStruct) Get() string {
 func (s *stringStruct) Sub(start, end int) *stringStruct {
 	s.s = s.sub(start, end)
 	return s
+}
+
+func (s *stringStruct) Has(substr string) bool {
+	if strings.Index(s.s, substr) != -1 {
+		return true
+	}
+	return false
 }
 
 func (s *stringStruct) sub(start, end int) string {

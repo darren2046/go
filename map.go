@@ -29,7 +29,7 @@ func (m *mapStruct) Keys() (keys []string) {
 		panicerr("Invalid data type of param \"Map\": Not a Map")
 	}
 	for _, v := range arr.MapKeys() {
-		keys = append(keys, str(v.Interface()))
+		keys = append(keys, Str(v.Interface()))
 	}
 	return
 }

@@ -42,7 +42,7 @@ func yaml2json(y string) string {
 	goyaml.FutureLineWrap()
 	outBytes, err := yaml.YAMLToJSON([]byte(y))
 	panicerr(err)
-	return str(outBytes)
+	return Str(outBytes)
 }
 
 func json2yaml(j string) string {
@@ -52,7 +52,7 @@ func json2yaml(j string) string {
 	goyaml.FutureLineWrap()
 	outBytes, err := yaml.JSONToYAML([]byte(j))
 	panicerr(err)
-	return str(outBytes)
+	return Str(outBytes)
 }
 
 func jsonValid(j string) bool {
