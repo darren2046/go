@@ -12,26 +12,30 @@ import (
 )
 
 type funcsStruct struct {
-	Nslookup      func(name string, querytype string, dnsService ...string) [][]string
-	FakeName      func() string
-	FileType      func(fpath string) string
-	Inotify       func(path string) chan *fsnotifyFileEventStruct
-	IPLocation    func(ip string, dbpath ...string) *ipLocationInfo
-	Gethostbyname func(hostname string, dnsserver ...string) (res []string)
-	Getcname      func(hostname string, dnsserver ...string) (res string)
+	Nslookup              func(name string, querytype string, dnsService ...string) [][]string
+	FakeName              func() string
+	FileType              func(fpath string) string
+	Inotify               func(path string) chan *fsnotifyFileEventStruct
+	IPLocation            func(ip string, dbpath ...string) *ipLocationInfo
+	Gethostbyname         func(hostname string, dnsserver ...string) (res []string)
+	Getcname              func(hostname string, dnsserver ...string) (res string)
+	HightLightHTMLForCode func(code string, codeType ...string) (html string)
+	Markdown2html         func(md string) string
 }
 
 var Funcs funcsStruct
 
 func init() {
 	Funcs = funcsStruct{
-		Nslookup:      nslookup,
-		FakeName:      fakeName,
-		FileType:      fileType,
-		Inotify:       inotify,
-		IPLocation:    getIPLocation,
-		Gethostbyname: gethostbyname,
-		Getcname:      getcname,
+		Nslookup:              nslookup,
+		FakeName:              fakeName,
+		FileType:              fileType,
+		Inotify:               inotify,
+		IPLocation:            getIPLocation,
+		Gethostbyname:         gethostbyname,
+		Getcname:              getcname,
+		HightLightHTMLForCode: getHightLightHTML,
+		Markdown2html:         md2html,
 	}
 }
 
@@ -104,7 +108,7 @@ func gethostbyname(hostname string, dnsserver ...string) (res []string) {
 }
 
 func fileType(fpath string) string {
-	kind, err := filetype.Match([]byte(open(fpath).read()))
+	kind, err := filetype.Match([]byte(Open(fpath).read()))
 
 	panicerr(err)
 

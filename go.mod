@@ -4,6 +4,8 @@ go 1.17
 
 require (
 	github.com/Go-ini/ini v1.66.2
+	github.com/abadojack/whatlanggo v1.0.1
+	github.com/alecthomas/chroma v0.9.4
 	github.com/alecthomas/repr v0.0.0-20210801044451-80ca428c5142
 	github.com/alibabacloud-go/alidns-20150109 v1.0.3
 	github.com/alibabacloud-go/darabonba-openapi v0.1.12
@@ -13,6 +15,7 @@ require (
 	github.com/denisbrodbeck/striphtmltags v6.6.6+incompatible
 	github.com/dustin/go-humanize v1.0.0
 	github.com/elliotchance/orderedmap v1.4.0
+	github.com/fatih/color v1.7.0
 	github.com/fsnotify/fsnotify v1.4.7
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-sql-driver/mysql v1.6.0
@@ -28,6 +31,7 @@ require (
 	github.com/mileusna/crontab v1.2.0
 	github.com/rakyll/statik v0.1.7
 	github.com/robertkrimen/otto v0.0.0-20211024170158-b87d35c0b86f
+	github.com/russross/blackfriday v1.6.0
 	github.com/spf13/cast v1.4.1
 	github.com/ulikunitz/xz v0.5.10
 	github.com/wangtuanjie/ip17mon v1.5.2
@@ -46,6 +50,7 @@ require (
 	github.com/alibabacloud-go/tea-utils v1.3.9 // indirect
 	github.com/aliyun/credentials-go v1.1.2 // indirect
 	github.com/blend/go-sdk v1.20211204.3 // indirect
+	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/gohouse/golib v0.0.0-20210711163732-a5c22059eb75 // indirect
 	github.com/gohouse/t v0.0.0-20201007094014-630049a6bfe9 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect

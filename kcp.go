@@ -10,10 +10,28 @@ import (
 	"golang.org/x/crypto/pbkdf2"
 )
 
-var KCP_PING uint32 = 4000000000
-var KCP_PONG uint32 = 4000000001
-var KCP_CLOSE uint32 = 4000000002
-var KCP_HEARTBEAT_SECOND int = 20
+type kcpStruct struct {
+	Listen     func(host string, port int, key string, salt string) *kcpServerSideListener
+	Connect    func(host string, port int, key string, salt string) *kcpClientSideConn
+	RawListen  func(host string, port int, key string, salt string) *kcpRawServerSideListener
+	RawConnect func(host string, port int, key string, salt string) *kcp.UDPSession
+}
+
+var kcpstruct kcpStruct
+
+func init() {
+	kcpstruct = kcpStruct{
+		Listen:     kcpListen,
+		Connect:    kcpConnect,
+		RawListen:  kcpRawListen,
+		RawConnect: kcpRawConnect,
+	}
+}
+
+var kcp_ping uint32 = 4000000000
+var kcp_pong uint32 = 4000000001
+var kcp_close uint32 = 4000000002
+var kcp_heartbeat_second int = 20
 
 func kcpRecvSendChanIsClosed(ch chan map[string]string) bool {
 	select {
@@ -175,9 +193,9 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 						totallen := binary.LittleEndian.Uint32(totalblen)
 
 						// 如果是心跳，更新心跳时间，回复它，处理下一个包
-						if totallen == KCP_PING {
+						if totallen == kcp_ping {
 							btlen := make([]byte, 4)
-							binary.LittleEndian.PutUint32(btlen, KCP_PONG)
+							binary.LittleEndian.PutUint32(btlen, kcp_pong)
 							_, err := mc.conn.Write(btlen)
 							if err != nil {
 								if mc.isclose {
@@ -208,9 +226,9 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 							if n == 4 {
 								buflen := binary.LittleEndian.Uint32(buf)
 								// 如果是心跳，更新心跳时间，回复它，处理下一个包
-								if buflen == KCP_PING {
+								if buflen == kcp_ping {
 									btlen := make([]byte, 4)
-									binary.LittleEndian.PutUint32(btlen, KCP_PONG)
+									binary.LittleEndian.PutUint32(btlen, kcp_pong)
 									_, err := mc.conn.Write(btlen)
 									if err != nil {
 										if mc.isclose {
@@ -242,7 +260,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 						if mc.isclose {
 							break
 						}
-						if Time.Now()-mc.heartbeatTime > Float64(KCP_HEARTBEAT_SECOND)*3 {
+						if Time.Now()-mc.heartbeatTime > Float64(kcp_heartbeat_second)*3 {
 							if !kcpRecvSendChanIsClosed(mc.recvchan) {
 								close(mc.recvchan)
 							}
@@ -439,7 +457,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 				totallen := binary.LittleEndian.Uint32(totalblen)
 
 				// 如果是心跳的回应, 继续下一个包
-				if totallen == KCP_PONG {
+				if totallen == kcp_pong {
 					m.heartbeatTime = Time.Now()
 					continue
 				}
@@ -462,7 +480,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 					if n == 4 {
 						buflen := binary.LittleEndian.Uint32(buf)
 						// 如果是心跳的回应, 继续下一个包
-						if buflen == KCP_PONG {
+						if buflen == kcp_pong {
 							m.heartbeatTime = Time.Now()
 							continue
 						}
@@ -483,7 +501,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 		try(func() {
 			for {
 				btlen := make([]byte, 4)
-				binary.LittleEndian.PutUint32(btlen, KCP_PING)
+				binary.LittleEndian.PutUint32(btlen, kcp_ping)
 				_, err := m.conn.Write(btlen)
 				if err != nil {
 					if m.isclose {
@@ -498,10 +516,10 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 						panicerr(err)
 					}
 				}
-				if Time.Now()-m.heartbeatTime > Float64(KCP_HEARTBEAT_SECOND)*3 {
+				if Time.Now()-m.heartbeatTime > Float64(kcp_heartbeat_second)*3 {
 					m.close()
 				}
-				sleep(KCP_HEARTBEAT_SECOND)
+				sleep(kcp_heartbeat_second)
 			}
 		}).except(func(e error) {
 		})

@@ -121,7 +121,7 @@ func (m *fileIOStruct) seek(num int64) {
 	panicerr(err)
 }
 
-func open(args ...string) *fileIOStruct {
+func Open(args ...string) *fileIOStruct {
 	path := args[0]
 	var mode string
 	if len(args) != 1 {

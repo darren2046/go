@@ -40,6 +40,7 @@ type osStruct struct {
 	Getuid          func() int
 	ProgressAlive   func(pid int) bool
 	GoroutineID     func() int64
+	Unlink          func(filename string)
 }
 
 var Os osStruct
@@ -69,7 +70,13 @@ func init() {
 		Getuid:          os.Getuid,
 		ProgressAlive:   progressAlive,
 		GoroutineID:     goroutineID,
+		Unlink:          unlink,
 	}
+}
+
+func unlink(filename string) {
+	err := os.RemoveAll(filename)
+	panicerr(err)
 }
 
 func goroutineID() int64 {

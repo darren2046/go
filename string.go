@@ -8,6 +8,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/abadojack/whatlanggo"
 	"github.com/denisbrodbeck/striphtmltags"
 )
 
@@ -312,4 +313,8 @@ func (s *stringStruct) RemoveNonUTF8Character() *stringStruct {
 		s.s = string(v)
 	}
 	return s
+}
+
+func (s *stringStruct) DetectLanguage() string {
+	return whatlanggo.Detect(s.s).Lang.String()
 }
