@@ -1,409 +1,416 @@
-Tools
-
-* func Lock() *lockStruct
-    * func (*lockStruct) Acquire() 
-    * func (*lockStruct) Release() 
-* AliDNS: func(string, string) *golanglibs.alidnsStruct
-    * func (m *alidnsStruct) Total() (TotalCount int64) 
-    * func (m *alidnsStruct) List(PageSize int64, PageNumber int64) (res []alidnsDomainInfoStruct) 
-    * func (m *alidnsStruct) Domain(domainName string) *alidnsDomainStruct
-        * func (m *alidnsDomainStruct) List() (res []alidnsRecord)
-        * func (m *alidnsDomainStruct) Add(recordName string, recordType string, recordValue string) (id string)
-        * func (m *alidnsDomainStruct) Delete(name string, dtype string, value string) 
-        * func (m *alidnsDomainStruct) modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordName string, dstRecordType string, dstRecordValue string)
-* Chart
-    * LineChartWithTimestampAndNumber: func([]int64, []float64, string, string, string, string) {...},
-    * LineChartWithNumberAndNumber:    func([]float64, []float64, string, string, string, string) {...},
-    * BarChartWithNameAndNumber:       func([]string, []float64, string, string, string) {...},
-    * PieChartWithNameAndNumber:       func([]string, []float64, string, string) {...},
-CloudflareDNS: func(string, string) *golanglibs.cloudflareStruct 
-    func (m *cloudflareStruct) Add(domain string) cloudflare.Zone {
-    func (m *cloudflareStruct) List() (res []cloudflareDomainInfoStruct) {
-    func (m *cloudflareStruct) Domain(domainName string) *cloudflareDomainStruct {
-        func (m *cloudflareDomainStruct) List() (res []cloudflareRecord) {
-        func (m *cloudflareDomainStruct) Delete(name string) {
-        func (m *cloudflareDomainStruct) Add(recordName string, recordType string, recordValue string, proxied ...bool) *cloudflare.DNSRecordResponse {
-        func (m *cloudflareDomainStruct) SetProxied(subdomain string, proxied bool) {
-        func (m *cloudflareDomainStruct) Update(recordName string, recordType string, recordValue string, proxied ...bool) {
-Compress:
-    LzmaCompressString:   func(string) string {...},
-    LzmaDecompressString: func(string) string {...},
-    ZlibCompressString:   func(string) string {...},
-    ZlibDecompressString: func(string) string {...},
-Crontab:      func() *golanglibs.crontabStruct {...},
-    func (m *crontabStruct) Add(schedule string, fn interface{}, args ...interface{})
-    func (m *crontabStruct) Destory()
-GodaddyDNS:   func(string, string) *golanglibs.godaddyStruct {...},
-    func (m *godaddyStruct) List() (res []godaddyDomainInfoStruct) {
-    func (m *godaddyStruct) Domain(domainName string) *godaddyDomainStruct {
-        func (m *godaddyDomainStruct) List() (res []godaddyRecord) {
-        func (m *godaddyDomainStruct) Delete(name string, dtype string, value string) {
-        func (m *godaddyDomainStruct) Modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordType string, dstRecordValue string) {
-        func (m *godaddyDomainStruct) Add(recordName string, recordType string, recordValue string) {
-Ini:          func(...string) *golanglibs.iniStruct {...},
-    func (m *iniStruct) Get(SectionKeyDefaultComment ...string) (res string) {
-    func (m *iniStruct) GetInt(key ...string) int {
-    func (m *iniStruct) GetInt64(key ...string) int64 {
-    func (m *iniStruct) getFloat64(key ...string) float64 {
-    func (m *iniStruct) Set(SectionKeyValueComment ...string) {
-    func (m *iniStruct) Save(fpath ...string) (exist bool) {
-JavascriptVM: func() *golanglibs.javascriptVMStruct {...},
-    func (m *javascriptVMStruct) Run(javascript string) *javascriptVMStruct {
-    func (m *javascriptVMStruct) Get(variableName string) string {
-    func (m *javascriptVMStruct) Set(variableName string, variableValue interface{}) {
-    func (m *javascriptVMStruct) Isdefined(variableName string) bool {
-Matrix:       func(string) *golanglibs.matrixStruct {...},
-    func (c *matrixStruct) Login(username string, password string) string {
-    func (c *matrixStruct) SetToken(userID string, token string) *matrixStruct {
-    func (c *matrixStruct) SetRoomID(roomID string) *matrixStruct {
-    func (c *matrixStruct) Send(text string) {
-Nats:         func(string) *golanglibs.natsStruct {...},
-    func (m *natsStruct) Subject(subject string) *subjectNatsStruct {
-        func (m *subjectNatsStruct) Publish(message string) {
-        func (m *subjectNatsStruct) Subscribe() chan string {
-        func (m *subjectNatsStruct) Flush() {
-Totp:         func(string) *golanglibs.totpStruct {...},
-    func (m *totpStruct) Validate(pass string) bool {
-    func (m *totpStruct) Password() string {
-Pexpect:      func(string) *golanglibs.pexpectStruct {...},
-    func (m *pexpectStruct) Sendline(msg string) {
-    func (m *pexpectStruct) Close() {
-ProgressBar:  func(string, int64, ...bool) *golanglibs.progressBarStruct {...},
-    func (m *progressBarStruct) Add(num int64) {
-    func (m *progressBarStruct) Set(num int64) {
-    func (m *progressBarStruct) SetTotal(total int64) {
-    func (m *progressBarStruct) Clear() {
-Prometheus:   func(string) *golanglibs.prometheusStruct {...},
-    func (m *prometheusStruct) Query(query string, time ...float64) (res []prometheusResultStruct) 
-MySQL:        func(string, int, string, string, string, ...golanglibs.DatabaseConfig) *golanglibs.databaseStruct {...},
-SQLite:       func(string) *golanglibs.databaseStruct {...},
-    func (m *databaseStruct) Query(sql string, args ...interface{}) []gorose.Data {
-    func (m *databaseStruct) Close() {
-    func (m *databaseStruct) Execute(sql string) int64 {
-    func (m *databaseStruct) RenameTable(oldTableName string, newTableNname string) {
-    func (m *databaseStruct) tables() (res []string) {
-    func (m *databaseStruct) createTable(tableName string, engineName ...string) *databaseOrmStruct {
-    func (m *databaseStruct) Table(tbname string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) Fields(items ...string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) Where(key string, operator string, value interface{}) *databaseOrmStruct {
-        func (m *databaseOrmStruct) WhereIn(key string, value []interface{}) *databaseOrmStruct {
-        func (m *databaseOrmStruct) WhereNotIn(key string, value []interface{}) *databaseOrmStruct {
-        func (m *databaseOrmStruct) WhereNull(columnName string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) WhereNotNull(columnName string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) OrWhere(key string, operator string, value interface{}) *databaseOrmStruct {
-        func (m *databaseOrmStruct) OrWhereIn(key string, value []interface{}) *databaseOrmStruct {
-        func (m *databaseOrmStruct) Orderby(item ...string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) Limit(number int) *databaseOrmStruct {
-        func (m *databaseOrmStruct) Get() (res []gorose.Data) {
-        func (m *databaseOrmStruct) Paginate(pagesize int, page int) []gorose.Data {
-        func (m *databaseOrmStruct) First() (res gorose.Data) {
-        func (m *databaseOrmStruct) find(id int) gorose.Data {
-        func (m *databaseOrmStruct) Count() (res int64) {
-        func (m *databaseOrmStruct) exists() (res bool) {
-        func (m *databaseOrmStruct) chunk(limit int, callback func([]gorose.Data) error) {
-        func (m *databaseOrmStruct) buildSQL() (string, []interface{}) {
-        func (m *databaseOrmStruct) data(data interface{}) *databaseOrmStruct {
-        func (m *databaseOrmStruct) offset(offset int) *databaseOrmStruct {
-        func (m *databaseOrmStruct) insertGetID() (num int64) {
-        func (m *databaseOrmStruct) Insert() (num int64) {
-        func (m *databaseOrmStruct) Update(data ...interface{}) (num int64) {
-        func (m *databaseOrmStruct) Delete() (num int64) {
-        func (m *databaseOrmStruct) DropTable() int64 {
-        func (m *databaseOrmStruct) TruncateTable() (status int64) {
-        func (m *databaseOrmStruct) AddColumn(columnName string, columnType string, defaultValue ...string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) DropColumn(columnName string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) AddIndex(columnName ...string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) IndexExists(columnName ...string) (exists bool) {
-        func (m *databaseOrmStruct) DropIndex(columnName ...string) *databaseOrmStruct {
-        func (m *databaseOrmStruct) Columns() (res map[string]string) {
-RabbitMQ:     func(string, string) *golanglibs.rabbitConnectionStruct {...},
-    func (m *rabbitConnectionStruct) Send(data map[string]string) {
-    func (m *rabbitConnectionStruct) Recv() chan map[string]string {
-RateLimit:    func(int) *golanglibs.rateLimitStruct {...},
-    func (m *rateLimitStruct) Take() {
-Redis:        func(string, int, string, int, ...golanglibs.redisConfig) *golanglibs.RedisStruct {...},
-    func (m *RedisStruct) Ping() string {
-    func (m *RedisStruct) Del(key string) {
-    func (m *RedisStruct) Set(key string, value string, ttl ...interface{}) {
-    func (m *RedisStruct) Get(key string) *string {
-    func (m *RedisStruct) GetLock(key string, timeoutsec int) *RedisLockStruct {
-        func (m *RedisLockStruct) acquire() {
-        func (m *RedisLockStruct) Release() {
-Selenium:     func(string) *golanglibs.seleniumStruct {...},
-    func (c *seleniumStruct) Close() {
-    func (c *seleniumStruct) Cookie() (co string) {
-    func (c *seleniumStruct) Url() string {
-    func (c *seleniumStruct) ScrollRight(pixel int) {
-    func (c *seleniumStruct) ScrollLeft(pixel int) {
-    func (c *seleniumStruct) ScrollUp(pixel int) {
-    func (c *seleniumStruct) ScrollDown(pixel int) {
-    func (c *seleniumStruct) ResizeWindow(width int, height int) *seleniumStruct {
-    func (c *seleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStruct {
-        func (c *seleniumElementStruct) Clear() *seleniumElementStruct {
-        func (c *seleniumElementStruct) Click() *seleniumElementStruct {
-        func (c *seleniumElementStruct) Text() string {
-        func (c *seleniumElementStruct) Input(s string) *seleniumElementStruct {
-        func (c *seleniumElementStruct) Submit() *seleniumElementStruct {
-        func (c *seleniumElementStruct) PressEnter() *seleniumElementStruct {
-SSH:          func(string, string, string, int) *golanglibs.sshStruct {...},
-    func (m *sshStruct) Close() {
-    func (m *sshStruct) Exec(cmd string) (output string, status int) {
-    func (m *sshStruct) PushFile(local string, remote string) {
-    func (m *sshStruct) PullFile(remote string, local string) {
-StatikOpen:   func(string) *golanglibs.statikFileStruct {...},
-    func (m *statikFileStruct) Readlines() chan string {
-    func (m *statikFileStruct) Readline() string {
-    func (m *statikFileStruct) Close() {
-    func (m *statikFileStruct) Read(num ...int) string {
-    func (m *statikFileStruct) Seek(num int64) {
-Table:        func(...string) *golanglibs.tableStruct {...},
-    func (m *tableStruct) SetMaxCellWidth(width ...int) {
-    func (m *tableStruct) AddRow(row ...interface{}) {
-    func (m *tableStruct) Render() string {
-TelegramBot:  func(string) *golanglibs.telegramBotStruct {...},
-    func (m *telegramBotStruct) SetChatID(chatid int64) *telegramBotStruct {
-    func (m *telegramBotStruct) SendFile(path string) tgbotapi.Message {
-    func (m *telegramBotStruct) SendImage(path string) tgbotapi.Message {
-    func (m *telegramBotStruct) Send(text string, cfg ...tgMsgConfig) tgbotapi.Message {
-Telegraph:    func(string) *golanglibs.telegraphStruct {...},
-    func (m *telegraphStruct) Post(title string, content string) *telegraphPageInfo
-URL:          func(string) *golanglibs.urlStruct {...},
-    func (u *urlStruct) Parse() *urlComponents {
-    func (u *urlStruct) Encode() string {
-    func (u *urlStruct) Decode() string {
-TTLCache:     func(interface {}) *golanglibs.ttlCacheStruct {...},
-    func (m *ttlCacheStruct) Set(key string, value string) {
-    func (m *ttlCacheStruct) Get(key string) string {
-    func (m *ttlCacheStruct) Exists(key string) bool {
-    func (m *ttlCacheStruct) Count() int {
-VNC:          func(string, ...golanglibs.VNCCfg) *golanglibs.vncStruct {...},
-    func (m *vncStruct) Close() {
-    func (m *vncStruct) Move(x, y int) *vncStruct {
-    func (m *vncStruct) Click() *vncStruct {
-    func (m *vncStruct) RightClick() *vncStruct {
-    func (m *vncStruct) Input(s string) *vncStruct {
-    func (m *vncStruct) Key() *vncKeyStruct {
-        func (m *vncKeyStruct) Enter() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_a() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_c() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_v() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_z() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_x() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_f() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_d() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_s() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_r() *vncKeyStruct {
-        func (m *vncKeyStruct) Ctrl_e() *vncKeyStruct {
-        func (m *vncKeyStruct) delete() *vncKeyStruct {
-        func (m *vncKeyStruct) tab() *vncKeyStruct {
-WebSocket:    func(string) *golanglibs.websocketStruct {...},
-    func (c *websocketStruct) Send(text string) {
-    func (c *websocketStruct) Recv(timeout ...int) string {
-    func (c *websocketStruct) Close() {
-Xlsx:         func(string) *golanglibs.xlsxStruct {...},
-    func (c *xlsxStruct) Save() {
-    func (c *xlsxStruct) Close() {
-    func (c *xlsxStruct) GetSheet(name string) *xlsxSheetStruct {
-        func (c *xlsxSheetStruct) Get(coordinate string) string {
-        func (c *xlsxSheetStruct) Set(coordinate string, value string) *xlsxSheetStruct {
-XPath:        func(string) *golanglibs.xpathStruct {...},
-    func (m *xpathStruct) First(expr string) (res *xpathStruct) {
-    func (m *xpathStruct) Find(expr string) (res []*xpathStruct) {
-    func (m *xpathStruct) Text() string {
-    func (m *xpathStruct) GetAttr(attr string) string {
-    func (m *xpathStruct) Html() string {
-JsonXPath:    func(string) *golanglibs.xpathJsonStruct {...},
-    func (m *xpathJsonStruct) Exists(expr string) bool {
-    func (m *xpathJsonStruct) First(expr string) (res *xpathJsonStruct) {
-    func (m *xpathJsonStruct) Find(expr string) (res []*xpathJsonStruct) {
-    func (m *xpathJsonStruct) Text() string {
-
-Random:
-	Int    func(min, max int64) int64
-	Choice func(array interface{}) interface{}
-	String func(length int, charset ...string) string
-
-
-Re:
-	FindAll func(pattern string, text string, multiline ...bool) [][]string
-	Replace func(pattern string, newstring string, text string) string
-
-Socket:
-
-  KCP: golanglibs.kcpStruct{
-    Listen:     func(string, int, string, string) *golanglibs.kcpServerSideListener {...},
-    Connect:    func(string, int, string, string) *golanglibs.kcpClientSideConn {...},
-    RawListen:  func(string, int, string, string) *golanglibs.kcpRawServerSideListener {...},
-    RawConnect: func(string, int, string, string) *kcp.UDPSession {...},
-  },
-  Smux: golanglibs.smuxStruct{
-    ServerWrapper: func(io.ReadWriteCloser, ...golanglibs.SmuxConfig) *golanglibs.smuxServerSideListener {...},
-    ClientWrapper: func(io.ReadWriteCloser, ...golanglibs.SmuxConfig) *golanglibs.smuxClientSideSession {...},
-  },
-  SSL: golanglibs.sslStruct{
-    Listen:        func(string, int, string, string) *golanglibs.tcpServerSideListener {...},
-    ServerWrapper: func(net.Conn, string, string) *golanglibs.tcpServerSideConn {...},
-    Connect:       func(string, int, ...golanglibs.sslCfg) *golanglibs.sslClientSideConn {...},
-    ClientWrapper: func(net.Conn, ...golanglibs.sslCfg) *golanglibs.sslClientSideConn {...},
-  },
-  TCP: golanglibs.tcpStruct{
-    Listen:  func(string, int) *golanglibs.tcpServerSideListener {...},
-    Connect: func(string, int, ...int) *golanglibs.tcpClientSideConn {...},
-  },
-  UDP: golanglibs.udpStruct{
-    Listen:  func(string, int) golanglibs.udpServerSideConn {...},
-    Connect: func(string, int) golanglibs.udpClientSideConn {...},
-  },
-
-String:
-
-Time:
-  Now:            func() float64 {...},
-  TimeDuration:   func(interface {}) time.Duration {...},
-  FormatDuration: func(int64) string {...},
-  Sleep:          func(interface {}) {...},
-  Strptime:       func(string, string) int64 {...},
-  Strftime:       func(string, interface {}) string {...},
-
-Argparser(description string) *argparseIniStruct
-    func (m *argparseIniStruct) Get(section, key, defaultValue, comment string) (res string) {
-    func (m *argparseIniStruct) GetInt(section, key, defaultValue, comment string) int {
-    func (m *argparseIniStruct) GetInt64(section, key, defaultValue, comment string) int64 {
-    func (m *argparseIniStruct) GetFloat64(section, key, defaultValue, comment string) float64 {
-    func (m *argparseIniStruct) GetBool(section, key, defaultValue, comment string) bool {
-    func (m *argparseIniStruct) Save(fpath ...string) (exist bool) {
-    func (m *argparseIniStruct) GetHelpString() (h string) {
-    func (m *argparseIniStruct) ParseArgs() *argparseIniStruct {
-
-Base64:
-	Encode func(str string) string
-	Decode func(str string) string
-
-
-
-Binary:
-	Map2bin func(m map[string]string) string
-	Bin2map func(s string) (res map[string]string)
-
-Cmd:
-	GetOutput                func(command string, timeoutSecond ...interface{}) string
-	GetStatusOutput          func(command string, timeoutSecond ...interface{}) (int, string)
-	GetOutputWithShell       func(command string, timeoutSecond ...interface{}) string
-	GetStatusOutputWithShell func(command string, timeoutSecond ...interface{}) (int, string)
-	Tail                     func(command string) chan string
-	Exists                   func(cmd string) bool
-
-
-Crypto
-	Xor func(data, key string) string
-	Aes func(key string) *aesStruct
-
-File(filePath string) *fileStruct
-    func (f *fileStruct) Time() *fileTimeStruct {
-    func (f *fileStruct) Stat() os.FileInfo {
-    func (f *fileStruct) Size() int64 {
-    func (f *fileStruct) Touch() {
-    func (f *fileStruct) Chmod(mode os.FileMode) bool {
-    func (f *fileStruct) Chown(uid, gid int) bool {
-    func (f *fileStruct) Mtime() int64 {
-    func (f *fileStruct) Unlink() {
-    func (f *fileStruct) Copy(dest string) {
-    func (f *fileStruct) Move(newPosition string) {
-
-Open(args ...string) *fileIOStruct
-    func (m *fileIOStruct) Readlines() chan string {
-    func (m *fileIOStruct) Readline() string {
-    func (m *fileIOStruct) Close() {
-    func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
-    func (m *fileIOStruct) Read(num ...int) string {
-    func (m *fileIOStruct) Seek(num int64) {
-
-
-Funcs
-	Nslookup               func(name string, querytype string, dnsService ...string) [][]string
-	FakeName               func() string
-	FileType               func(fpath string) string
-	Inotify                func(path string) chan *fsnotifyFileEventStruct
-	IPLocation             func(ip string, dbpath ...string) *ipLocationInfo
-	HightLightHTMLForCode  func(code string, codeType ...string) (html string)
-	Markdown2html          func(md string) string
-	CPUUsagePerProgress    func() (res map[int64]progressCPUUsageStruct)
-	ResizeImg              func(srcPath string, dstPath string, width int, height ...int)
-	GetRSS                 func(url string, config ...rssConfig) *gofeed.Feed
-	GbkToUtf8              func(s string) string
-	Utf8ToGbk              func(s string) string
-	GetSnowflakeID         func(nodeNumber ...int) int64
-	GetRemoteServerSSLCert func(host string, port ...int) []*x509.Certificate
-	Tailf                  func(path string, startFromEndOfFile ...bool) chan *tail.Line
-	BaiduTranslateAnyToZH  func(text string) string
-	ParseUserAgent         func(UserAgent string) ua.UserAgent
-	Wget                   func(url string, cfg ...WgetCfg) (filename string)
-	Whois                  func(s string, servers ...string) string
-	IpInNet                func(ip string, Net string, mask ...string) bool
-	Int2ip                 func(ipnr int64) string
-	Ip2int                 func(ipnr string) int64
-    Zh2PinYin              func(zh string) (ress []string)
-
-
-Hash
-	Md5sum   func(str string) string
-	Md5File  func(path string) string
-	Sha1sum  func(str string) string
-	Sha1File func(path string) string
-
-Html
-	Encode func(str string) string
-	Decode func(str string) string
-
-Http
-	Head     func(uri string, args ...interface{}) httpResp
-	PostFile func(uri string, filePath string, args ...interface{}) httpResp
-	PostRaw  func(uri string, body string, args ...interface{}) httpResp
-	PostJSON func(uri string, json interface{}, args ...interface{}) httpResp
-	Post     func(uri string, args ...interface{}) httpResp
-	Get      func(uri string, args ...interface{}) httpResp
-	PutJSON  func(uri string, json interface{}, args ...interface{}) httpResp
-	Put      func(uri string, args ...interface{}) httpResp
-	PutRaw   func(uri string, body string, args ...interface{}) httpResp
-
-Json
-	Dumps     func(v interface{}, pretty ...bool) string
-	Loads     func(str string) map[string]interface{}
-	Valid     func(j string) bool
-	Yaml2json func(y string) string
-	Json2yaml func(j string) string
-	Format    func(js string) string
-
-Math
-	Abs          func(number float64) float64
-	Sum          func(array interface{}) (sumresult float64)
-	Average      func(array interface{}) (avgresult float64)
-	DecimalToAny func(num, n int64) string
-	AnyToDecimal func(num string, n int64) int64
-
-Os
-	Mkdir           func(filename string)
-	Getcwd          func() string
-	Exit            func(status int)
-	Touch           func(filePath string)
-	Chmod           func(filePath string, mode os.FileMode) bool
-	Chown           func(filePath string, uid, gid int) bool
-	Copy            func(filePath, dest string)
-	Rename          func(filePath, newPosition string)
-	Move            func(filePath, newPosition string)
-	Path            pathStruct
-	System          func(command string, timeoutSecond ...interface{}) int
-	SystemWithShell func(command string, timeoutSecond ...interface{}) int
-	Hostname        func() string
-	Envexists       func(varname string) bool
-	Getenv          func(varname string) string
-	Walk            func(path string) chan string
-	Listdir         func(path string) (res []string)
-	SelfDir         func() string
-	TempFilePath    func() string
-	TempDirPath     func() string
-	Getuid          func() int
-	ProgressAlive   func(pid int) bool
-	GoroutineID     func() int64
-	Unlink          func(filename string)
+* Tools
+    * func Lock() \*lock
+        * func (*lock) Acquire() 
+        * func (*lock) Release() 
+    * func AliDNS(string, string) \*golanglibs.alidns
+        * func (m \*alidns) Total() (TotalCount int64) 
+        * func (m \*alidns) List(PageSize int64, PageNumber int64) (res []alidnsDomainInfo) 
+        * func (m \*alidns) Domain(domainName string) \*alidnsDomain
+            * func (m \*alidnsDomain) List() (res []alidnsRecord)
+            * func (m \*alidnsDomain) Add(recordName string, recordType string, recordValue string) (id string)
+            * func (m \*alidnsDomain) Delete(name string, dtype string, value string) 
+            * func (m \*alidnsDomain) modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordName string, dstRecordType string, dstRecordValue string)
+    * Chart
+        * func LineChartWithTimestampAndNumber([]int64, []float64, string, string, string, string)
+        * func LineChartWithNumberAndNumber([]float64, []float64, string, string, string, string)
+        * func BarChartWithNameAndNumber([]string, []float64, string, string, string)
+        * func PieChartWithNameAndNumber([]string, []float64, string, string)
+    * func CloudflareDNS(string, string) \*golanglibs.cloudflare 
+        * func (m \*cloudflare) Add(domain string) cloudflare.Zone
+        * func (m \*cloudflare) List() (res []cloudflareDomainInfo)
+        * func (m \*cloudflare) Domain(domainName string) \*cloudflareDomain
+            * func (m \*cloudflareDomain) List() (res []cloudflareRecord)
+            * func (m \*cloudflareDomain) Delete(name string)
+            * func (m \*cloudflareDomain) Add(recordName string, recordType string, recordValue string, proxied ...bool) \*cloudflare.DNSRecordResponse
+            * func (m \*cloudflareDomain) SetProxied(subdomain string, proxied bool)
+            * func (m \*cloudflareDomain) Update(recordName string, recordType string, recordValue string, proxied ...bool)
+    * Compress
+        * func LzmaCompressString(string) string
+        * func LzmaDecompressString(string) string
+        * func ZlibCompressString(string) string
+        * func ZlibDecompressString(string) string
+    * func Crontab() \*golanglibs.crontab
+        * func (m \*crontab) Add(schedule string, fn interface{}, args ...interface{})
+        * func (m \*crontab) Destory()
+    * func GodaddyDNS(string, string) \*golanglibs.godaddy
+        * func (m \*godaddy) List() (res []godaddyDomainInfo)
+        * func (m \*godaddy) Domain(domainName string) \*godaddyDomain
+            * func (m \*godaddyDomain) List() (res []godaddyRecord)
+            * func (m \*godaddyDomain) Delete(name string, dtype string, value string)
+            * func (m \*godaddyDomain) Modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordType string, dstRecordValue string)
+            * func (m \*godaddyDomain) Add(recordName string, recordType string, recordValue string)
+    * func Ini(...string) \*golanglibs.ini
+        * func (m \*ini) Get(SectionKeyDefaultComment ...string) (res string)
+        * func (m \*ini) GetInt(key ...string) int
+        * func (m \*ini) GetInt64(key ...string) int64
+        * func (m \*ini) getFloat64(key ...string) float64
+        * func (m \*ini) Set(SectionKeyValueComment ...string)
+        * func (m \*ini) Save(fpath ...string) (exist bool)
+    * func JavascriptVM() \*golanglibs.javascriptVM
+        * func (m \*javascriptVM) Run(javascript string) \*javascriptVM
+        * func (m \*javascriptVM) Get(variableName string) string
+        * func (m \*javascriptVM) Set(variableName string, variableValue interface{})
+        * func (m \*javascriptVM) Isdefined(variableName string) bool
+    * func Matrix(string) \*golanglibs.matrix
+        * func (c \*matrix) Login(username string, password string) string
+        * func (c \*matrix) SetToken(userID string, token string) \*matrix
+        * func (c \*matrix) SetRoomID(roomID string) \*matrix
+        * func (c \*matrix) Send(text string)
+    * func Nats(string) \*golanglibs.nats
+        * func (m \*nats) Subject(subject string) \*subjectNats
+            * func (m \*subjectNats) Publish(message string)
+            * func (m \*subjectNats) Subscribe() chan string
+            * func (m \*subjectNats) Flush()
+    * func Totp(string) \*golanglibs.totp
+        * func (m \*totp) Validate(pass string) bool
+        * func (m \*totp) Password() string
+    * func Pexpect(string) \*golanglibs.pexpect
+        * func (m \*pexpect) Sendline(msg string)
+        * func (m \*pexpect) Close()
+    * func ProgressBar(string, int64, ...bool) \*golanglibs.progressBar
+        * func (m \*progressBar) Add(num int64)
+        * func (m \*progressBar) Set(num int64)
+        * func (m \*progressBar) SetTotal(total int64)
+        * func (m \*progressBar) Clear()
+    * func Prometheus(string) \*golanglibs.prometheus
+        * func (m \*prometheus) Query(query string, time ...float64) (res []prometheusResult) 
+    * func MySQL(string, int, string, string, string, ...golanglibs.DatabaseConfig) \*golanglibs.database
+    * func SQLite(string) \*golanglibs.database
+        * func (m \*database) Query(sql string, args ...interface{}) []gorose.Data
+        * func (m \*database) Close()
+        * func (m \*database) Execute(sql string) int64
+        * func (m \*database) RenameTable(oldTableName string, newTableNname string)
+        * func (m \*database) tables() (res []string)
+        * func (m \*database) createTable(tableName string, engineName ...string) \*databaseOrm
+        * func (m \*database) Table(tbname string) \*databaseOrm
+            * func (m \*databaseOrm) Fields(items ...string) \*databaseOrm
+            * func (m \*databaseOrm) Where(key string, operator string, value interface{}) \*databaseOrm
+            * func (m \*databaseOrm) WhereIn(key string, value []interface{}) \*databaseOrm
+            * func (m \*databaseOrm) WhereNotIn(key string, value []interface{}) \*databaseOrm
+            * func (m \*databaseOrm) WhereNull(columnName string) \*databaseOrm
+            * func (m \*databaseOrm) WhereNotNull(columnName string) \*databaseOrm
+            * func (m \*databaseOrm) OrWhere(key string, operator string, value interface{}) \*databaseOrm
+            * func (m \*databaseOrm) OrWhereIn(key string, value []interface{}) \*databaseOrm
+            * func (m \*databaseOrm) Orderby(item ...string) \*databaseOrm
+            * func (m \*databaseOrm) Limit(number int) \*databaseOrm
+            * func (m \*databaseOrm) Get() (res []gorose.Data)
+            * func (m \*databaseOrm) Paginate(pagesize int, page int) []gorose.Data
+            * func (m \*databaseOrm) First() (res gorose.Data)
+            * func (m \*databaseOrm) find(id int) gorose.Data
+            * func (m \*databaseOrm) Count() (res int64)
+            * func (m \*databaseOrm) exists() (res bool)
+            * func (m \*databaseOrm) chunk(limit int, callback func([]gorose.Data) error)
+            * func (m \*databaseOrm) buildSQL() (string, []interface{})
+            * func (m \*databaseOrm) data(data interface{}) \*databaseOrm
+            * func (m \*databaseOrm) offset(offset int) \*databaseOrm
+            * func (m \*databaseOrm) insertGetID() (num int64)
+            * func (m \*databaseOrm) Insert() (num int64)
+            * func (m \*databaseOrm) Update(data ...interface{}) (num int64)
+            * func (m \*databaseOrm) Delete() (num int64)
+            * func (m \*databaseOrm) DropTable() int64
+            * func (m \*databaseOrm) TruncateTable() (status int64)
+            * func (m \*databaseOrm) AddColumn(columnName string, columnType string, defaultValue ...string) \*databaseOrm
+            * func (m \*databaseOrm) DropColumn(columnName string) \*databaseOrm
+            * func (m \*databaseOrm) AddIndex(columnName ...string) \*databaseOrm
+            * func (m \*databaseOrm) IndexExists(columnName ...string) (exists bool)
+            * func (m \*databaseOrm) DropIndex(columnName ...string) \*databaseOrm
+            * func (m \*databaseOrm) Columns() (res map[string]string)
+    * func RabbitMQ(string, string) \*golanglibs.rabbitConnection
+        * func (m \*rabbitConnection) Send(data map[string]string)
+        * func (m \*rabbitConnection) Recv() chan map[string]string
+    * func RateLimit(int) \*golanglibs.rateLimit
+        * func (m \*rateLimit) Take()
+    * func Redis(string, int, string, int, ...golanglibs.redisConfig) \*golanglibs.Redis
+        * func (m \*Redis) Ping() string
+        * func (m \*Redis) Del(key string)
+        * func (m \*Redis) Set(key string, value string, ttl ...interface{})
+        * func (m \*Redis) Get(key string) \*string
+        * func (m \*Redis) GetLock(key string, timeoutsec int) \*RedisLock
+            * func (m \*RedisLock) acquire()
+            * func (m \*RedisLock) Release()
+    * func Selenium(string) \*golanglibs.selenium
+        * func (c \*selenium) Close()
+        * func (c \*selenium) Cookie() (co string)
+        * func (c \*selenium) Url() string
+        * func (c \*selenium) ScrollRight(pixel int)
+        * func (c \*selenium) ScrollLeft(pixel int)
+        * func (c \*selenium) ScrollUp(pixel int)
+        * func (c \*selenium) ScrollDown(pixel int)
+        * func (c \*selenium) ResizeWindow(width int, height int) \*selenium
+        * func (c \*selenium) Find(xpath string, nowait ...bool) \*seleniumElement
+            * func (c \*seleniumElement) Clear() \*seleniumElement
+            * func (c \*seleniumElement) Click() \*seleniumElement
+            * func (c \*seleniumElement) Text() string
+            * func (c \*seleniumElement) Input(s string) \*seleniumElement
+            * func (c \*seleniumElement) Submit() \*seleniumElement
+            * func (c \*seleniumElement) PressEnter() \*seleniumElement
+    * func SSH(string, string, string, int) \*golanglibs.ssh
+        * func (m \*ssh) Close()
+        * func (m \*ssh) Exec(cmd string) (output string, status int)
+        * func (m \*ssh) PushFile(local string, remote string)
+        * func (m \*ssh) PullFile(remote string, local string)
+    * func StatikOpen(string) \*golanglibs.statikFile
+        * func (m \*statikFile) Readlines() chan string
+        * func (m \*statikFile) Readline() string
+        * func (m \*statikFile) Close()
+        * func (m \*statikFile) Read(num ...int) string
+        * func (m \*statikFile) Seek(num int64)
+    * func Table(...string) \*golanglibs.table
+        * func (m \*table) SetMaxCellWidth(width ...int)
+        * func (m \*table) AddRow(row ...interface{})
+        * func (m \*table) Render() string
+    * func TelegramBot(string) \*golanglibs.telegramBot
+        * func (m \*telegramBot) SetChatID(chatid int64) \*telegramBot
+        * func (m \*telegramBot) SendFile(path string) tgbotapi.Message
+        * func (m \*telegramBot) SendImage(path string) tgbotapi.Message
+        * func (m \*telegramBot) Send(text string, cfg ...tgMsgConfig) tgbotapi.Message
+    * func Telegraph(string) \*golanglibs.telegraph
+        * func (m \*telegraph) Post(title string, content string) \*telegraphPageInfo
+    * func URL(string) \*golanglibs.url
+        * func (u \*url) Parse() \*urlComponents
+        * func (u \*url) Encode() string
+        * func (u \*url) Decode() string
+    * func TTLCache(interface {}) \*golanglibs.ttlCache
+        * func (m \*ttlCache) Set(key string, value string)
+        * func (m \*ttlCache) Get(key string) string
+        * func (m \*ttlCache) Exists(key string) bool
+        * func (m \*ttlCache) Count() int
+    * func VNC(string, ...golanglibs.VNCCfg) \*golanglibs.vnc
+        * func (m \*vnc) Close()
+        * func (m \*vnc) Move(x, y int) \*vnc
+        * func (m \*vnc) Click() \*vnc
+        * func (m \*vnc) RightClick() \*vnc
+        * func (m \*vnc) Input(s string) \*vnc
+        * func (m \*vnc) Key() \*vncKey
+            * func (m \*vncKey) Enter() \*vncKey
+            * func (m \*vncKey) Ctrl_a() \*vncKey
+            * func (m \*vncKey) Ctrl_c() \*vncKey
+            * func (m \*vncKey) Ctrl_v() \*vncKey
+            * func (m \*vncKey) Ctrl_z() \*vncKey
+            * func (m \*vncKey) Ctrl_x() \*vncKey
+            * func (m \*vncKey) Ctrl_f() \*vncKey
+            * func (m \*vncKey) Ctrl_d() \*vncKey
+            * func (m \*vncKey) Ctrl_s() \*vncKey
+            * func (m \*vncKey) Ctrl_r() \*vncKey
+            * func (m \*vncKey) Ctrl_e() \*vncKey
+            * func (m \*vncKey) delete() \*vncKey
+            * func (m \*vncKey) tab() \*vncKey
+    * func WebSocket(string) \*golanglibs.websocket
+        * func (c \*websocket) Send(text string)
+        * func (c \*websocket) Recv(timeout ...int) string
+        * func (c \*websocket) Close()
+    * func Xlsx(string) \*golanglibs.xlsx
+        * func (c \*xlsx) Save()
+        * func (c \*xlsx) Close()
+        * func (c \*xlsx) GetSheet(name string) \*xlsxSheet
+            * func (c \*xlsxSheet) Get(coordinate string) string
+            * func (c \*xlsxSheet) Set(coordinate string, value string) \*xlsxSheet
+    * func XPath(string) \*golanglibs.xpath
+        * func (m \*xpath) First(expr string) (res *xpath)
+        * func (m \*xpath) Find(expr string) (res []*xpath)
+        * func (m \*xpath) Text() string
+        * func (m \*xpath) GetAttr(attr string) string
+        * func (m \*xpath) Html() string
+    * func JsonXPath(string) \*golanglibs.xpathJson
+        * func (m \*xpathJson) Exists(expr string) bool
+        * func (m \*xpathJson) First(expr string) (res *xpathJson)
+        * func (m \*xpathJson) Find(expr string) (res []*xpathJson)
+        * func (m \*xpathJson) Text() string
+* Random
+    * func Int(min, max int64) int64
+    * func Choice(array interface{}) interface{}
+    * func String(length int, charset ...string) string
+* Re
+    * func FindAll(pattern string, text string, multiline ...bool) [][]string
+    * func Replace(pattern string, newstring string, text string) string
+* Socket
+    * KCP: golanglibs.kcp{
+        * func Listen(string, int, string, string) \*golanglibs.kcpServerSideListener
+        * func Connect(string, int, string, string) \*golanglibs.kcpClientSideConn
+        * func RawListen(string, int, string, string) \*golanglibs.kcpRawServerSideListener
+        * func RawConnect(string, int, string, string) \*kcp.UDPSession
+    * Smux: golanglibs.smux{
+        * func ServerWrapper(io.ReadWriteCloser, ...golanglibs.SmuxConfig) \*golanglibs.smuxServerSideListener
+        * func ClientWrapper(io.ReadWriteCloser, ...golanglibs.SmuxConfig) \*golanglibs.smuxClientSideSession
+    * SSL: golanglibs.ssl{
+        * func Listen(string, int, string, string) \*golanglibs.tcpServerSideListener
+        * func ServerWrapper(net.Conn, string, string) \*golanglibs.tcpServerSideConn
+        * func Connect(string, int, ...golanglibs.sslCfg) \*golanglibs.sslClientSideConn
+        * func ClientWrapper(net.Conn, ...golanglibs.sslCfg) \*golanglibs.sslClientSideConn
+    * TCP: golanglibs.tcp{
+        * func Listen(string, int) \*golanglibs.tcpServerSideListener
+        * func Connect(string, int, ...int) \*golanglibs.tcpClientSideConn
+    * UDP: golanglibs.udp{
+        * func Listen(string, int) golanglibs.udpServerSideConn
+        * func Connect(string, int) golanglibs.udpClientSideConn
+* String
+    * func (s \*string) Get() string
+    * func (s \*string) Sub(start, end int) \*string
+    * func (s \*string) Has(substr string) bool
+    * func (s \*string) sub(start, end int) string
+    * func (s \*string) Len() int
+    * func (s \*string) Reverse() string
+    * func (s \*string) Chunk(length int) (res []string)
+    * func (s \*string) Utf8Len() int
+    * func (s \*string) Repeat(count int) \*string
+    * func (s \*string) Shuffle() \*string
+    * func (s \*string) Index(substr string) int
+    * func (s \*string) Replace(old, new string) \*string
+    * func (s \*string) Upper() \*string
+    * func (s \*string) Lower() \*string
+    * func (s \*string) Join(pieces []string) \*string
+    * func (s \*string) Strip(characterMask ...string) \*string
+    * func (s \*string) Split(sep ...string) []string
+    * func (s \*string) Count(substr string) int
+    * func (s \*string) EndsWith(substr string) (res bool)
+    * func (s \*string) StartsWith(substr string) (res bool)
+    * func (s \*string) Splitlines(strip ...bool) []string
+    * func (s \*string) In(str string) bool
+    * func (s \*string) LStrip(characterMask ...string) \*string
+    * func (s \*string) RStrip(characterMask ...string) \*string
+    * func (ss\*string) Isdigit() bool
+    * func (s \*string) hasChinese() bool
+    * func (s \*string) Filter(charts ...string) \*string
+    * func (s \*string) RemoveHtmlTag() \*string
+    * func (s \*string) RemoveNonUTF8Character() \*string
+    * func (s \*string) DetectLanguage() string
+* Time:
+    * func Now() float64
+    * func TimeDuration(interface {}) time.Duration
+    * func FormatDuration(int64) string
+    * func Sleep(interface {})
+    * func Strptime(string, string) int64
+    * func Strftime(string, interface {}) string
+* Argparser(description string) \*argparseIni
+    * func (m \*argparseIni) Get(section, key, defaultValue, comment string) (res string)
+    * func (m \*argparseIni) GetInt(section, key, defaultValue, comment string) int
+    * func (m \*argparseIni) GetInt64(section, key, defaultValue, comment string) int64
+    * func (m \*argparseIni) GetFloat64(section, key, defaultValue, comment string) float64
+    * func (m \*argparseIni) GetBool(section, key, defaultValue, comment string) bool
+    * func (m \*argparseIni) Save(fpath ...string) (exist bool)
+    * func (m \*argparseIni) GetHelpString() (h string)
+    * func (m \*argparseIni) ParseArgs() \*argparseIni
+* Base64
+    * func Encode(str string) string
+    * func Decode(str string) string
+* Binary
+    * Map2bin func(m map[string]string) string
+    * Bin2map func(s string) (res map[string]string)
+* Cmd
+    * func GetOutput(command string, timeoutSecond ...interface{}) string
+    * func GetStatusOutput(command string, timeoutSecond ...interface{}) (int, string)
+    * func GetOutputWithShell(command string, timeoutSecond ...interface{}) string
+    * func GetStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int, string)
+    * func Tail(command string) chan string
+    * func Exists(cmd string) bool
+* Crypto
+    * func Xor(data, key string) string
+    * func Aes(key string) \*aes
+* File(filePath string) \*file
+    * func (f \*file) Time() \*fileTime
+    * func (f \*file) Stat() os.FileInfo
+    * func (f \*file) Size() int64
+    * func (f \*file) Touch()
+    * func (f \*file) Chmod(mode os.FileMode) bool
+    * func (f \*file) Chown(uid, gid int) bool
+    * func (f \*file) Mtime() int64
+    * func (f \*file) Unlink()
+    * func (f \*file) Copy(dest string)
+    * func (f \*file) Move(newPosition string)
+* Open(args ...string) \*fileIO
+    * func (m \*fileIO) Readlines() chan string
+    * func (m \*fileIO) Readline() string
+    * func (m \*fileIO) Close()
+    * func (m \*fileIO) Write(str interface{}) \*fileIO
+    * func (m \*fileIO) Read(num ...int) string
+    * func (m \*fileIO) Seek(num int64)
+* Funcs
+    * func Nslookup(name string, querytype string, dnsService ...string) [][]string
+    * func FakeName() string
+    * func FileType(fpath string) string
+    * func Inotify(path string) chan *fsnotifyFileEvent
+    * func IPLocation(ip string, dbpath ...string) \*ipLocationInfo
+    * func HightLightHTMLForCode(code string, codeType ...string) (html string)
+    * Markdown2html          func(md string) string
+    * func CPUUsagePerProgress() (res map[int64]progressCPUUsage)
+    * func ResizeImg(srcPath string, dstPath string, width int, height ...int)
+    * func GetRSS(url string, config ...rssConfig) \*gofeed.Feed
+    * GbkToUtf8              func(s string) string
+    * Utf8ToGbk              func(s string) string
+    * func GetSnowflakeID(nodeNumber ...int) int64
+    * func GetRemoteServerSSLCert(host string, port ...int) []*x509.Certificate
+    * func Tailf(path string, startFromEndOfFile ...bool) chan *tail.Line
+    * func BaiduTranslateAnyToZH(text string) string
+    * func ParseUserAgent(UserAgent string) ua.UserAgent
+    * func Wget(url string, cfg ...WgetCfg) (filename string)
+    * func Whois(s string, servers ...string) string
+    * func IpInNet(ip string, Net string, mask ...string) bool
+    * Int2ip                 func(ipnr int64) string
+    * Ip2int                 func(ipnr string) int64
+    * Zh2PinYin              func(zh string) (ress []string)
+* Hash
+    * Md5sum   func(str string) string
+    * Md5File  func(path string) string
+    * Sha1sum  func(str string) string
+    * Sha1File func(path string) string
+* Html
+    * func Encode(str string) string
+    * func Decode(str string) string
+* Http
+    * func Head(uri string, args ...interface{}) httpResp
+    * func PostFile(uri string, filePath string, args ...interface{}) httpResp
+    * func PostRaw(uri string, body string, args ...interface{}) httpResp
+    * func PostJSON(uri string, json interface{}, args ...interface{}) httpResp
+    * func Post(uri string, args ...interface{}) httpResp
+    * func Get(uri string, args ...interface{}) httpResp
+    * func PutJSON(uri string, json interface{}, args ...interface{}) httpResp
+    * func Put(uri string, args ...interface{}) httpResp
+    * func PutRaw(uri string, body string, args ...interface{}) httpResp
+* Json
+    * func Dumps(v interface{}, pretty ...bool) string
+    * func Loads(str string) map[string]interface{}
+    * func Valid(j string) bool
+    * Yaml2json func(y string) string
+    * Json2yaml func(j string) string
+    * func Format(js string) string
+* Math
+    * func Abs(number float64) float64
+    * func Sum(array interface{}) (sumresult float64)
+    * func Average(array interface{}) (avgresult float64)
+    * func DecimalToAny(num, n int64) string
+    * func AnyToDecimal(num string, n int64) int64
+* Os
+    * func Mkdir(filename string)
+    * func Getcwd() string
+    * func Exit(status int)
+    * func Touch(filePath string)
+    * func Chmod(filePath string, mode os.FileMode) bool
+    * func Chown(filePath string, uid, gid int) bool
+    * func Copy(filePath, dest string)
+    * func Rename(filePath, newPosition string)
+    * func Move(filePath, newPosition string)
+    * Path 
+        * func Exists(path string) bool
+        * func IsFile(path string) bool
+        * func IsDir(path string) bool
+        * func Basename(path string) string
+        * func Basedir(path string) string
+        * func Dirname(path string) string
+        * func Join(args ...string) string
+        * func Abspath(path string) string
+        * func IsSymlink(path string) bool
+    * func System(command string, timeoutSecond ...interface{}) int
+    * func SystemWithShell(command string, timeoutSecond ...interface{}) int
+    * func Hostname() string
+    * func Envexists(varname string) bool
+    * func Getenv(varname string) string
+    * func Walk(path string) chan string
+    * func Listdir(path string) (res []string)
+    * func SelfDir() string
+    * func TempFilePath() string
+    * func TempDirPath() string
+    * func Getuid() int
+    * func ProgressAlive(pid int) bool
+    * func GoroutineID() int64
+    * func Unlink(filename string)
 
