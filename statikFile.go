@@ -19,7 +19,7 @@ type statikFileStruct struct {
 	reader *bufio.Reader
 }
 
-func (m *statikFileStruct) readlines() chan string {
+func (m *statikFileStruct) Readlines() chan string {
 	if m.reader == nil {
 		m.reader = bufio.NewReader(m.fd)
 	}
@@ -32,7 +32,7 @@ func (m *statikFileStruct) readlines() chan string {
 			if len(line) == 0 {
 				if err != nil {
 					close(lines)
-					m.close()
+					m.Close()
 					if err == io.EOF {
 						return
 					}
@@ -48,7 +48,7 @@ func (m *statikFileStruct) readlines() chan string {
 	return lines
 }
 
-func (m *statikFileStruct) readline() string {
+func (m *statikFileStruct) Readline() string {
 	b := make([]byte, 1)
 
 	line := ""
@@ -69,17 +69,17 @@ func (m *statikFileStruct) readline() string {
 	}
 }
 
-func (m *statikFileStruct) close() {
+func (m *statikFileStruct) Close() {
 	m.fd.Close()
 }
 
-func (m *statikFileStruct) read(num ...int) string {
+func (m *statikFileStruct) Read(num ...int) string {
 	var bytes []byte
 	var err error
 	if len(num) == 0 {
 		bytes, err = ioutil.ReadAll(m.fd)
 		panicerr(err)
-		m.close()
+		m.Close()
 	} else {
 		buffer := make([]byte, num[0])
 		_, err := io.ReadAtLeast(m.fd, buffer, num[0])
@@ -90,7 +90,7 @@ func (m *statikFileStruct) read(num ...int) string {
 	return string(bytes)
 }
 
-func (m *statikFileStruct) seek(num int64) {
+func (m *statikFileStruct) Seek(num int64) {
 	_, err := m.fd.Seek(num, 0)
 	panicerr(err)
 }

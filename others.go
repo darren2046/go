@@ -118,7 +118,7 @@ func Typeof(v interface{}) string {
 	return reflect.TypeOf(v).String()
 }
 
-func fmtsize(num uint64) string {
+func Fmtsize(num uint64) string {
 	return humanize.Bytes(num)
 }
 

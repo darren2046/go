@@ -48,13 +48,13 @@ func getCloudflare(key string, email string) *cloudflareStruct {
 	}
 }
 
-func (m *cloudflareStruct) add(domain string) cloudflare.Zone {
+func (m *cloudflareStruct) Add(domain string) cloudflare.Zone {
 	zone, err := m.api.CreateZone(context.Background(), domain, false, cloudflare.Account{}, "full")
 	panicerr(err)
 	return zone
 }
 
-func (m *cloudflareStruct) list() (res []cloudflareDomainInfoStruct) {
+func (m *cloudflareStruct) List() (res []cloudflareDomainInfoStruct) {
 	zones, err := m.api.ListZones(context.Background())
 	panicerr(err)
 	for _, zone := range zones {
@@ -69,7 +69,7 @@ func (m *cloudflareStruct) list() (res []cloudflareDomainInfoStruct) {
 	return
 }
 
-func (m *cloudflareStruct) domain(domainName string) *cloudflareDomainStruct {
+func (m *cloudflareStruct) Domain(domainName string) *cloudflareDomainStruct {
 	id, err := m.api.ZoneIDByName(domainName)
 	panicerr(err)
 	return &cloudflareDomainStruct{
@@ -79,7 +79,7 @@ func (m *cloudflareStruct) domain(domainName string) *cloudflareDomainStruct {
 	}
 }
 
-func (m *cloudflareDomainStruct) list() (res []cloudflareRecord) {
+func (m *cloudflareDomainStruct) List() (res []cloudflareRecord) {
 	records, err := m.api.DNSRecords(context.Background(), m.DomainID, cloudflare.DNSRecord{})
 	panicerr(err)
 
@@ -105,7 +105,7 @@ func (m *cloudflareDomainStruct) list() (res []cloudflareRecord) {
 	return
 }
 
-func (m *cloudflareDomainStruct) delete(name string) {
+func (m *cloudflareDomainStruct) Delete(name string) {
 	// 虽然之后有log的代码, 但是在这个函数里面关闭log
 	// logLevel := lg.getLevel()
 	// lg.setLevel("")
@@ -116,7 +116,7 @@ func (m *cloudflareDomainStruct) delete(name string) {
 	// }
 
 	// lg.debug(name)
-	for _, v := range m.list() {
+	for _, v := range m.List() {
 		// lg.debug(v)
 		if name == v.Name {
 			err := m.api.DeleteDNSRecord(context.Background(), m.DomainID, v.ID)
@@ -125,7 +125,7 @@ func (m *cloudflareDomainStruct) delete(name string) {
 	}
 }
 
-func (m *cloudflareDomainStruct) add(recordName string, recordType string, recordValue string, proxied ...bool) *cloudflare.DNSRecordResponse {
+func (m *cloudflareDomainStruct) Add(recordName string, recordType string, recordValue string, proxied ...bool) *cloudflare.DNSRecordResponse {
 	if recordName == "@" {
 		recordName = m.DomainName
 	} else {
@@ -150,8 +150,8 @@ func (m *cloudflareDomainStruct) add(recordName string, recordType string, recor
 	return resp
 }
 
-func (m *cloudflareDomainStruct) setProxied(subdomain string, proxied bool) {
-	for _, v := range m.list() {
+func (m *cloudflareDomainStruct) SetProxied(subdomain string, proxied bool) {
+	for _, v := range m.List() {
 		//lg.trace(v.Name, domain, proxied)
 		if v.Name == subdomain {
 			if v.Proxiable == false && proxied == true {
@@ -164,7 +164,7 @@ func (m *cloudflareDomainStruct) setProxied(subdomain string, proxied bool) {
 	}
 }
 
-func (m *cloudflareDomainStruct) update(recordName string, recordType string, recordValue string, proxied ...bool) {
+func (m *cloudflareDomainStruct) Update(recordName string, recordType string, recordValue string, proxied ...bool) {
 	var prox bool
 	if len(proxied) == 0 {
 		prox = false
@@ -172,15 +172,15 @@ func (m *cloudflareDomainStruct) update(recordName string, recordType string, re
 		prox = proxied[0]
 	}
 
-	for _, v := range m.list() {
+	for _, v := range m.List() {
 		//lg.trace(v.Name, recordName)
 		if v.Name == recordName {
-			m.delete(recordName)
+			m.Delete(recordName)
 			if len(proxied) == 0 {
 				prox = v.Proxied
 			}
 		}
 	}
 
-	m.add(recordName, recordType, recordValue, prox)
+	m.Add(recordName, recordType, recordValue, prox)
 }

@@ -32,7 +32,7 @@ func getRedis(host string, port int, password string, db int, cfg ...redisConfig
 		DB:       db,
 	})
 	r := &RedisStruct{ctx: context.Background(), rdb: rdb}
-	r.ping()
+	r.Ping()
 
 	if len(cfg) != 0 {
 		r.networkErrorRetryTimes = cfg[0].networkErrorRetryTimes
@@ -41,13 +41,13 @@ func getRedis(host string, port int, password string, db int, cfg ...redisConfig
 	return r
 }
 
-func (m *RedisStruct) ping() string {
+func (m *RedisStruct) Ping() string {
 	pong, err := m.rdb.Ping(m.ctx).Result()
 	panicerr(err)
 	return pong
 }
 
-func (m *RedisStruct) del(key string) {
+func (m *RedisStruct) Del(key string) {
 	errortimes := 0
 	var err error
 	for {
@@ -72,7 +72,7 @@ func (m *RedisStruct) del(key string) {
 	}
 }
 
-func (m *RedisStruct) set(key string, value string, ttl ...interface{}) {
+func (m *RedisStruct) Set(key string, value string, ttl ...interface{}) {
 	var t time.Duration
 
 	if len(ttl) != 0 {
@@ -110,7 +110,7 @@ func (m *RedisStruct) set(key string, value string, ttl ...interface{}) {
 	}
 }
 
-func (m *RedisStruct) get(key string) *string {
+func (m *RedisStruct) Get(key string) *string {
 	errortimes := 0
 	var val string
 	var err error
@@ -150,7 +150,7 @@ type RedisLockStruct struct {
 
 var redisLockMutex sync.Mutex
 
-func (m *RedisStruct) getLock(key string, timeoutsec int) *RedisLockStruct {
+func (m *RedisStruct) GetLock(key string, timeoutsec int) *RedisLockStruct {
 	return &RedisLockStruct{
 		redis:      m,
 		key:        key,
@@ -173,7 +173,7 @@ func (m *RedisLockStruct) acquire() {
 	}
 }
 
-func (m *RedisLockStruct) release() {
+func (m *RedisLockStruct) Release() {
 	_, err := m.redis.rdb.Del(m.redis.ctx, m.key).Result()
 	panicerr(err)
 }

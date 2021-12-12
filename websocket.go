@@ -28,11 +28,11 @@ func getWebSocket(url string) *websocketStruct {
 	}
 }
 
-func (c *websocketStruct) send(text string) {
+func (c *websocketStruct) Send(text string) {
 	c.socket.SendText(text)
 }
 
-func (c *websocketStruct) recv(timeout ...int) string {
+func (c *websocketStruct) Recv(timeout ...int) string {
 	if len(timeout) != 0 {
 		select {
 		case resp := <-c.recvMsgChan:
@@ -46,6 +46,6 @@ func (c *websocketStruct) recv(timeout ...int) string {
 	return ""
 }
 
-func (c *websocketStruct) close() {
+func (c *websocketStruct) Close() {
 	c.socket.Close()
 }

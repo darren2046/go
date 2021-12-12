@@ -2,53 +2,27 @@ package golanglibs
 
 import (
 	"math"
-	"net"
 	"reflect"
-	"strconv"
 	"strings"
 )
 
 type mathStruct struct {
-	Int2ip       func(ipnr int64) string
-	Ip2int       func(ipnr string) int64
 	Abs          func(number float64) float64
 	Sum          func(array interface{}) (sumresult float64)
 	Average      func(array interface{}) (avgresult float64)
 	DecimalToAny func(num, n int64) string
 	AnyToDecimal func(num string, n int64) int64
-	IpInNet      func(ip string, Net string, mask ...string) bool
 }
 
 var Math mathStruct
 
 func init() {
 	Math = mathStruct{
-		Int2ip:       int2ip,
-		Ip2int:       ip2int,
 		Abs:          abs,
 		Sum:          mathsum,
 		Average:      mathaverage,
 		DecimalToAny: decimalToAny,
 		AnyToDecimal: anyToDecimal,
-		IpInNet:      ipInNet,
-	}
-}
-
-func ipInNet(ip string, Net string, mask ...string) bool {
-	if len(mask) != 0 {
-		ip := net.ParseIP(mask[0])
-		addr := ip.To4()
-		cidrsuffix, _ := net.IPv4Mask(addr[0], addr[1], addr[2], addr[3]).Size()
-		Net = Net + "/" + Str(cidrsuffix)
-	}
-
-	_, ipnetA, _ := net.ParseCIDR(Net)
-	ipB := net.ParseIP(ip)
-
-	if ipnetA.Contains(ipB) {
-		return true
-	} else {
-		return false
 	}
 }
 
@@ -191,32 +165,4 @@ func mathsum(array interface{}) (sumresult float64) {
 
 func abs(number float64) float64 {
 	return math.Abs(number)
-}
-
-func int2ip(ipnr int64) string {
-	var bytes [4]byte
-	bytes[0] = byte(ipnr & 0xFF)
-	bytes[1] = byte((ipnr >> 8) & 0xFF)
-	bytes[2] = byte((ipnr >> 16) & 0xFF)
-	bytes[3] = byte((ipnr >> 24) & 0xFF)
-
-	return net.IPv4(bytes[3], bytes[2], bytes[1], bytes[0]).String()
-}
-
-func ip2int(ipnr string) int64 {
-	bits := strings.Split(ipnr, ".")
-
-	b0, _ := strconv.Atoi(bits[0])
-	b1, _ := strconv.Atoi(bits[1])
-	b2, _ := strconv.Atoi(bits[2])
-	b3, _ := strconv.Atoi(bits[3])
-
-	var sum int64
-
-	sum += int64(b0) << 24
-	sum += int64(b1) << 16
-	sum += int64(b2) << 8
-	sum += int64(b3)
-
-	return sum
 }

@@ -16,7 +16,7 @@ func getMatrix(homeserverURL string) *matrixStruct {
 	return &matrixStruct{cli: cli}
 }
 
-func (c *matrixStruct) login(username string, password string) string {
+func (c *matrixStruct) Login(username string, password string) string {
 	resp, err := c.cli.Login(&gomatrix.ReqLogin{
 		Type:     "m.login.password",
 		User:     username,
@@ -24,22 +24,22 @@ func (c *matrixStruct) login(username string, password string) string {
 	})
 	panicerr(err)
 
-	c.setToken(resp.UserID, resp.AccessToken)
+	c.SetToken(resp.UserID, resp.AccessToken)
 
 	return resp.AccessToken
 }
 
-func (c *matrixStruct) setToken(userID string, token string) *matrixStruct {
+func (c *matrixStruct) SetToken(userID string, token string) *matrixStruct {
 	c.cli.SetCredentials(userID, token)
 	return c
 }
 
-func (c *matrixStruct) setRoomID(roomID string) *matrixStruct {
+func (c *matrixStruct) SetRoomID(roomID string) *matrixStruct {
 	c.roomID = roomID
 	return c
 }
 
-func (c *matrixStruct) send(text string) {
+func (c *matrixStruct) Send(text string) {
 	_, err := c.cli.SendText(c.roomID, text)
 	panicerr(err)
 }

@@ -41,19 +41,19 @@ type subjectNatsStruct struct {
 	subject string
 }
 
-func (m *natsStruct) subject(subject string) *subjectNatsStruct {
+func (m *natsStruct) Subject(subject string) *subjectNatsStruct {
 	return &subjectNatsStruct{
 		conn:    m.conn,
 		subject: subject,
 	}
 }
 
-func (m *subjectNatsStruct) publish(message string) {
+func (m *subjectNatsStruct) Publish(message string) {
 	err := m.conn.Publish(m.subject, []byte(message))
 	panicerr(err)
 }
 
-func (m *subjectNatsStruct) subscribe() chan string {
+func (m *subjectNatsStruct) Subscribe() chan string {
 	subscribeChan := make(chan string)
 	go func() {
 		_, err := m.conn.Subscribe(m.subject, func(msg *nats.Msg) {
@@ -67,7 +67,7 @@ func (m *subjectNatsStruct) subscribe() chan string {
 	return subscribeChan
 }
 
-func (m *subjectNatsStruct) flush() {
+func (m *subjectNatsStruct) Flush() {
 	err := m.conn.Flush()
 	panicerr(err)
 }

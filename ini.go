@@ -28,7 +28,7 @@ func getIni(fpath ...string) *iniStruct {
 	return &iniStruct{cfg: cfg, cfgPath: cfgPath}
 }
 
-func (m *iniStruct) get(SectionKeyDefaultComment ...string) (res string) {
+func (m *iniStruct) Get(SectionKeyDefaultComment ...string) (res string) {
 	if len(SectionKeyDefaultComment) == 2 {
 		res = m.cfg.Section(SectionKeyDefaultComment[0]).Key(SectionKeyDefaultComment[1]).String()
 	} else if len(SectionKeyDefaultComment) == 3 {
@@ -48,19 +48,19 @@ func (m *iniStruct) get(SectionKeyDefaultComment ...string) (res string) {
 	return
 }
 
-func (m *iniStruct) getInt(key ...string) int {
-	return Int(m.get(key...))
+func (m *iniStruct) GetInt(key ...string) int {
+	return Int(m.Get(key...))
 }
 
-func (m *iniStruct) getInt64(key ...string) int64 {
-	return Int64(m.get(key...))
+func (m *iniStruct) GetInt64(key ...string) int64 {
+	return Int64(m.Get(key...))
 }
 
 func (m *iniStruct) getFloat64(key ...string) float64 {
-	return Float64(m.get(key...))
+	return Float64(m.Get(key...))
 }
 
-func (m *iniStruct) set(SectionKeyValueComment ...string) {
+func (m *iniStruct) Set(SectionKeyValueComment ...string) {
 	if len(SectionKeyValueComment) == 3 {
 		m.cfg.Section(SectionKeyValueComment[0]).Key(SectionKeyValueComment[1]).SetValue(SectionKeyValueComment[2])
 	} else if len(SectionKeyValueComment) == 4 {
@@ -71,7 +71,7 @@ func (m *iniStruct) set(SectionKeyValueComment ...string) {
 	}
 }
 
-func (m *iniStruct) save(fpath ...string) (exist bool) {
+func (m *iniStruct) Save(fpath ...string) (exist bool) {
 	if len(fpath) != 0 {
 		exist = pathExists(fpath[0])
 		m.cfg.SaveTo(fpath[0])

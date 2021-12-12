@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/x509"
 	"net"
+	"strconv"
 	"strings"
 	"time"
 
@@ -22,8 +23,6 @@ type funcsStruct struct {
 	FileType               func(fpath string) string
 	Inotify                func(path string) chan *fsnotifyFileEventStruct
 	IPLocation             func(ip string, dbpath ...string) *ipLocationInfo
-	Gethostbyname          func(hostname string, dnsserver ...string) (res []string)
-	Getcname               func(hostname string, dnsserver ...string) (res string)
 	HightLightHTMLForCode  func(code string, codeType ...string) (html string)
 	Markdown2html          func(md string) string
 	CPUUsagePerProgress    func() (res map[int64]progressCPUUsageStruct)
@@ -38,6 +37,10 @@ type funcsStruct struct {
 	ParseUserAgent         func(UserAgent string) ua.UserAgent
 	Wget                   func(url string, cfg ...WgetCfg) (filename string)
 	Whois                  func(s string, servers ...string) string
+	IpInNet                func(ip string, Net string, mask ...string) bool
+	Int2ip                 func(ipnr int64) string
+	Ip2int                 func(ipnr string) int64
+	Zh2PinYin              func(zh string) (ress []string)
 }
 
 var Funcs funcsStruct
@@ -49,8 +52,6 @@ func init() {
 		FileType:               fileType,
 		Inotify:                inotify,
 		IPLocation:             getIPLocation,
-		Gethostbyname:          gethostbyname,
-		Getcname:               getcname,
 		HightLightHTMLForCode:  getHightLightHTML,
 		Markdown2html:          md2html,
 		CPUUsagePerProgress:    getSystemProgressCPUUsage,
@@ -65,6 +66,56 @@ func init() {
 		ParseUserAgent:         parseUserAgent,
 		Wget:                   wget,
 		Whois:                  whois,
+		IpInNet:                ipInNet,
+		Int2ip:                 int2ip,
+		Ip2int:                 ip2int,
+		Zh2PinYin:              zh2PinYin,
+	}
+}
+
+func int2ip(ipnr int64) string {
+	var bytes [4]byte
+	bytes[0] = byte(ipnr & 0xFF)
+	bytes[1] = byte((ipnr >> 8) & 0xFF)
+	bytes[2] = byte((ipnr >> 16) & 0xFF)
+	bytes[3] = byte((ipnr >> 24) & 0xFF)
+
+	return net.IPv4(bytes[3], bytes[2], bytes[1], bytes[0]).String()
+}
+
+func ip2int(ipnr string) int64 {
+	bits := strings.Split(ipnr, ".")
+
+	b0, _ := strconv.Atoi(bits[0])
+	b1, _ := strconv.Atoi(bits[1])
+	b2, _ := strconv.Atoi(bits[2])
+	b3, _ := strconv.Atoi(bits[3])
+
+	var sum int64
+
+	sum += int64(b0) << 24
+	sum += int64(b1) << 16
+	sum += int64(b2) << 8
+	sum += int64(b3)
+
+	return sum
+}
+
+func ipInNet(ip string, Net string, mask ...string) bool {
+	if len(mask) != 0 {
+		ip := net.ParseIP(mask[0])
+		addr := ip.To4()
+		cidrsuffix, _ := net.IPv4Mask(addr[0], addr[1], addr[2], addr[3]).Size()
+		Net = Net + "/" + Str(cidrsuffix)
+	}
+
+	_, ipnetA, _ := net.ParseCIDR(Net)
+	ipB := net.ParseIP(ip)
+
+	if ipnetA.Contains(ipB) {
+		return true
+	} else {
+		return false
 	}
 }
 
@@ -178,7 +229,7 @@ func gethostbyname(hostname string, dnsserver ...string) (res []string) {
 }
 
 func fileType(fpath string) string {
-	kind, err := filetype.Match([]byte(Open(fpath).read()))
+	kind, err := filetype.Match([]byte(Open(fpath).Read()))
 
 	panicerr(err)
 

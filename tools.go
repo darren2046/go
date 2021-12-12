@@ -16,7 +16,6 @@ type toolsStruct struct {
 	Nats          func(server string) *natsStruct
 	Totp          func(key string) *totpStruct
 	Pexpect       func(command string) *pexpectStruct
-	Zh2PinYin     func(zh string) (ress []string)
 	ProgressBar   func(title string, total int64, showBytes ...bool) *progressBarStruct
 	Prometheus    func(url string) *prometheusStruct
 	MySQL         func(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *databaseStruct
@@ -88,10 +87,10 @@ func getLock() *lockStruct {
 	return &lockStruct{lock: &a}
 }
 
-func (m *lockStruct) acquire() {
+func (m *lockStruct) Acquire() {
 	m.lock.Lock()
 }
 
-func (m *lockStruct) release() {
+func (m *lockStruct) Release() {
 	m.lock.Unlock()
 }

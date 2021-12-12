@@ -206,12 +206,12 @@ func getVNC(server string, cfg ...VNCCfg) *vncStruct {
 	}
 }
 
-func (m *vncStruct) close() {
+func (m *vncStruct) Close() {
 	m.vc.Close()
 	m.nc.Close()
 }
 
-func (m *vncStruct) move(x, y int) *vncStruct {
+func (m *vncStruct) Move(x, y int) *vncStruct {
 	m.lastX = x
 	m.lastY = y
 	err := m.vc.PointerEvent(0, Uint16(x), Uint16(y))
@@ -220,7 +220,7 @@ func (m *vncStruct) move(x, y int) *vncStruct {
 	return m
 }
 
-func (m *vncStruct) click() *vncStruct {
+func (m *vncStruct) Click() *vncStruct {
 	err := m.vc.PointerEvent(1, Uint16(m.lastX), Uint16(m.lastY))
 	panicerr(err)
 	err = m.vc.PointerEvent(0, Uint16(m.lastX), Uint16(m.lastY))
@@ -229,7 +229,7 @@ func (m *vncStruct) click() *vncStruct {
 	return m
 }
 
-func (m *vncStruct) rightClick() *vncStruct {
+func (m *vncStruct) RightClick() *vncStruct {
 	err := m.vc.PointerEvent(4, Uint16(m.lastX), Uint16(m.lastY))
 	panicerr(err)
 	err = m.vc.PointerEvent(0, Uint16(m.lastX), Uint16(m.lastY))
@@ -238,7 +238,7 @@ func (m *vncStruct) rightClick() *vncStruct {
 	return m
 }
 
-func (m *vncStruct) input(s string) *vncStruct {
+func (m *vncStruct) Input(s string) *vncStruct {
 	for i := 0; i < len(s); i++ {
 		c := string([]byte{s[i]})
 		// 顺序按那数组里面的按键, 然后反顺序放开
@@ -251,7 +251,7 @@ func (m *vncStruct) input(s string) *vncStruct {
 			}
 		}
 		if c == "\n" {
-			m.key().enter()
+			m.Key().Enter()
 		}
 	}
 	sleep(m.delay)
@@ -263,18 +263,18 @@ type vncKeyStruct struct {
 	delay interface{}
 }
 
-func (m *vncStruct) key() *vncKeyStruct {
+func (m *vncStruct) Key() *vncKeyStruct {
 	return &vncKeyStruct{vc: m.vc, delay: m.delay}
 }
 
-func (m *vncKeyStruct) enter() *vncKeyStruct {
+func (m *vncKeyStruct) Enter() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Enter, true)
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Enter, false)
 	sleep(m.delay)
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_a() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_a() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["a"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["a"][0], false)
@@ -283,7 +283,7 @@ func (m *vncKeyStruct) ctrl_a() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_c() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_c() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["c"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["c"][0], false)
@@ -292,7 +292,7 @@ func (m *vncKeyStruct) ctrl_c() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_v() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_v() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["v"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["v"][0], false)
@@ -301,7 +301,7 @@ func (m *vncKeyStruct) ctrl_v() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_z() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_z() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["z"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["z"][0], false)
@@ -310,7 +310,7 @@ func (m *vncKeyStruct) ctrl_z() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_x() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_x() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["x"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["x"][0], false)
@@ -319,7 +319,7 @@ func (m *vncKeyStruct) ctrl_x() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_f() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_f() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["f"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["f"][0], false)
@@ -328,7 +328,7 @@ func (m *vncKeyStruct) ctrl_f() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_d() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_d() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["d"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["d"][0], false)
@@ -337,7 +337,7 @@ func (m *vncKeyStruct) ctrl_d() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_s() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_s() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["s"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["s"][0], false)
@@ -346,7 +346,7 @@ func (m *vncKeyStruct) ctrl_s() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_r() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_r() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["r"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["r"][0], false)
@@ -355,7 +355,7 @@ func (m *vncKeyStruct) ctrl_r() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) ctrl_e() *vncKeyStruct {
+func (m *vncKeyStruct) Ctrl_e() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	m.vc.KeyEvent(vncAsciiKeyMap["e"][0], true)
 	m.vc.KeyEvent(vncAsciiKeyMap["e"][0], false)

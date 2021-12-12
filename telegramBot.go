@@ -23,12 +23,12 @@ func getTelegramBot(token string) *telegramBotStruct {
 	}
 }
 
-func (m *telegramBotStruct) setChatID(chatid int64) *telegramBotStruct {
+func (m *telegramBotStruct) SetChatID(chatid int64) *telegramBotStruct {
 	m.chatid = chatid
 	return m
 }
 
-func (m *telegramBotStruct) sendFile(path string) tgbotapi.Message {
+func (m *telegramBotStruct) SendFile(path string) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 	sleepCount := 10
@@ -43,7 +43,7 @@ func (m *telegramBotStruct) sendFile(path string) tgbotapi.Message {
 	return msg
 }
 
-func (m *telegramBotStruct) sendImage(path string) tgbotapi.Message {
+func (m *telegramBotStruct) SendImage(path string) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 	sleepCount := 10
@@ -64,7 +64,7 @@ type tgMsgConfig struct {
 	DisableRetryOnError   bool
 }
 
-func (m *telegramBotStruct) send(text string, cfg ...tgMsgConfig) tgbotapi.Message {
+func (m *telegramBotStruct) Send(text string, cfg ...tgMsgConfig) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 

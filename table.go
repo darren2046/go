@@ -15,7 +15,7 @@ func getTable(header ...string) *tableStruct {
 	return &tableStruct{header: header, maxCellWidth: 0}
 }
 
-func (m *tableStruct) setMaxCellWidth(width ...int) {
+func (m *tableStruct) SetMaxCellWidth(width ...int) {
 	if len(width) == 0 {
 		m.maxCellWidth = 30
 	} else {
@@ -23,14 +23,14 @@ func (m *tableStruct) setMaxCellWidth(width ...int) {
 	}
 }
 
-func (m *tableStruct) addRow(row ...interface{}) {
+func (m *tableStruct) AddRow(row ...interface{}) {
 	if len(row) != len(m.header) {
 		panicerr("添加的数据个数跟表头的个数对不上")
 	}
 	m.row = append(m.row, row)
 }
 
-func (m *tableStruct) render() string {
+func (m *tableStruct) Render() string {
 	if m.maxCellWidth == 0 {
 		table := simpletable.New()
 

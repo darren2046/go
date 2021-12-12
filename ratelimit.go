@@ -12,6 +12,6 @@ func getRateLimit(rate int) *rateLimitStruct {
 	}
 }
 
-func (m *rateLimitStruct) take() {
+func (m *rateLimitStruct) Take() {
 	m.rl.Take()
 }

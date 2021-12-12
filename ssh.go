@@ -39,11 +39,11 @@ func getSSH(user string, pass string, host string, port int) *sshStruct {
 	}
 }
 
-func (m *sshStruct) close() {
+func (m *sshStruct) Close() {
 	m.client.Close()
 }
 
-func (m *sshStruct) exec(cmd string) (output string, status int) {
+func (m *sshStruct) Exec(cmd string) (output string, status int) {
 	session, err := m.client.NewSession()
 	if err != nil {
 		m.client.Close()
@@ -66,7 +66,7 @@ func (m *sshStruct) exec(cmd string) (output string, status int) {
 	return
 }
 
-func (m *sshStruct) pushFile(local string, remote string) {
+func (m *sshStruct) PushFile(local string, remote string) {
 	sftp, err := sftp.NewClient(m.client)
 	panicerr(err)
 	defer sftp.Close()
@@ -86,7 +86,7 @@ func (m *sshStruct) pushFile(local string, remote string) {
 	panicerr(err)
 }
 
-func (m *sshStruct) pullFile(remote string, local string) {
+func (m *sshStruct) PullFile(remote string, local string) {
 	sftp, err := sftp.NewClient(m.client)
 	panicerr(err)
 	defer sftp.Close()

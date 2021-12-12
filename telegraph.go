@@ -26,7 +26,7 @@ func getTelegraph(AuthorName string) *telegraphStruct {
 	}
 }
 
-func (m *telegraphStruct) post(title string, content string) *telegraphPageInfo {
+func (m *telegraphStruct) Post(title string, content string) *telegraphPageInfo {
 	tcontent, err := telegraph.ContentFormat(content)
 	panicerr(err)
 

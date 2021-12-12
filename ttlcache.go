@@ -36,7 +36,7 @@ type ttlCacheSCache struct {
 	items map[string]*ttlCache
 }
 
-func (cache *ttlCacheSCache) Set(key string, data string) {
+func (cache *ttlCacheSCache) set(key string, data string) {
 	cache.mutex.Lock()
 	item := &ttlCache{data: data}
 	item.touch(cache.ttl)
@@ -44,7 +44,7 @@ func (cache *ttlCacheSCache) Set(key string, data string) {
 	cache.mutex.Unlock()
 }
 
-func (cache *ttlCacheSCache) Get(key string) (data string, found bool) {
+func (cache *ttlCacheSCache) get(key string) (data string, found bool) {
 	cache.mutex.Lock()
 	item, exists := cache.items[key]
 	if !exists || item.expired() {
@@ -59,7 +59,7 @@ func (cache *ttlCacheSCache) Get(key string) (data string, found bool) {
 	return
 }
 
-func (cache *ttlCacheSCache) Count() int {
+func (cache *ttlCacheSCache) count() int {
 	cache.mutex.RLock()
 	count := len(cache.items)
 	cache.mutex.RUnlock()
@@ -107,23 +107,23 @@ func getTTLCache(ttlsecond interface{}) *ttlCacheStruct {
 	}
 }
 
-func (m *ttlCacheStruct) set(key string, value string) {
-	m.cache.Set(key, value)
+func (m *ttlCacheStruct) Set(key string, value string) {
+	m.cache.set(key, value)
 }
 
-func (m *ttlCacheStruct) get(key string) string {
-	value, exists := m.cache.Get(key)
+func (m *ttlCacheStruct) Get(key string) string {
+	value, exists := m.cache.get(key)
 	if exists != true {
 		panicerr("Key " + key + " not found in cache")
 	}
 	return value
 }
 
-func (m *ttlCacheStruct) exists(key string) bool {
-	_, exists := m.cache.Get(key)
+func (m *ttlCacheStruct) Exists(key string) bool {
+	_, exists := m.cache.get(key)
 	return exists
 }
 
-func (m *ttlCacheStruct) count() int {
-	return m.cache.Count()
+func (m *ttlCacheStruct) Count() int {
+	return m.cache.count()
 }

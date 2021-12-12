@@ -48,7 +48,7 @@ func getAlidns(accessKeyID string, accessKeySecret string) *alidnsStruct {
 	}
 }
 
-func (m *alidnsStruct) total() (TotalCount int64) {
+func (m *alidnsStruct) Total() (TotalCount int64) {
 	describeDomainsRequest := &alidns20150109.DescribeDomainsRequest{}
 	result, err := m.client.DescribeDomains(describeDomainsRequest)
 	panicerr(err)
@@ -56,7 +56,7 @@ func (m *alidnsStruct) total() (TotalCount int64) {
 	return
 }
 
-func (m *alidnsStruct) list(PageSize int64, PageNumber int64) (res []alidnsDomainInfoStruct) {
+func (m *alidnsStruct) List(PageSize int64, PageNumber int64) (res []alidnsDomainInfoStruct) {
 	describeDomainsRequest := &alidns20150109.DescribeDomainsRequest{
 		PageSize:   &PageSize,
 		PageNumber: &PageNumber,
@@ -74,14 +74,14 @@ func (m *alidnsStruct) list(PageSize int64, PageNumber int64) (res []alidnsDomai
 	return
 }
 
-func (m *alidnsStruct) domain(domainName string) *alidnsDomainStruct {
+func (m *alidnsStruct) Domain(domainName string) *alidnsDomainStruct {
 	return &alidnsDomainStruct{
 		client:     m.client,
 		DomainName: domainName,
 	}
 }
 
-func (m *alidnsDomainStruct) list() (res []alidnsRecord) {
+func (m *alidnsDomainStruct) List() (res []alidnsRecord) {
 	result, err := m.client.DescribeDomainRecords(&alidns20150109.DescribeDomainRecordsRequest{
 		DomainName: &m.DomainName,
 	})
@@ -98,7 +98,7 @@ func (m *alidnsDomainStruct) list() (res []alidnsRecord) {
 	return
 }
 
-func (m *alidnsDomainStruct) add(recordName string, recordType string, recordValue string) (id string) {
+func (m *alidnsDomainStruct) Add(recordName string, recordType string, recordValue string) (id string) {
 	recordType = String(recordType).Upper().Get()
 	addDomainRecordRequest := &alidns20150109.AddDomainRecordRequest{
 		DomainName: &m.DomainName,
@@ -111,8 +111,8 @@ func (m *alidnsDomainStruct) add(recordName string, recordType string, recordVal
 	return *res.Body.RecordId
 }
 
-func (m *alidnsDomainStruct) delete(name string, dtype string, value string) {
-	for _, d := range m.list() {
+func (m *alidnsDomainStruct) Delete(name string, dtype string, value string) {
+	for _, d := range m.List() {
 		var nameres, dtyperes, valueres bool = false, false, false
 		if name == "" || d.Name == name {
 			nameres = true
@@ -132,7 +132,7 @@ func (m *alidnsDomainStruct) delete(name string, dtype string, value string) {
 	}
 }
 
-func (m *alidnsDomainStruct) modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordName string, dstRecordType string, dstRecordValue string) {
-	m.delete(recordName, srcRecordType, srcRecordValue)
-	m.add(dstRecordName, dstRecordType, dstRecordValue)
+func (m *alidnsDomainStruct) Modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordName string, dstRecordType string, dstRecordValue string) {
+	m.Delete(recordName, srcRecordType, srcRecordValue)
+	m.Add(dstRecordName, dstRecordType, dstRecordValue)
 }

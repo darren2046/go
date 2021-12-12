@@ -55,7 +55,7 @@ func Argparser(description string) *argparseIniStruct {
 	return &argparseIniStruct{cfg: cfg, cfgPath: cfgPath, args: orderedmap.NewOrderedMap(), description: description}
 }
 
-func (m *argparseIniStruct) get(section, key, defaultValue, comment string) (res string) {
+func (m *argparseIniStruct) Get(section, key, defaultValue, comment string) (res string) {
 	res = m.cfg.Section(section).Key(key).String()
 	if res == "" {
 		res = defaultValue
@@ -93,23 +93,23 @@ func (m *argparseIniStruct) get(section, key, defaultValue, comment string) (res
 	return
 }
 
-func (m *argparseIniStruct) getInt(section, key, defaultValue, comment string) int {
-	return Int(m.get(section, key, defaultValue, comment))
+func (m *argparseIniStruct) GetInt(section, key, defaultValue, comment string) int {
+	return Int(m.Get(section, key, defaultValue, comment))
 }
 
-func (m *argparseIniStruct) getInt64(section, key, defaultValue, comment string) int64 {
-	return Int64(m.get(section, key, defaultValue, comment))
+func (m *argparseIniStruct) GetInt64(section, key, defaultValue, comment string) int64 {
+	return Int64(m.Get(section, key, defaultValue, comment))
 }
 
-func (m *argparseIniStruct) getFloat64(section, key, defaultValue, comment string) float64 {
-	return Float64(m.get(section, key, defaultValue, comment))
+func (m *argparseIniStruct) GetFloat64(section, key, defaultValue, comment string) float64 {
+	return Float64(m.Get(section, key, defaultValue, comment))
 }
 
-func (m *argparseIniStruct) getBool(section, key, defaultValue, comment string) bool {
-	return Bool(m.get(section, key, defaultValue, comment))
+func (m *argparseIniStruct) GetBool(section, key, defaultValue, comment string) bool {
+	return Bool(m.Get(section, key, defaultValue, comment))
 }
 
-func (m *argparseIniStruct) save(fpath ...string) (exist bool) {
+func (m *argparseIniStruct) Save(fpath ...string) (exist bool) {
 	exist = true
 	if len(fpath) != 0 {
 		exist = pathExists(fpath[0])
@@ -121,7 +121,7 @@ func (m *argparseIniStruct) save(fpath ...string) (exist bool) {
 	return
 }
 
-func (m *argparseIniStruct) getHelpString() (h string) {
+func (m *argparseIniStruct) GetHelpString() (h string) {
 	maxLength := 0
 	for _, k := range m.args.Keys() {
 		if len(Str(k)) > maxLength {
@@ -139,9 +139,9 @@ func (m *argparseIniStruct) getHelpString() (h string) {
 	return
 }
 
-func (m *argparseIniStruct) parseArgs() *argparseIniStruct {
+func (m *argparseIniStruct) ParseArgs() *argparseIniStruct {
 	if Array(os.Args).Has("-h") || Array(os.Args).Has("--help") {
-		fmt.Println(m.getHelpString())
+		fmt.Println(m.GetHelpString())
 		Os.Exit(0)
 	}
 	if Array(os.Args).Has("-b") {
@@ -161,7 +161,7 @@ func (m *argparseIniStruct) parseArgs() *argparseIniStruct {
 			Os.Exit(0)
 		}
 	}
-	if !m.save() { // 配置文件存在或者未指定则返回true，如果不存在则返回true
+	if !m.Save() { // 配置文件存在或者未指定则返回true，如果不存在则返回true
 		fmt.Println("初始配置文件不存在，已保存模板配置文件。")
 		Os.Exit(0)
 	}

@@ -18,7 +18,7 @@ type fileIOStruct struct {
 	lock   *lockStruct
 }
 
-func (m *fileIOStruct) readlines() chan string {
+func (m *fileIOStruct) Readlines() chan string {
 	if m.reader == nil {
 		m.reader = bufio.NewReader(m.fd)
 	}
@@ -26,14 +26,14 @@ func (m *fileIOStruct) readlines() chan string {
 	lines := make(chan string)
 
 	go func() {
-		m.lock.acquire()
-		defer m.lock.release()
+		m.lock.Acquire()
+		defer m.lock.Release()
 		for {
 			line, err := m.reader.ReadString('\n')
 			if len(line) == 0 {
 				if err != nil {
 					close(lines)
-					m.close()
+					m.Close()
 					if err == io.EOF {
 						return
 					}
@@ -49,9 +49,9 @@ func (m *fileIOStruct) readlines() chan string {
 	return lines
 }
 
-func (m *fileIOStruct) readline() string {
-	m.lock.acquire()
-	defer m.lock.release()
+func (m *fileIOStruct) Readline() string {
+	m.lock.Acquire()
+	defer m.lock.Release()
 
 	b := make([]byte, 1)
 
@@ -73,13 +73,13 @@ func (m *fileIOStruct) readline() string {
 	}
 }
 
-func (m *fileIOStruct) close() {
+func (m *fileIOStruct) Close() {
 	m.fd.Close()
 }
 
-func (m *fileIOStruct) write(str interface{}) *fileIOStruct {
-	m.lock.acquire()
-	defer m.lock.release()
+func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
+	m.lock.Acquire()
+	defer m.lock.Release()
 	var buf []byte
 	if Typeof(str) == "string" {
 		s := str.(string)
@@ -92,16 +92,16 @@ func (m *fileIOStruct) write(str interface{}) *fileIOStruct {
 	return m
 }
 
-func (m *fileIOStruct) read(num ...int) string {
-	m.lock.acquire()
-	defer m.lock.release()
+func (m *fileIOStruct) Read(num ...int) string {
+	m.lock.Acquire()
+	defer m.lock.Release()
 
 	var bytes []byte
 	var err error
 	if len(num) == 0 {
 		bytes, err = ioutil.ReadAll(m.fd)
 		panicerr(err)
-		m.close()
+		m.Close()
 	} else {
 		buffer := make([]byte, num[0])
 		i, err := io.ReadAtLeast(m.fd, buffer, num[0])
@@ -116,7 +116,7 @@ func (m *fileIOStruct) read(num ...int) string {
 	return string(bytes)
 }
 
-func (m *fileIOStruct) seek(num int64) {
+func (m *fileIOStruct) Seek(num int64) {
 	_, err := m.fd.Seek(num, 0)
 	panicerr(err)
 }

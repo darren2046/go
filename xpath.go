@@ -19,27 +19,27 @@ func getXPath(htmlString string) *xpathStruct {
 	}
 }
 
-func (m *xpathStruct) first(expr string) (res *xpathStruct) {
+func (m *xpathStruct) First(expr string) (res *xpathStruct) {
 	return &xpathStruct{
 		doc: htmlquery.FindOne(m.doc, expr),
 	}
 }
 
-func (m *xpathStruct) find(expr string) (res []*xpathStruct) {
+func (m *xpathStruct) Find(expr string) (res []*xpathStruct) {
 	for _, doc := range htmlquery.Find(m.doc, expr) {
 		res = append(res, &xpathStruct{doc: doc})
 	}
 	return
 }
 
-func (m *xpathStruct) text() string {
+func (m *xpathStruct) Text() string {
 	return htmlquery.InnerText(m.doc)
 }
 
-func (m *xpathStruct) getAttr(attr string) string {
+func (m *xpathStruct) GetAttr(attr string) string {
 	return htmlquery.SelectAttr(m.doc, attr)
 }
 
-func (m *xpathStruct) html() string {
+func (m *xpathStruct) Html() string {
 	return htmlquery.OutputHTML(m.doc, true)
 }

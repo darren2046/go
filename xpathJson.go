@@ -18,25 +18,25 @@ func getXPathJson(jsonstr string) *xpathJsonStruct {
 	}
 }
 
-func (m *xpathJsonStruct) exists(expr string) bool {
+func (m *xpathJsonStruct) Exists(expr string) bool {
 	return try(func() {
-		m.first(expr).text()
+		m.First(expr).Text()
 	}).Error == nil
 }
 
-func (m *xpathJsonStruct) first(expr string) (res *xpathJsonStruct) {
+func (m *xpathJsonStruct) First(expr string) (res *xpathJsonStruct) {
 	return &xpathJsonStruct{
 		doc: jsonquery.FindOne(m.doc, expr),
 	}
 }
 
-func (m *xpathJsonStruct) find(expr string) (res []*xpathJsonStruct) {
+func (m *xpathJsonStruct) Find(expr string) (res []*xpathJsonStruct) {
 	for _, doc := range jsonquery.Find(m.doc, expr) {
 		res = append(res, &xpathJsonStruct{doc: doc})
 	}
 	return
 }
 
-func (m *xpathJsonStruct) text() string {
+func (m *xpathJsonStruct) Text() string {
 	return m.doc.InnerText()
 }

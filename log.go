@@ -202,14 +202,14 @@ func (m *logStruct) show(t string, level string, msg string, position string) {
 			}
 		}
 
-		m.lock.acquire()
+		m.lock.Acquire()
 		if m.displayOnTerminal {
 			fmt.Println(strMsg)
 		}
 		if m.fd != nil {
 			if m.logFileSizeInMB == 0 {
 				if m.fd.path != pathJoin(m.logDir, m.logFileName+"."+strftime("%Y-%m-%d", Time.Now())+"."+m.logFileSuffix) {
-					m.fd.close()
+					m.fd.Close()
 					logpath := pathJoin(m.logDir, m.logFileName+"."+strftime("%Y-%m-%d", Time.Now())+"."+m.logFileSuffix)
 					m.fd = Open(logpath, "a")
 					m.logfiles = append(m.logfiles, logpath)
@@ -221,7 +221,7 @@ func (m *logStruct) show(t string, level string, msg string, position string) {
 			} else {
 				if m.currentLogFileSizeInByte > m.logFileSizeInMB*1024*1024 {
 					m.currentLogFileSizeInByte = 0
-					m.fd.close()
+					m.fd.Close()
 					var logpath string
 					for {
 						logpath = pathJoin(m.logDir, m.logFileName+"."+Str(m.currentLogFileNumber)+"."+m.logFileSuffix)
@@ -239,9 +239,9 @@ func (m *logStruct) show(t string, level string, msg string, position string) {
 					}
 				}
 			}
-			m.fd.write(strMsg + "\n")
+			m.fd.Write(strMsg + "\n")
 			m.currentLogFileSizeInByte = m.currentLogFileSizeInByte + len(strMsg) + 1
 		}
-		m.lock.release()
+		m.lock.Release()
 	}
 }

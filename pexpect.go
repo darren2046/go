@@ -18,14 +18,14 @@ type pexpectStruct struct {
 	isAlive     bool // 子进程是否在运行
 }
 
-func (m *pexpectStruct) sendline(msg string) {
+func (m *pexpectStruct) Sendline(msg string) {
 	m.buf = ""
 	m.bufall += msg + "\n"
 	_, err := m.ptmx.Write([]byte(msg + "\n"))
 	panicerr(err)
 }
 
-func (m *pexpectStruct) close() {
+func (m *pexpectStruct) Close() {
 	m.isAlive = false
 	m.ptmx.Close()
 	m.cmd.Process.Signal(os.Kill)
@@ -90,7 +90,7 @@ func pexpect(command string) *pexpectStruct {
 			}
 		}
 
-		m.close()
+		m.Close()
 		m.isAlive = false
 	}()
 

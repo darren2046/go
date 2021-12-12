@@ -39,12 +39,12 @@ func getSelenium(url string) *seleniumStruct {
 	}
 }
 
-func (c *seleniumStruct) close() {
+func (c *seleniumStruct) Close() {
 	c.service.Stop()
 	c.driver.Close()
 }
 
-func (c *seleniumStruct) cookie() (co string) {
+func (c *seleniumStruct) Cookie() (co string) {
 	cookies, err := c.driver.GetCookies()
 	panicerr(err)
 	var coo []string
@@ -54,33 +54,33 @@ func (c *seleniumStruct) cookie() (co string) {
 	return String(";").Join(coo).Get()
 }
 
-func (c *seleniumStruct) url() string {
+func (c *seleniumStruct) Url() string {
 	u, err := c.driver.CurrentURL()
 	panicerr(err)
 	return u
 }
 
-func (c *seleniumStruct) scrollRight(pixel int) {
+func (c *seleniumStruct) ScrollRight(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy("+Str(pixel)+",0);", []interface{}{})
 	panicerr(err)
 }
 
-func (c *seleniumStruct) scrollLeft(pixel int) {
+func (c *seleniumStruct) ScrollLeft(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy("+Str(pixel*-1)+",0);", []interface{}{})
 	panicerr(err)
 }
 
-func (c *seleniumStruct) scrollUp(pixel int) {
+func (c *seleniumStruct) ScrollUp(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy(0, "+Str(pixel*-1)+");", []interface{}{})
 	panicerr(err)
 }
 
-func (c *seleniumStruct) scrollDown(pixel int) {
+func (c *seleniumStruct) ScrollDown(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy(0, "+Str(pixel)+");", []interface{}{})
 	panicerr(err)
 }
 
-func (c *seleniumStruct) resizeWindow(width int, height int) *seleniumStruct {
+func (c *seleniumStruct) ResizeWindow(width int, height int) *seleniumStruct {
 	cur, err := c.driver.CurrentWindowHandle()
 	panicerr(err)
 
@@ -94,7 +94,7 @@ type seleniumElementStruct struct {
 	element selenium.WebElement
 }
 
-func (c *seleniumStruct) find(xpath string, nowait ...bool) *seleniumElementStruct {
+func (c *seleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStruct {
 	if len(nowait) != 0 && nowait[0] {
 		we, err := c.driver.FindElement(selenium.ByXPATH, xpath)
 		panicerr(err)
@@ -111,37 +111,37 @@ func (c *seleniumStruct) find(xpath string, nowait ...bool) *seleniumElementStru
 	}
 }
 
-func (c *seleniumElementStruct) clear() *seleniumElementStruct {
+func (c *seleniumElementStruct) Clear() *seleniumElementStruct {
 	err := c.element.Clear()
 	panicerr(err)
 	return c
 }
 
-func (c *seleniumElementStruct) click() *seleniumElementStruct {
+func (c *seleniumElementStruct) Click() *seleniumElementStruct {
 	err := c.element.Click()
 	panicerr(err)
 	return c
 }
 
-func (c *seleniumElementStruct) text() string {
+func (c *seleniumElementStruct) Text() string {
 	s, err := c.element.Text()
 	panicerr(err)
 	return s
 }
 
-func (c *seleniumElementStruct) input(s string) *seleniumElementStruct {
+func (c *seleniumElementStruct) Input(s string) *seleniumElementStruct {
 	err := c.element.SendKeys(s)
 	panicerr(err)
 	return c
 }
 
-func (c *seleniumElementStruct) submit() *seleniumElementStruct {
+func (c *seleniumElementStruct) Submit() *seleniumElementStruct {
 	err := c.element.Submit()
 	panicerr(err)
 	return c
 }
 
-func (c *seleniumElementStruct) pressEnter() *seleniumElementStruct {
-	c.input(selenium.EnterKey)
+func (c *seleniumElementStruct) PressEnter() *seleniumElementStruct {
+	c.Input(selenium.EnterKey)
 	return c
 }

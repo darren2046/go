@@ -50,7 +50,7 @@ func getGodaddy(key string, secret string) *godaddyStruct {
 	}
 }
 
-func (m *godaddyStruct) list() (res []godaddyDomainInfoStruct) {
+func (m *godaddyStruct) List() (res []godaddyDomainInfoStruct) {
 	resp := httpGet("https://api.godaddy.com/v1/domains", m.header)
 	if resp.statusCode != 200 {
 		panicerr(resp.content)
@@ -60,14 +60,14 @@ func (m *godaddyStruct) list() (res []godaddyDomainInfoStruct) {
 	return
 }
 
-func (m *godaddyStruct) domain(domainName string) *godaddyDomainStruct {
+func (m *godaddyStruct) Domain(domainName string) *godaddyDomainStruct {
 	return &godaddyDomainStruct{
 		header:     m.header,
 		domainName: domainName,
 	}
 }
 
-func (m *godaddyDomainStruct) list() (res []godaddyRecord) {
+func (m *godaddyDomainStruct) List() (res []godaddyRecord) {
 	resp := httpGet("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", m.header)
 	if resp.statusCode != 200 {
 		panicerr(resp.content)
@@ -78,10 +78,10 @@ func (m *godaddyDomainStruct) list() (res []godaddyRecord) {
 }
 
 // 参数留空字符串则忽略这个项目
-func (m *godaddyDomainStruct) delete(name string, dtype string, value string) {
+func (m *godaddyDomainStruct) Delete(name string, dtype string, value string) {
 	dtype = String(dtype).Upper().Get()
 	var records []godaddyRecord
-	for _, v := range m.list() {
+	for _, v := range m.List() {
 		if v.Name != name && !(v.Data == "Parked" && v.Type == "A") {
 			if name != "" && dtype != "" && value != "" {
 				if !(v.Name == name && v.Type == dtype && v.Data == value) {
@@ -121,9 +121,9 @@ func (m *godaddyDomainStruct) delete(name string, dtype string, value string) {
 	}
 }
 
-func (m *godaddyDomainStruct) modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordType string, dstRecordValue string) {
+func (m *godaddyDomainStruct) Modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordType string, dstRecordValue string) {
 	var records []godaddyRecord
-	for _, v := range m.list() {
+	for _, v := range m.List() {
 		if !(v.Data == "Parked" && v.Type == "A") {
 			records = append(records, v)
 		}
@@ -143,9 +143,9 @@ func (m *godaddyDomainStruct) modify(recordName string, srcRecordType string, sr
 	}
 }
 
-func (m *godaddyDomainStruct) add(recordName string, recordType string, recordValue string) {
+func (m *godaddyDomainStruct) Add(recordName string, recordType string, recordValue string) {
 	var records []godaddyRecord
-	for _, v := range m.list() {
+	for _, v := range m.List() {
 		if !(v.Data == "Parked" && v.Type == "A") {
 			records = append(records, v)
 		}

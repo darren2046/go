@@ -36,18 +36,18 @@ func getProgressBar(title string, total int64, showBytes ...bool) *progressBarSt
 	}
 }
 
-func (m *progressBarStruct) add(num int64) {
+func (m *progressBarStruct) Add(num int64) {
 	m.bar.Add64(num)
 }
 
-func (m *progressBarStruct) set(num int64) {
+func (m *progressBarStruct) Set(num int64) {
 	m.bar.Set64(num)
 }
 
-func (m *progressBarStruct) setTotal(total int64) {
+func (m *progressBarStruct) SetTotal(total int64) {
 	m.bar.ChangeMax64(total)
 }
 
-func (m *progressBarStruct) clear() {
+func (m *progressBarStruct) Clear() {
 	m.bar.Clear()
 }

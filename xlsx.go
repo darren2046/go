@@ -26,7 +26,7 @@ type xlsxSheetStruct struct {
 	sheet string
 }
 
-func (c *xlsxStruct) getSheet(name string) *xlsxSheetStruct {
+func (c *xlsxStruct) GetSheet(name string) *xlsxSheetStruct {
 	name = strings.Title(name)
 	if !Array(c.f.GetSheetList()).Has(name) {
 		Lg.trace("make new sheet")
@@ -38,22 +38,22 @@ func (c *xlsxStruct) getSheet(name string) *xlsxSheetStruct {
 	}
 }
 
-func (c *xlsxSheetStruct) get(coordinate string) string {
+func (c *xlsxSheetStruct) Get(coordinate string) string {
 	s, err := c.x.f.GetCellValue(c.sheet, coordinate)
 	panicerr(err)
 	return s
 }
 
-func (c *xlsxSheetStruct) set(coordinate string, value string) *xlsxSheetStruct {
+func (c *xlsxSheetStruct) Set(coordinate string, value string) *xlsxSheetStruct {
 	err := c.x.f.SetCellValue(c.sheet, coordinate, value)
 	panicerr(err)
 	return c
 }
 
-func (c *xlsxStruct) save() {
+func (c *xlsxStruct) Save() {
 	c.f.Save()
 }
 
-func (c *xlsxStruct) close() {
-	c.save()
+func (c *xlsxStruct) Close() {
+	c.Save()
 }

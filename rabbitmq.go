@@ -33,7 +33,7 @@ func getRabbitMQ(rabbitMQURL string, queueName string) *rabbitConnectionStruct {
 	}
 }
 
-func (m *rabbitConnectionStruct) send(data map[string]string) {
+func (m *rabbitConnectionStruct) Send(data map[string]string) {
 	err := m.channel.Publish(
 		"",           // exchange
 		m.queue.Name, // routing key
@@ -46,7 +46,7 @@ func (m *rabbitConnectionStruct) send(data map[string]string) {
 	panicerr(err)
 }
 
-func (m *rabbitConnectionStruct) recv() chan map[string]string {
+func (m *rabbitConnectionStruct) Recv() chan map[string]string {
 	msgs, err := m.channel.Consume(
 		m.queue.Name, // queue
 		"",           // consumer

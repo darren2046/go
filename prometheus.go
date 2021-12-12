@@ -28,7 +28,7 @@ func getPrometheus(url string) *prometheusStruct {
 	return &prometheusStruct{url: url + "/api/v1/query"}
 }
 
-func (m *prometheusStruct) query(query string, time ...float64) (res []prometheusResultStruct) {
+func (m *prometheusStruct) Query(query string, time ...float64) (res []prometheusResultStruct) {
 	var ttime int64
 	if len(time) == 0 {
 		ttime = Int64(Time.Now())
