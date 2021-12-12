@@ -2,7 +2,7 @@
     * func Lock() \*lock
         * func (*lock) Acquire() 
         * func (*lock) Release() 
-    * func AliDNS(string, string) \*golanglibs.alidns
+    * func AliDNS(string, string) \*alidns
         * func (m \*alidns) Total() (TotalCount int64) 
         * func (m \*alidns) List(PageSize int64, PageNumber int64) (res []alidnsDomainInfo) 
         * func (m \*alidns) Domain(domainName string) \*alidnsDomain
@@ -15,7 +15,7 @@
         * func LineChartWithNumberAndNumber([]float64, []float64, string, string, string, string)
         * func BarChartWithNameAndNumber([]string, []float64, string, string, string)
         * func PieChartWithNameAndNumber([]string, []float64, string, string)
-    * func CloudflareDNS(string, string) \*golanglibs.cloudflare 
+    * func CloudflareDNS(string, string) \*cloudflare 
         * func (m \*cloudflare) Add(domain string) cloudflare.Zone
         * func (m \*cloudflare) List() (res []cloudflareDomainInfo)
         * func (m \*cloudflare) Domain(domainName string) \*cloudflareDomain
@@ -29,53 +29,53 @@
         * func LzmaDecompressString(string) string
         * func ZlibCompressString(string) string
         * func ZlibDecompressString(string) string
-    * func Crontab() \*golanglibs.crontab
+    * func Crontab() \*crontab
         * func (m \*crontab) Add(schedule string, fn interface{}, args ...interface{})
         * func (m \*crontab) Destory()
-    * func GodaddyDNS(string, string) \*golanglibs.godaddy
+    * func GodaddyDNS(string, string) \*godaddy
         * func (m \*godaddy) List() (res []godaddyDomainInfo)
         * func (m \*godaddy) Domain(domainName string) \*godaddyDomain
             * func (m \*godaddyDomain) List() (res []godaddyRecord)
             * func (m \*godaddyDomain) Delete(name string, dtype string, value string)
             * func (m \*godaddyDomain) Modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordType string, dstRecordValue string)
             * func (m \*godaddyDomain) Add(recordName string, recordType string, recordValue string)
-    * func Ini(...string) \*golanglibs.ini
+    * func Ini(...string) \*ini
         * func (m \*ini) Get(SectionKeyDefaultComment ...string) (res string)
         * func (m \*ini) GetInt(key ...string) int
         * func (m \*ini) GetInt64(key ...string) int64
         * func (m \*ini) getFloat64(key ...string) float64
         * func (m \*ini) Set(SectionKeyValueComment ...string)
         * func (m \*ini) Save(fpath ...string) (exist bool)
-    * func JavascriptVM() \*golanglibs.javascriptVM
+    * func JavascriptVM() \*javascriptVM
         * func (m \*javascriptVM) Run(javascript string) \*javascriptVM
         * func (m \*javascriptVM) Get(variableName string) string
         * func (m \*javascriptVM) Set(variableName string, variableValue interface{})
         * func (m \*javascriptVM) Isdefined(variableName string) bool
-    * func Matrix(string) \*golanglibs.matrix
+    * func Matrix(string) \*matrix
         * func (c \*matrix) Login(username string, password string) string
         * func (c \*matrix) SetToken(userID string, token string) \*matrix
         * func (c \*matrix) SetRoomID(roomID string) \*matrix
         * func (c \*matrix) Send(text string)
-    * func Nats(string) \*golanglibs.nats
+    * func Nats(string) \*nats
         * func (m \*nats) Subject(subject string) \*subjectNats
             * func (m \*subjectNats) Publish(message string)
             * func (m \*subjectNats) Subscribe() chan string
             * func (m \*subjectNats) Flush()
-    * func Totp(string) \*golanglibs.totp
+    * func Totp(string) \*totp
         * func (m \*totp) Validate(pass string) bool
         * func (m \*totp) Password() string
-    * func Pexpect(string) \*golanglibs.pexpect
+    * func Pexpect(string) \*pexpect
         * func (m \*pexpect) Sendline(msg string)
         * func (m \*pexpect) Close()
-    * func ProgressBar(string, int64, ...bool) \*golanglibs.progressBar
+    * func ProgressBar(string, int64, ...bool) \*progressBar
         * func (m \*progressBar) Add(num int64)
         * func (m \*progressBar) Set(num int64)
         * func (m \*progressBar) SetTotal(total int64)
         * func (m \*progressBar) Clear()
-    * func Prometheus(string) \*golanglibs.prometheus
+    * func Prometheus(string) \*prometheus
         * func (m \*prometheus) Query(query string, time ...float64) (res []prometheusResult) 
-    * func MySQL(string, int, string, string, string, ...golanglibs.DatabaseConfig) \*golanglibs.database
-    * func SQLite(string) \*golanglibs.database
+    * func MySQL(string, int, string, string, string, ...DatabaseConfig) \*database
+    * func SQLite(string) \*database
         * func (m \*database) Query(sql string, args ...interface{}) []gorose.Data
         * func (m \*database) Close()
         * func (m \*database) Execute(sql string) int64
@@ -115,12 +115,12 @@
             * func (m \*databaseOrm) IndexExists(columnName ...string) (exists bool)
             * func (m \*databaseOrm) DropIndex(columnName ...string) \*databaseOrm
             * func (m \*databaseOrm) Columns() (res map[string]string)
-    * func RabbitMQ(string, string) \*golanglibs.rabbitConnection
+    * func RabbitMQ(string, string) \*rabbitConnection
         * func (m \*rabbitConnection) Send(data map[string]string)
         * func (m \*rabbitConnection) Recv() chan map[string]string
-    * func RateLimit(int) \*golanglibs.rateLimit
+    * func RateLimit(int) \*rateLimit
         * func (m \*rateLimit) Take()
-    * func Redis(string, int, string, int, ...golanglibs.redisConfig) \*golanglibs.Redis
+    * func Redis(string, int, string, int, ...redisConfig) \*Redis
         * func (m \*Redis) Ping() string
         * func (m \*Redis) Del(key string)
         * func (m \*Redis) Set(key string, value string, ttl ...interface{})
@@ -128,7 +128,7 @@
         * func (m \*Redis) GetLock(key string, timeoutsec int) \*RedisLock
             * func (m \*RedisLock) acquire()
             * func (m \*RedisLock) Release()
-    * func Selenium(string) \*golanglibs.selenium
+    * func Selenium(string) \*selenium
         * func (c \*selenium) Close()
         * func (c \*selenium) Cookie() (co string)
         * func (c \*selenium) Url() string
@@ -144,38 +144,38 @@
             * func (c \*seleniumElement) Input(s string) \*seleniumElement
             * func (c \*seleniumElement) Submit() \*seleniumElement
             * func (c \*seleniumElement) PressEnter() \*seleniumElement
-    * func SSH(string, string, string, int) \*golanglibs.ssh
+    * func SSH(string, string, string, int) \*ssh
         * func (m \*ssh) Close()
         * func (m \*ssh) Exec(cmd string) (output string, status int)
         * func (m \*ssh) PushFile(local string, remote string)
         * func (m \*ssh) PullFile(remote string, local string)
-    * func StatikOpen(string) \*golanglibs.statikFile
+    * func StatikOpen(string) \*statikFile
         * func (m \*statikFile) Readlines() chan string
         * func (m \*statikFile) Readline() string
         * func (m \*statikFile) Close()
         * func (m \*statikFile) Read(num ...int) string
         * func (m \*statikFile) Seek(num int64)
-    * func Table(...string) \*golanglibs.table
+    * func Table(...string) \*table
         * func (m \*table) SetMaxCellWidth(width ...int)
         * func (m \*table) AddRow(row ...interface{})
         * func (m \*table) Render() string
-    * func TelegramBot(string) \*golanglibs.telegramBot
+    * func TelegramBot(string) \*telegramBot
         * func (m \*telegramBot) SetChatID(chatid int64) \*telegramBot
         * func (m \*telegramBot) SendFile(path string) tgbotapi.Message
         * func (m \*telegramBot) SendImage(path string) tgbotapi.Message
         * func (m \*telegramBot) Send(text string, cfg ...tgMsgConfig) tgbotapi.Message
-    * func Telegraph(string) \*golanglibs.telegraph
+    * func Telegraph(string) \*telegraph
         * func (m \*telegraph) Post(title string, content string) \*telegraphPageInfo
-    * func URL(string) \*golanglibs.url
+    * func URL(string) \*url
         * func (u \*url) Parse() \*urlComponents
         * func (u \*url) Encode() string
         * func (u \*url) Decode() string
-    * func TTLCache(interface {}) \*golanglibs.ttlCache
+    * func TTLCache(interface {}) \*ttlCache
         * func (m \*ttlCache) Set(key string, value string)
         * func (m \*ttlCache) Get(key string) string
         * func (m \*ttlCache) Exists(key string) bool
         * func (m \*ttlCache) Count() int
-    * func VNC(string, ...golanglibs.VNCCfg) \*golanglibs.vnc
+    * func VNC(string, ...VNCCfg) \*vnc
         * func (m \*vnc) Close()
         * func (m \*vnc) Move(x, y int) \*vnc
         * func (m \*vnc) Click() \*vnc
@@ -195,23 +195,23 @@
             * func (m \*vncKey) Ctrl_e() \*vncKey
             * func (m \*vncKey) delete() \*vncKey
             * func (m \*vncKey) tab() \*vncKey
-    * func WebSocket(string) \*golanglibs.websocket
+    * func WebSocket(string) \*websocket
         * func (c \*websocket) Send(text string)
         * func (c \*websocket) Recv(timeout ...int) string
         * func (c \*websocket) Close()
-    * func Xlsx(string) \*golanglibs.xlsx
+    * func Xlsx(string) \*xlsx
         * func (c \*xlsx) Save()
         * func (c \*xlsx) Close()
         * func (c \*xlsx) GetSheet(name string) \*xlsxSheet
             * func (c \*xlsxSheet) Get(coordinate string) string
             * func (c \*xlsxSheet) Set(coordinate string, value string) \*xlsxSheet
-    * func XPath(string) \*golanglibs.xpath
+    * func XPath(string) \*xpath
         * func (m \*xpath) First(expr string) (res *xpath)
         * func (m \*xpath) Find(expr string) (res []*xpath)
         * func (m \*xpath) Text() string
         * func (m \*xpath) GetAttr(attr string) string
         * func (m \*xpath) Html() string
-    * func JsonXPath(string) \*golanglibs.xpathJson
+    * func JsonXPath(string) \*xpathJson
         * func (m \*xpathJson) Exists(expr string) bool
         * func (m \*xpathJson) First(expr string) (res *xpathJson)
         * func (m \*xpathJson) Find(expr string) (res []*xpathJson)
@@ -224,25 +224,25 @@
     * func FindAll(pattern string, text string, multiline ...bool) [][]string
     * func Replace(pattern string, newstring string, text string) string
 * Socket
-    * KCP: golanglibs.kcp{
-        * func Listen(string, int, string, string) \*golanglibs.kcpServerSideListener
-        * func Connect(string, int, string, string) \*golanglibs.kcpClientSideConn
-        * func RawListen(string, int, string, string) \*golanglibs.kcpRawServerSideListener
+    * KCP: kcp{
+        * func Listen(string, int, string, string) \*kcpServerSideListener
+        * func Connect(string, int, string, string) \*kcpClientSideConn
+        * func RawListen(string, int, string, string) \*kcpRawServerSideListener
         * func RawConnect(string, int, string, string) \*kcp.UDPSession
-    * Smux: golanglibs.smux{
-        * func ServerWrapper(io.ReadWriteCloser, ...golanglibs.SmuxConfig) \*golanglibs.smuxServerSideListener
-        * func ClientWrapper(io.ReadWriteCloser, ...golanglibs.SmuxConfig) \*golanglibs.smuxClientSideSession
-    * SSL: golanglibs.ssl{
-        * func Listen(string, int, string, string) \*golanglibs.tcpServerSideListener
-        * func ServerWrapper(net.Conn, string, string) \*golanglibs.tcpServerSideConn
-        * func Connect(string, int, ...golanglibs.sslCfg) \*golanglibs.sslClientSideConn
-        * func ClientWrapper(net.Conn, ...golanglibs.sslCfg) \*golanglibs.sslClientSideConn
-    * TCP: golanglibs.tcp{
-        * func Listen(string, int) \*golanglibs.tcpServerSideListener
-        * func Connect(string, int, ...int) \*golanglibs.tcpClientSideConn
-    * UDP: golanglibs.udp{
-        * func Listen(string, int) golanglibs.udpServerSideConn
-        * func Connect(string, int) golanglibs.udpClientSideConn
+    * Smux: smux{
+        * func ServerWrapper(io.ReadWriteCloser, ...SmuxConfig) \*smuxServerSideListener
+        * func ClientWrapper(io.ReadWriteCloser, ...SmuxConfig) \*smuxClientSideSession
+    * SSL: ssl{
+        * func Listen(string, int, string, string) \*tcpServerSideListener
+        * func ServerWrapper(net.Conn, string, string) \*tcpServerSideConn
+        * func Connect(string, int, ...sslCfg) \*sslClientSideConn
+        * func ClientWrapper(net.Conn, ...sslCfg) \*sslClientSideConn
+    * TCP: tcp{
+        * func Listen(string, int) \*tcpServerSideListener
+        * func Connect(string, int, ...int) \*tcpClientSideConn
+    * UDP: udp{
+        * func Listen(string, int) udpServerSideConn
+        * func Connect(string, int) udpClientSideConn
 * String
     * func (s \*string) Get() string
     * func (s \*string) Sub(start, end int) \*string
