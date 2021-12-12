@@ -9,12 +9,12 @@
             * func (m \*alidnsDomain) List() (res []alidnsRecord)
             * func (m \*alidnsDomain) Add(recordName string, recordType string, recordValue string) (id string)
             * func (m \*alidnsDomain) Delete(name string, dtype string, value string) 
-            * func (m \*alidnsDomain) modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordName string, dstRecordType string, dstRecordValue string)
+            * func (m \*alidnsDomain) Modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordName string, dstRecordType string, dstRecordValue string)
     * Chart
-        * func LineChartWithTimestampAndNumber([]int64, []float64, string, string, string, string)
-        * func LineChartWithNumberAndNumber([]float64, []float64, string, string, string, string)
-        * func BarChartWithNameAndNumber([]string, []float64, string, string, string)
-        * func PieChartWithNameAndNumber([]string, []float64, string, string)
+        * func LineChartWithTimestampAndNumber([]int64, []float64, string, string, string, string) 以时间为x轴，数据为y轴，做折线图
+        * func LineChartWithNumberAndNumber([]float64, []float64, string, string, string, string) 以数据为x和y轴，做折线图
+        * func BarChartWithNameAndNumber([]string, []float64, string, string, string) 以名字为x轴，数据为y轴，作柱状图, 注意：数据的数量会决定图片的宽度
+        * func PieChartWithNameAndNumber([]string, []float64, string, string) 以x为名字，y的百分比为数据，做饼图
     * func CloudflareDNS(string, string) \*cloudflare 
         * func (m \*cloudflare) Add(domain string) cloudflare.Zone
         * func (m \*cloudflare) List() (res []cloudflareDomainInfo)
@@ -29,7 +29,7 @@
         * func LzmaDecompressString(string) string
         * func ZlibCompressString(string) string
         * func ZlibDecompressString(string) string
-    * func Crontab() \*crontab
+    * func [Crontab](#toolscrontab)() \*crontab 定时任务
         * func (m \*crontab) Add(schedule string, fn interface{}, args ...interface{})
         * func (m \*crontab) Destory()
     * func GodaddyDNS(string, string) \*godaddy
@@ -439,3 +439,77 @@ func main() {
 	print(Json.Json2yaml(j))
 }
 ```
+
+## Tools.Chart.LineChartWithTimestampAndNumber
+
+```go
+func main() {
+	x := "2020-04-21,2020-05-09,2020-05-11,2020-05-14,2020-05-15,2020-05-17,2020-05-19,2020-05-20,2020-05-21,2020-05-22,2020-05-24,2020-05-25,2020-05-26,2020-05-27,2020-05-28,2020-05-29,2020-05-30,2020-05-31,2020-06-01,2020-06-02,2020-06-03,2020-06-04,2020-06-05,2020-06-06,2020-06-07,2020-06-08,2020-06-09,2020-06-10,2020-06-11,2020-06-12,2020-06-13,2020-06-14,2020-06-15,2020-06-16,2020-06-17,2020-06-18,2020-06-19,2020-06-20,2020-06-21,2020-06-22,2020-06-23,2020-06-25,2020-06-26,2020-06-27,2020-06-28,2020-06-29,2020-06-30,2020-07-01,2020-07-02,2020-07-03,2020-07-04,2020-07-05,2020-07-06,2020-07-07,2020-07-08,2020-07-09,2020-07-10,2020-07-11,2020-07-12,2020-07-13,2020-07-14,2020-07-15,2020-07-16,2020-07-17,2020-07-18,2020-07-19,2020-07-20,2020-07-21,2020-07-22,2020-07-23,2020-07-24,2020-07-25,2020-07-26,2020-07-27,2020-07-28,2020-07-29,2020-07-30,2020-07-31,2020-08-01,2020-08-02,2020-08-03,2020-08-04,2020-08-05,2020-08-06,2020-08-07,2020-08-08,2020-08-09,2020-08-10,2020-08-11,2020-08-12,2020-08-13"
+	var xx []int64
+	for _, i := range strSplit(x, ",") {
+		xx = append(xx, strptime("%Y-%m-%d", i))
+	}
+
+	y := "100,100,500,100,100,100,200,700,200,700,300,400,900,1100,1400,900,3004,908,1460,4400,1500,2000,2950,2150,2750,7150,3850,4050,3900,4800,4200,7400,6700,6150,7400,7250,7550,9800,8900,5300,1700,1000,800,1500,1150,1300,2060,3820,4852,4320,4960,5160,2610,2640,3300,1770,2690,2020,2360,2050,1580,1410,1080,850,1540,1410,1460,1540,1620,1370,3328,3898,2218,2238,2398,2038,1700,750,1100,1700,1650,1340,950,2270,540,890,1390,1900,1580,2450,1680"
+	var yy []float64
+	for _, i := range strSplit(y, ",") {
+		yy = append(yy, toFloat64(i))
+	}
+
+	drawLineChartWithTimeSeries(xx, yy, "日期", "人数", "每日访问量", "output.png") // 不论文件名，都输出png格式图片
+}
+```
+
+## Tools.Crontab
+
+```go
+func func1(arg string) {
+	print(arg)
+}
+
+func main() {
+	c := getCrontab()
+	
+	c.add("*/1 * * * *", func() {
+		print(now())
+	})
+
+	c.add("*/1 * * * *", func(param1 string, param2 string) {
+		print(now(), "with param: "+param1+" and "+param2)
+	}, "paramValue1", "paramValue2")
+
+	c.add("00 16 * * *", func1, "args1")
+
+	select {}
+}
+```
+
+关于时间格式
+
+```
+*     *     *     *     *        
+
+^     ^     ^     ^     ^
+|     |     |     |     |
+|     |     |     |     +----- day of week (0-6) (Sunday=0)
+|     |     |     +------- month (1-12)
+|     |     +--------- day of month (1-31)
+|     +----------- hour (0-23)
++------------- min (0-59)
+```
+
+举例子
+
+1. `* * * * *` run on every minute
+2. `10 * * * *` run at 0:10, 1:10 etc
+4. `10 15 * * *` run at 15:10 every day
+5. `* * 1 * *` run on every minute on 1st day of month
+6. `0 0 1 1 *` Happy new year schedule
+7. `0 0 * * 1` Run at midnight on every Monday
+8. `* 10,15,19 * * *` run at 10:00, 15:00 and 19:00
+9. `1-15 * * * *` run at 1, 2, 3...15 minute of each hour
+10. `0 0-5,10 * * *` run on every hour from 0-5 and in 10 oclock
+11. `*/2 * * * *` run every two minutes
+12. `10 */3 * * *` run every 3 hours on 10th min
+13. `0 12 */2 * *` run at noon on every two days
+14. `1-59/2 * * *` * run every two minutes, but on odd minutes
