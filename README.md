@@ -370,9 +370,9 @@
     * func Dumps(v interface{}, pretty ...bool) string
     * func Loads(str string) map[string]interface{}
     * func Valid(j string) bool
-    * Yaml2json func(y string) string
+    * [Yaml2json](#json-yaml2json) func(y string) string 转换yaml到json
     * Json2yaml func(j string) string
-    * func Format(js string) string
+    * func Format(js string) string 格式化json字符串, 可以多次format，不报错，结果正常
 * Math
     * func Abs(number float64) float64
     * func Sum(array interface{}) (sumresult float64)
@@ -414,3 +414,19 @@
     * func GoroutineID() int64
     * func Unlink(filename string)
 
+## Json.Yaml2Json
+
+```go
+func main() {
+	j := `code: 0
+mesg: Get Domains Successful
+result:
+  active: true
+  domains:
+  - ishomee.com
+  - dx2cone1.xyz
+  - zhiyunxianghe.com
+success: true`
+	fmt.Println(Json.Yaml2json(j))
+}
+```
