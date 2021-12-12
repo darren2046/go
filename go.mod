@@ -19,12 +19,12 @@ require (
 	github.com/cavaliercoder/grab v2.0.0+incompatible
 	github.com/cloudflare/cloudflare-go v0.28.0
 	github.com/corpix/uarand v0.1.1
-	github.com/creack/pty v1.1.7
+	github.com/creack/pty v1.1.17
 	github.com/denisbrodbeck/striphtmltags v6.6.6+incompatible
 	github.com/dustin/go-humanize v1.0.0
 	github.com/elliotchance/orderedmap v1.4.0
-	github.com/fatih/color v1.7.0
-	github.com/fsnotify/fsnotify v1.4.9
+	github.com/fatih/color v1.13.0
+	github.com/fsnotify/fsnotify v1.5.1
 	github.com/ghodss/yaml v1.0.0
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-sql-driver/mysql v1.6.0
@@ -46,7 +46,7 @@ require (
 	github.com/mileusna/useragent v1.0.2
 	github.com/mitchellh/go-vnc v0.0.0-20150629162542-723ed9867aed
 	github.com/mmcdole/gofeed v1.1.3
-	github.com/mozillazg/go-pinyin v0.18.0
+	github.com/mozillazg/go-pinyin v0.19.0
 	github.com/nats-io/nats.go v1.13.1-0.20211122170419-d7c1d78a50fc
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/pkg/sftp v1.13.4
@@ -68,10 +68,10 @@ require (
 	github.com/xuri/excelize/v2 v2.4.1
 	gitlab.com/toby3d/telegraph v1.2.1
 	go.uber.org/ratelimit v0.2.0
-	golang.org/x/crypto v0.0.0-20210817164053-32db794688a5
+	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410
-	golang.org/x/net v0.0.0-20210929193557-e81a3d93ecf6
-	golang.org/x/text v0.3.6
+	golang.org/x/net v0.0.0-20211209124913-491a49abca63
+	golang.org/x/text v0.3.7
 	gopkg.in/yaml.v2 v2.4.0
 )
 
@@ -103,7 +103,7 @@ require (
 	github.com/klauspost/cpuid/v2 v2.0.6 // indirect
 	github.com/klauspost/reedsolomon v1.9.15 // indirect
 	github.com/kr/fs v0.1.0 // indirect
-	github.com/mattn/go-colorable v0.1.12 // indirect
+	github.com/mattn/go-colorable v0.1.9 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
@@ -127,7 +127,7 @@ require (
 	github.com/valyala/fasthttp v1.8.0 // indirect
 	github.com/xtaci/lossyconn v0.0.0-20200209145036-adba10fffc37 // indirect
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3 // indirect
-	golang.org/x/sys v0.0.0-20210927094055-39ccf1dd6fa6 // indirect
+	golang.org/x/sys v0.0.0-20210910150752-751e447fb3d0 // indirect
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
