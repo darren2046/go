@@ -11,7 +11,6 @@ import (
 
 type pexpectStruct struct {
 	cmd         *exec.Cmd
-	buf         string // sendline之前的命令输出，每次sendline都会清空
 	bufall      string // 所有屏幕的显示内容，包括了输入
 	ptmx        *os.File
 	logToStdout bool // 是否在屏幕打印出整个交互（适合做debug)
@@ -19,8 +18,6 @@ type pexpectStruct struct {
 }
 
 func (m *pexpectStruct) Sendline(msg string) {
-	m.buf = ""
-	m.bufall += msg + "\n"
 	_, err := m.ptmx.Write([]byte(msg + "\n"))
 	panicerr(err)
 }
@@ -30,6 +27,32 @@ func (m *pexpectStruct) Close() {
 	m.ptmx.Close()
 	m.cmd.Process.Signal(os.Kill)
 	m.cmd.Wait()
+}
+
+func (m *pexpectStruct) ExitCode() int {
+	return m.cmd.ProcessState.ExitCode()
+}
+
+func (m *pexpectStruct) IsAlive() bool {
+	return m.isAlive
+}
+
+func (m *pexpectStruct) LogToStdout(enable ...bool) {
+	var e bool
+	if len(enable) != 0 {
+		e = enable[0]
+	} else {
+		e = true
+	}
+	m.logToStdout = e
+}
+
+func (m *pexpectStruct) GetLog() string {
+	return m.bufall
+}
+
+func (m *pexpectStruct) ClearLog() {
+	m.bufall = ""
 }
 
 func pexpect(command string) *pexpectStruct {
@@ -83,8 +106,7 @@ func pexpect(command string) *pexpectStruct {
 				break
 			}
 
-			m.buf = m.buf + string(buf[:n])
-			m.bufall += string(buf[:n])
+			m.bufall = m.bufall + string(buf[:n])
 			if m.logToStdout {
 				os.Stdout.Write([]byte(buf[:n]))
 			}

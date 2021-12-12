@@ -39,24 +39,24 @@
             * func (m \*godaddyDomain) Delete(name string, dtype string, value string)
             * func (m \*godaddyDomain) Modify(recordName string, srcRecordType string, srcRecordValue string, dstRecordType string, dstRecordValue string)
             * func (m \*godaddyDomain) Add(recordName string, recordType string, recordValue string)
-    * func Ini(...string) \*ini
+    * func [Ini](#toolsini)(...string) \*ini
         * func (m \*ini) Get(SectionKeyDefaultComment ...string) (res string)
         * func (m \*ini) GetInt(key ...string) int
         * func (m \*ini) GetInt64(key ...string) int64
-        * func (m \*ini) getFloat64(key ...string) float64
+        * func (m \*ini) GetFloat64(key ...string) float64
         * func (m \*ini) Set(SectionKeyValueComment ...string)
         * func (m \*ini) Save(fpath ...string) (exist bool)
-    * func JavascriptVM() \*javascriptVM
+    * func [JavascriptVM](#toolsjavascriptvm)() \*javascriptVM
         * func (m \*javascriptVM) Run(javascript string) \*javascriptVM
         * func (m \*javascriptVM) Get(variableName string) string
         * func (m \*javascriptVM) Set(variableName string, variableValue interface{})
         * func (m \*javascriptVM) Isdefined(variableName string) bool
-    * func Matrix(string) \*matrix
+    * func [Matrix](#toolsmatrix)(string) \*matrix
         * func (c \*matrix) Login(username string, password string) string
         * func (c \*matrix) SetToken(userID string, token string) \*matrix
         * func (c \*matrix) SetRoomID(roomID string) \*matrix
         * func (c \*matrix) Send(text string)
-    * func Nats(string) \*nats
+    * func [Nats](#toolsnats)(string) \*nats
         * func (m \*nats) Subject(subject string) \*subjectNats
             * func (m \*subjectNats) Publish(message string)
             * func (m \*subjectNats) Subscribe() chan string
@@ -64,17 +64,22 @@
     * func Totp(string) \*totp
         * func (m \*totp) Validate(pass string) bool
         * func (m \*totp) Password() string
-    * func Pexpect(string) \*pexpect
+    * func [Pexpect](#toolspexpect)(string) \*pexpect
         * func (m \*pexpect) Sendline(msg string)
         * func (m \*pexpect) Close()
-    * func ProgressBar(string, int64, ...bool) \*progressBar
+        * func (m \*pexpect) IsAlive() bool
+        * func (m \*pexpect) LogToStdout(enable ...bool)
+        * func (m \*pexpect) ExitCode() int
+        * func (m \*pexpect) GetLog() string
+        * func (m \*pexpect) ClearLog()
+    * func [ProgressBar](#toolsprogressbar)(string, int64, ...bool) \*progressBar
         * func (m \*progressBar) Add(num int64)
         * func (m \*progressBar) Set(num int64)
         * func (m \*progressBar) SetTotal(total int64)
         * func (m \*progressBar) Clear()
-    * func Prometheus(string) \*prometheus
+    * func [Prometheus](#toolsprometheus)(string) \*prometheus
         * func (m \*prometheus) Query(query string, time ...float64) (res []prometheusResult) 
-    * func MySQL(string, int, string, string, string, ...DatabaseConfig) \*database
+    * func [MySQL](#toolsmysql)(string, int, string, string, string, ...DatabaseConfig) \*database
     * func SQLite(string) \*database
         * func (m \*database) Query(sql string, args ...interface{}) []gorose.Data
         * func (m \*database) Close()
@@ -436,7 +441,7 @@ success: true`
 ```go
 func main() {
 	j := `{"code":0,"mesg":"Get Domains Successful","result":{"active":true,"domains":["ishomee.com","dx2cone1.xyz","zhiyunxianghe.com"]},"success":true}`
-	print(Json.Json2yaml(j))
+	Print(Json.Json2yaml(j))
 }
 ```
 
@@ -446,14 +451,14 @@ func main() {
 func main() {
 	x := "2020-04-21,2020-05-09,2020-05-11,2020-05-14,2020-05-15,2020-05-17,2020-05-19,2020-05-20,2020-05-21,2020-05-22,2020-05-24,2020-05-25,2020-05-26,2020-05-27,2020-05-28,2020-05-29,2020-05-30,2020-05-31,2020-06-01,2020-06-02,2020-06-03,2020-06-04,2020-06-05,2020-06-06,2020-06-07,2020-06-08,2020-06-09,2020-06-10,2020-06-11,2020-06-12,2020-06-13,2020-06-14,2020-06-15,2020-06-16,2020-06-17,2020-06-18,2020-06-19,2020-06-20,2020-06-21,2020-06-22,2020-06-23,2020-06-25,2020-06-26,2020-06-27,2020-06-28,2020-06-29,2020-06-30,2020-07-01,2020-07-02,2020-07-03,2020-07-04,2020-07-05,2020-07-06,2020-07-07,2020-07-08,2020-07-09,2020-07-10,2020-07-11,2020-07-12,2020-07-13,2020-07-14,2020-07-15,2020-07-16,2020-07-17,2020-07-18,2020-07-19,2020-07-20,2020-07-21,2020-07-22,2020-07-23,2020-07-24,2020-07-25,2020-07-26,2020-07-27,2020-07-28,2020-07-29,2020-07-30,2020-07-31,2020-08-01,2020-08-02,2020-08-03,2020-08-04,2020-08-05,2020-08-06,2020-08-07,2020-08-08,2020-08-09,2020-08-10,2020-08-11,2020-08-12,2020-08-13"
 	var xx []int64
-	for _, i := range strSplit(x, ",") {
-		xx = append(xx, strptime("%Y-%m-%d", i))
+	for _, i := range String(x).Split(",") {
+		xx = append(xx, Time.Strptime("%Y-%m-%d", i))
 	}
 
 	y := "100,100,500,100,100,100,200,700,200,700,300,400,900,1100,1400,900,3004,908,1460,4400,1500,2000,2950,2150,2750,7150,3850,4050,3900,4800,4200,7400,6700,6150,7400,7250,7550,9800,8900,5300,1700,1000,800,1500,1150,1300,2060,3820,4852,4320,4960,5160,2610,2640,3300,1770,2690,2020,2360,2050,1580,1410,1080,850,1540,1410,1460,1540,1620,1370,3328,3898,2218,2238,2398,2038,1700,750,1100,1700,1650,1340,950,2270,540,890,1390,1900,1580,2450,1680"
 	var yy []float64
-	for _, i := range strSplit(y, ",") {
-		yy = append(yy, toFloat64(i))
+	for _, i := range String(y).Split(",") {
+		yy = append(yy, Float64(i))
 	}
 
 	drawLineChartWithTimeSeries(xx, yy, "日期", "人数", "每日访问量", "output.png") // 不论文件名，都输出png格式图片
@@ -464,21 +469,21 @@ func main() {
 
 ```go
 func func1(arg string) {
-	print(arg)
+	Print(arg)
 }
 
 func main() {
-	c := getCrontab()
+	c := Tools.Crontab()
 	
-	c.add("*/1 * * * *", func() {
-		print(now())
+	c.Add("*/1 * * * *", func() {
+		Print(now())
 	})
 
-	c.add("*/1 * * * *", func(param1 string, param2 string) {
-		print(now(), "with param: "+param1+" and "+param2)
+	c.Add("*/1 * * * *", func(param1 string, param2 string) {
+		Print(Time.Now(), "with param: "+param1+" and "+param2)
 	}, "paramValue1", "paramValue2")
 
-	c.add("00 16 * * *", func1, "args1")
+	c.Add("00 16 * * *", func1, "args1")
 
 	select {}
 }
@@ -513,3 +518,310 @@ func main() {
 12. `10 */3 * * *` run every 3 hours on 10th min
 13. `0 12 */2 * *` run at noon on every two days
 14. `1-59/2 * * *` * run every two minutes, but on odd minutes
+
+## Tools.JavascriptVM
+
+```go
+func main() {
+  s := "a = 1;console.log(b);"
+  vm := Tools.JavascriptVM()
+  vm.Set("b", "2")
+  vm.Run(s)
+  Print(vm.Get("a"))
+}
+```
+
+## Tools.Matrix
+
+```go
+  // 设置homeserver的url, 以及需要发送到的会话的id, 这个房间的消息不能是加密的
+  cli = Tools.Matrix(args["server"]).SetRoomID(args["roomID"])
+
+  // 可以使用帐号密码登录, 它会先获取token, 然后使用token去交互, 每次登录获取一次token
+  token := cli.Login(args["username"], args["password"]) // 登录成功会返回一个token
+  // 也可以直接使用token, 默认synapse的token是没有过期时间的
+  cli.SetToken(args["userid"], args["token"])
+  
+  cli.Send(msg)
+}
+```
+
+## Tools.Nats
+
+```go
+func main() {
+	server := "nat://nats.nats.svc.cluster.local"
+	subj := Tools.Nats(server).Subject("mysubject")
+
+	go func() {
+		for msg := range subj.Subscribe() {
+			Lg.trace(msg)
+		}
+	}()
+
+	for {
+		sleeptime := Rand.Int(1, 3)
+		Time.Sleep(sleeptime)
+		subj.Publish("sleep for " + str(sleeptime) + " second(s) just now")
+	}
+}
+```
+
+## Tools.Pexpect
+
+准备个py，做交互的子进程
+
+```python
+try:
+    while True:
+        a = input("Enter something: ")
+        Print("You Enter: ", a)
+except:
+	pass
+```
+
+```go
+func main() {
+	i := 0
+	p := Tools.Pexpect("python3 test.py")
+	defer p.Close()
+	p.LogToStdout()
+	for p.IsAlive() {
+		Time.Sleep(1)
+		if strings.Contains(p.GetLog(), "Enter something:") {
+			p.ClearLog()
+            p.Sendline(Str(i))
+		}
+		i++
+		if i >= 5 {
+			p.Close()
+			break
+		}
+	}
+	Print("Exit code:", p.ExitCode())
+}
+```
+
+## Tools.Ini
+
+```go
+func main() {
+	i := Tools.Ini("c.ini")                               // 直接读，不存在就返回空的ini结构体
+	Print(i.Get("section", "key", "value", "comment")) // 直接读，如果存在就返回配置项目，如果不存在就写入配置项目到结构体，并返回默认值
+	Print(i.Save())                                    // 保存文件，如果文件存在返回true，不存在返回false
+}
+```
+
+## Tools.ProgressBar
+
+```go
+func main() {
+	bar := Tools.ProgressBar("example bar", 100)
+	for i := 0; i < 100; i++ {
+		bar.Add(1)
+		Time.Sleep(5)
+		if i == 80 {
+			bar.SetTotal(300) // 重设最大长度
+		}
+	}
+
+	for i := 0; i < 200; i++ {
+		bar.Add(1)
+		Time.Sleep(5)
+	}
+}
+```
+
+## Tools.Prometheus
+
+如果聚合成一个值, 没有label的, 应该是不支持(暂时没这个需求, 没做适配)
+
+```go
+func main() {
+	p := Tools.Prometheus("http://localhost:9090")
+	pr := p.Query("sum_over_time(channel_register_count_in_5_minutes{channel=\"1\"}[1h]) / sum_over_time(channel_inpour_count_in_5_minutes[1h]) < 100")
+	Lg.Debug(pr)
+}
+```
+
+上例输出
+
+```go
+[]main.prometheusResultStruct{
+  main.prometheusResultStruct{
+    Label: map[string]string{
+      "instance":  "10.0.0.1:9100",
+      "job":       "my-service-svc",
+      "namespace": "default",
+      "pod":       "my-service-332332234-1231232",
+      "service":   "my-service-svc",
+      "channel":   "1",
+      "endpoint":  "my-endpoint",
+    },
+    Value: 44.651376,
+  },
+}
+```
+
+## Tools.MySQL
+
+操作表
+
+```go
+func main() {
+	db := Tools.MySQL("mysql-svc", 3306, "root", "", "test")
+	//db := getSQLite("data.db")
+	// 建表
+	db.CreateTable("tbName")
+	// 添加列
+	db.Table("tbName").AddColumn("intType", "int")      // bigint
+	db.Table("tbName").AddColumn("floatType", "float")  // double
+	db.Table("tbName").AddColumn("vcharType", "string") // VARCHAR(512)
+	db.Table("tbName").AddColumn("textType", "text")    // LONGTEXT
+	// 删除列
+	db.Table("tbName").DropColumn("intType") // SQLite不支持
+	// 添加索引
+	db.Table("tbName").AddIndex("floatType")
+	db.Table("tbName").AddIndex("floatType", "vcharType")
+	// 删除索引
+	db.Table("tbName").DropIndex("floatType")
+	db.Table("tbName").DropIndex("floatType", "vcharType")
+
+	// 也可以链式操作
+	db.createTable("usercodes").
+		addColumn("usercode", "string").
+		addColumn("start", "int").
+		addColumn("duration", "int").
+		addIndex("usercode")
+
+	// 如果不存在才创建
+	db.createTableIfNotExists("usercodes"). // 表存在，后面的也会执行
+		addColumnIfNotExists("usercode", "string"). // 列存在，后面的也会执行
+		addColumnIfNotExists("start", "int").
+		addColumnIfNotExists("duration", "int").
+		addIndexIfNotExists("start"). // 索引存在，后面的也会执行
+		addIndexIfNotExists("duration")
+
+	// 临时使用的表
+	pg := getSQLite(":memory:").
+		createTable("progress").
+		addColumn("pid", "float").
+		addColumn("name", "string").
+		addColumn("cpu", "float").
+		addColumn("cmd", "string").
+		addColumn("start", "int").
+		addColumn("end", "int").
+		addColumn("notified", "string").
+		addIndex("cpu")
+}
+```
+
+数据查询
+
+```go
+func main() {
+	db := getMySQL("mysql-svc", 3306, "root", "", "test")
+
+	u := db.Table("user") // 之后使用u这个变量去操作的话，线程安全，会上锁
+
+	// select
+	reses := db.Table("user").Fields("id", "name", "age").Where("age", ">", 0).Orderby("id desc").limit(2).get()
+	fmt.Println(reses) // [map[age:6 id:5 name:cat ] map[age:5 id:4 name:monkey]]
+	// 获取一个行
+	fmt.Println(reses[0]) // map[age:6 id:5 name:cat ]
+	// 便利所有行获取某个字段
+	for _, r := range reses {
+		fmt.Println(r["name"])
+	}
+
+	// 获取第一条记录
+	res := db.Table("user").Where("age", ">", 0).Orderby("id", "desc").First()
+	fmt.Println(res) // map[age:6 id:5 name:cat ]
+	Print(len(res)) // 0, 如果没数据 
+
+	count := db.Table("user").Where("age", ">", 0).count()
+	fmt.Println(count) // 5
+
+	// 便利数据库
+	db.Table("user").Fields("id", "name", "age").Where("age", ">", 0).Orderby("id").chunk(2, func(data []gorose.Data) error {
+		fmt.Println("In Chunk: ", data)
+		// In Chunk:  [map[age:1 id:1 name:cookie] map[age:2 id:2 name:ares]]
+		// In Chunk:  [map[age:3 id:3 name:div] map[age:5 id:4 name:monkey]]
+		// In Chunk:  [map[age:6 id:5 name:cat ]]
+		return nil
+	})
+
+	// 插入一条数据
+	var data = map[string]interface{}{"age": 17, "name": "it3"}
+	id := db.Table("user").Data(data).InsertGetID()
+	fmt.Println(id) // 6， 为新数据的id
+
+	// 插入多条数据
+	var multiData = []map[string]interface{}{{"age": 18, "name": "it4"}, {"age": 19, "name": "it5"}}
+	re := db.Table("user").Data(multiData).Insert()
+	fmt.Println(re) // 2 ， 插入的数据条数
+
+	// 更新数据
+	re = db.Table("user").Where("id", "=", 1).OrWhere("age", ">", 5).Data(map[string]interface{}{"age": 29, "name": "new Name"}).update()
+	fmt.Println(re) // 5, 更新的数据条数
+
+	// 删除数据
+	re = db.Table("user").Where("id", "=", 1).Delete()
+	fmt.Println(re) // 1, 删除的数据条数
+
+	rese := db.Query("select count(id) as `count`, `age` from `user` group by `age` order by `count` desc")
+	fmt.Println(rese) // [map[age:29 count:4] map[age:2 count:1] map[age:3 count:1] map[age:5 count:1]]
+
+	ress := db.Execute("delete from `user` where `age` = 29")
+	fmt.Println(ress) // 4
+
+	sql, param := db.Table("user").Fields("id", "name", "age").Where("age", ">", 0).Orderby("id desc").limit(2).buildSQL()
+	fmt.Println(sql, param) // SELECT `id`,`name`,`age` FROM `user` WHERE `age` > ? ORDER BY id desc LIMIT 2 [0]
+}
+```
+
+上面范例用到的SQL
+
+```sql
+CREATE TABLE `user`  (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL,
+  `age` int(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 0 CHARACTER SET = utf8 COLLATE = utf8_general_ci ROW_FORMAT = Dynamic;
+
+INSERT INTO `user` VALUES (1, 'cookie', 1);
+INSERT INTO `user` VALUES (2, 'ares', 2);
+INSERT INTO `user` VALUES (3, 'div', 3);
+INSERT INTO `user` VALUES (4, 'monkey', 5);
+INSERT INTO `user` VALUES (5, 'cat ', 6)
+```
+
+# jsonDumps() - 序列化类型到json字符串
+
+```go
+func main() {
+	a := jsonMap{
+		"a": "b",
+		"c": "d",
+		"e": jsonMap{"f": "g"},
+		"h": jsonArr{1, "k"},
+	}
+	j := jsonDumps(a) // {"a":"b","c":"d","e":{"f":"g"},"h":[1,"k"]}
+	Print(j)
+	k := jsonLoads(j)
+	Print(k)      // map[a:b c:d e:map[f:g] h:[1 k]]
+	Print(k["a"]) // b
+}
+```
+
+
+
+
+
+
+
+
+
+
+

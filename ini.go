@@ -56,7 +56,7 @@ func (m *iniStruct) GetInt64(key ...string) int64 {
 	return Int64(m.Get(key...))
 }
 
-func (m *iniStruct) getFloat64(key ...string) float64 {
+func (m *iniStruct) GetFloat64(key ...string) float64 {
 	return Float64(m.Get(key...))
 }
 
