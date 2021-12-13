@@ -1456,9 +1456,9 @@ func main() {
 
 ```go
 func main() {
-	try(func() {
+	Try(func() {
 		Bool("abc")
-	}).except(func(err error) {
+	}).Except(func(err error) {
 		fmt.Println(err)
 	})
 }
