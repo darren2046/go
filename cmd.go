@@ -2,7 +2,6 @@ package golanglibs
 
 import (
 	"context"
-	"errors"
 	"os"
 	"os/exec"
 	"strings"
@@ -122,8 +121,7 @@ func getStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int
 	}
 
 	if shell == "" {
-		err := errors.New("Shell not found")
-		Panicerr(err)
+		Panicerr("Shell not found")
 	}
 
 	var statuscode int

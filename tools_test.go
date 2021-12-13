@@ -1,6 +1,8 @@
 package golanglibs
 
-func TestNats() {
+import "testing"
+
+func TestNats(t *testing.T) {
 	server := "nat://nats.nats.svc.cluster.local"
 	subj := Tools.Nats(server).Subject("mysubject")
 

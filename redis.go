@@ -158,7 +158,7 @@ func (m *RedisStruct) GetLock(key string, timeoutsec int) *RedisLockStruct {
 	}
 }
 
-func (m *RedisLockStruct) acquire() {
+func (m *RedisLockStruct) Acquire() {
 	redisLockMutex.Lock()
 	defer redisLockMutex.Unlock()
 

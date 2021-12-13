@@ -56,7 +56,7 @@ func md2html(md string) string {
 			code = ""
 			lang = ""
 		}
-		if insideCode == false && !String(line).StartsWith("</code></pre>") {
+		if !insideCode && !String(line).StartsWith("</code></pre>") {
 			// res := reFindAll("\\[(.+?)\\]\\((.+?)\\)", line)
 			// if len(res) != 0 && !strIn("!"+res[0][0], line) {
 			// 	links = append(links, res[0])
@@ -64,7 +64,7 @@ func md2html(md string) string {
 			// }
 			htmlCodeContent += line + "\n"
 		}
-		if insideCode == true {
+		if insideCode {
 			code += line + "\n"
 		}
 	}

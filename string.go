@@ -34,10 +34,7 @@ func (s *stringStruct) Sub(start, end int) *stringStruct {
 }
 
 func (s *stringStruct) Has(substr string) bool {
-	if strings.Index(s.s, substr) != -1 {
-		return true
-	}
-	return false
+	return strings.Contains(s.s, substr)
 }
 
 func (s *stringStruct) sub(start, end int) string {
@@ -200,10 +197,7 @@ func (s *stringStruct) Splitlines(strip ...bool) []string {
 }
 
 func (s *stringStruct) In(str string) bool {
-	if String(str).Index(s.s) != -1 {
-		return true
-	}
-	return false
+	return String(str).Index(s.s) != -1
 }
 
 func (s *stringStruct) LStrip(characterMask ...string) *stringStruct {
@@ -264,7 +258,7 @@ func (ss *stringStruct) Isdigit() bool {
 	return true
 }
 
-func (s *stringStruct) hasChinese() bool {
+func (s *stringStruct) HasChinese() bool {
 	var count int
 	for _, v := range s.s {
 		if unicode.Is(unicode.Han, v) {

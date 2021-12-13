@@ -2,17 +2,14 @@ package golanglibs
 
 import (
 	"encoding/json"
-
-	"github.com/bregydoc/gtranslate"
-	"golang.org/x/text/language"
 )
 
 // 有一定的次数限制, 具体多少未知, 但很少, 到限制就hang住
-func gen2zh(text string) string {
-	s, err := gtranslate.Translate(text, language.English, language.Chinese)
-	Panicerr(err)
-	return s
-}
+// func gen2zh(text string) string {
+// 	s, err := gtranslate.Translate(text, language.English, language.Chinese)
+// 	Panicerr(err)
+// 	return s
+// }
 
 type bresult struct {
 	ErrorCode   string `json:"error_code"`

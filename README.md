@@ -85,8 +85,8 @@
         * func (m \*database) Close()
         * func (m \*database) Execute(sql string) int64
         * func (m \*database) RenameTable(oldTableName string, newTableNname string)
-        * func (m \*database) tables() (res []string)
-        * func (m \*database) createTable(tableName string, engineName ...string) \*databaseOrm
+        * func (m \*database) Tables() (res []string)
+        * func (m \*database) CreateTable(tableName string, engineName ...string) \*databaseOrm
         * func (m \*database) Table(tbname string) \*databaseOrm
             * func (m \*databaseOrm) Fields(items ...string) \*databaseOrm
             * func (m \*databaseOrm) Where(key string, operator string, value interface{}) \*databaseOrm
@@ -101,14 +101,14 @@
             * func (m \*databaseOrm) Get() (res []gorose.Data)
             * func (m \*databaseOrm) Paginate(pagesize int, page int) []gorose.Data
             * func (m \*databaseOrm) First() (res gorose.Data)
-            * func (m \*databaseOrm) find(id int) gorose.Data
+            * func (m \*databaseOrm) Find(id int) gorose.Data
             * func (m \*databaseOrm) Count() (res int64)
-            * func (m \*databaseOrm) exists() (res bool)
-            * func (m \*databaseOrm) chunk(limit int, callback func([]gorose.Data) error)
-            * func (m \*databaseOrm) buildSQL() (string, []interface{})
-            * func (m \*databaseOrm) data(data interface{}) \*databaseOrm
-            * func (m \*databaseOrm) offset(offset int) \*databaseOrm
-            * func (m \*databaseOrm) insertGetID() (num int64)
+            * func (m \*databaseOrm) Exists() (res bool)
+            * func (m \*databaseOrm) Chunk(limit int, callback func([]gorose.Data) error)
+            * func (m \*databaseOrm) BuildSQL() (string, []interface{})
+            * func (m \*databaseOrm) Data(data interface{}) \*databaseOrm
+            * func (m \*databaseOrm) Offset(offset int) \*databaseOrm
+            * func (m \*databaseOrm) InsertGetID() (num int64)
             * func (m \*databaseOrm) Insert() (num int64)
             * func (m \*databaseOrm) Update(data ...interface{}) (num int64)
             * func (m \*databaseOrm) Delete() (num int64)
@@ -131,7 +131,7 @@
         * func (m \*Redis) Set(key string, value string, ttl ...interface{})
         * func (m \*Redis) Get(key string) \*string
         * func (m \*Redis) GetLock(key string, timeoutsec int) \*RedisLock
-            * func (m \*RedisLock) acquire()
+            * func (m \*RedisLock) Acquire()
             * func (m \*RedisLock) Release()
     * func [Selenium](#toolsselenium)(string) \*selenium
         * func (c \*selenium) Close()
@@ -198,8 +198,8 @@
             * func (m \*vncKey) Ctrl_s() \*vncKey
             * func (m \*vncKey) Ctrl_r() \*vncKey
             * func (m \*vncKey) Ctrl_e() \*vncKey
-            * func (m \*vncKey) delete() \*vncKey
-            * func (m \*vncKey) tab() \*vncKey
+            * func (m \*vncKey) Delete() \*vncKey
+            * func (m \*vncKey) Tab() \*vncKey
     * func WebSocket(string) \*websocket
         * func (c \*websocket) Send(text string)
         * func (c \*websocket) Recv(timeout ...int) string
@@ -224,30 +224,72 @@
     * func FindAll(pattern string, text string, multiline ...bool) [][]string
     * func Replace(pattern string, newstring string, text string) string
 * Socket
-    * [KCP](#socketkcp): kcp{
+    * [KCP](#socketkcp)
         * func Listen(string, int, string, string) \*kcpServerSideListener
+            * func (m *kcpServerSideListener) Close() 
+            * func (m *kcpServerSideListener) Accept() chan *kcpServerSideConn 
+                * func (m *kcpServerSideConn) Close() 
+                * func (m *kcpServerSideConn) Send(data map[string]string) 
+                * func (m *kcpServerSideConn) Recv(timeoutSecond ...int) (res map[string]string)
         * func Connect(string, int, string, string) \*kcpClientSideConn
+            * func (m *kcpClientSideConn) Send(data map[string]string) 
+            * func (m *kcpClientSideConn) Recv(timeoutSecond ...int) (res map[string]string) 
+            * func (m *kcpClientSideConn) Close() 
         * func RawListen(string, int, string, string) \*kcpRawServerSideListener
+            * func (m *kcpRawServerSideListener) Accept() chan *kcp.UDPSession
         * func RawConnect(string, int, string, string) \*kcp.UDPSession
-    * Smux: smux{
+    * Smux
         * func ServerWrapper(io.ReadWriteCloser, ...SmuxConfig) \*smuxServerSideListener
+            * func (m *smuxServerSideListener) Accept() chan *smuxServerSideConnection 
+                * func (m *smuxServerSideConnection) Send(data map[string]string, timeout ...int) 
+                * func (m *smuxServerSideConnection) Recv(timeout ...int) (data map[string]string) 
+                * func (m *smuxServerSideConnection) Close()
         * func ClientWrapper(io.ReadWriteCloser, ...SmuxConfig) \*smuxClientSideSession
-    * SSL: ssl{
+            * func (m *smuxClientSideSession) Connect() *smuxClientSideConnection 
+            * func (m *smuxClientSideSession) Close() 
+                * func (m *smuxClientSideConnection) Send(data map[string]string, timeout ...int) 
+                * func (m *smuxClientSideConnection) Recv(timeout ...int) (data map[string]string) 
+                * func (m *smuxClientSideConnection) Close() 
+    * SSL
         * func [Listen](#socketssllisten)(string, int, string, string) \*tcpServerSideListener
+            * func (m *tcpServerSideListener) Accept() chan *TcpServerSideConn 
+            * func (m *tcpServerSideListener) Close() 
+                * func (m *TcpServerSideConn) Close() 
+                * func (m *TcpServerSideConn) Send(str string) 
+                * func (m *TcpServerSideConn) Recv(buffersize int) string 
         * func [ServerWrapper](#socketsslserverwrapper)(net.Conn, string, string) \*tcpServerSideConn
+            * func (m *tcpClientSideConn) Send(str string, timeout ...int) 
+            * func (m *tcpClientSideConn) Recv(buffersize int, timeout ...int) string 
+            * func (m *tcpClientSideConn) Close() 
         * func Connect(string, int, ...sslCfg) \*sslClientSideConn
         * func ClientWrapper(net.Conn, ...sslCfg) \*sslClientSideConn
-    * TCP: tcp{
+            * func (m *sslClientSideConn) Send(str string) 
+            * func (m *sslClientSideConn) Recv(buffersize int) string 
+            * func (m *sslClientSideConn) Close() 
+    * TCP
         * func [Listen](#sockettcplisten)(string, int) \*tcpServerSideListener
+            * func (m *tcpServerSideListener) Accept() chan *TcpServerSideConn 
+            * func (m *tcpServerSideListener) Close() 
+                * func (m *TcpServerSideConn) Close() 
+                * func (m *TcpServerSideConn) Send(str string) 
+                * func (m *TcpServerSideConn) Recv(buffersize int) string 
         * func [Connect](#sockettcpconnect)(string, int, ...int) \*tcpClientSideConn
-    * [UDP](#socketudp): udp{
+            * func (m *tcpClientSideConn) Send(str string, timeout ...int) 
+            * func (m *tcpClientSideConn) Recv(buffersize int, timeout ...int) string 
+            * func (m *tcpClientSideConn) Close() 
+    * [UDP](#socketudp)
         * func Listen(string, int) udpServerSideConn
+            * func (m *udpClientSideConn) Send(str string) 
+            * func (m *udpClientSideConn) Close() 
+            * func (m *udpClientSideConn) Recv(buffersize int) string 
         * func Connect(string, int) udpClientSideConn
+            * func (m *udpServerSideConn) Recvfrom(buffersize int, timeout ...int) (string, *net.UDPAddr) 
+            * func (m *udpServerSideConn) Sendto(data string, address *net.UDPAddr, timeout ...int) 
+            * func (m *udpServerSideConn) Close() 
 * String
     * func (s \*string) Get() string
     * func (s \*string) Sub(start, end int) \*string
     * func (s \*string) Has(substr string) bool
-    * func (s \*string) sub(start, end int) string
     * func (s \*string) Len() int
     * func (s \*string) Reverse() string
     * func (s \*string) Chunk(length int) (res []string)
@@ -269,7 +311,7 @@
     * func (s \*string) LStrip(characterMask ...string) \*string
     * func (s \*string) RStrip(characterMask ...string) \*string
     * func (ss\*string) Isdigit() bool
-    * func (s \*string) hasChinese() bool
+    * func (s \*string) HasChinese() bool
     * func (s \*string) Filter(charts ...string) \*string
     * func (s \*string) RemoveHtmlTag() \*string
     * func (s \*string) RemoveNonUTF8Character() \*string
@@ -711,31 +753,31 @@ func main() {
 	db.Table("tbName").DropIndex("floatType", "vcharType")
 
 	// 也可以链式操作
-	db.createTable("usercodes").
-		addColumn("usercode", "string").
-		addColumn("start", "int").
-		addColumn("duration", "int").
-		addIndex("usercode")
+	db.CreateTable("usercodes").
+		AddColumn("usercode", "string").
+		AddColumn("start", "int").
+		AddColumn("duration", "int").
+		AddIndex("usercode")
 
 	// 如果不存在才创建
-	db.createTableIfNotExists("usercodes"). // 表存在，后面的也会执行
-		addColumnIfNotExists("usercode", "string"). // 列存在，后面的也会执行
-		addColumnIfNotExists("start", "int").
-		addColumnIfNotExists("duration", "int").
-		addIndexIfNotExists("start"). // 索引存在，后面的也会执行
-		addIndexIfNotExists("duration")
+	db.CreateTableIfNotExists("usercodes"). // 表存在，后面的也会执行
+		AddColumnIfNotExists("usercode", "string"). // 列存在，后面的也会执行
+		AddColumnIfNotExists("start", "int").
+		AddColumnIfNotExists("duration", "int").
+		AddIndexIfNotExists("start"). // 索引存在，后面的也会执行
+		AddIndexIfNotExists("duration")
 
 	// 临时使用的表
 	pg := getSQLite(":memory:").
-		createTable("progress").
-		addColumn("pid", "float").
-		addColumn("name", "string").
-		addColumn("cpu", "float").
-		addColumn("cmd", "string").
-		addColumn("start", "int").
-		addColumn("end", "int").
-		addColumn("notified", "string").
-		addIndex("cpu")
+		CreateTable("progress").
+		AddColumn("pid", "float").
+		AddColumn("name", "string").
+		AddColumn("cpu", "float").
+		AddColumn("cmd", "string").
+		AddColumn("start", "int").
+		AddColumn("end", "int").
+		AddColumn("notified", "string").
+		AddIndex("cpu")
 }
 ```
 
@@ -1415,7 +1457,7 @@ func main() {
 ```go
 func main() {
 	try(func() {
-		toBool("abc")
+		Bool("abc")
 	}).except(func(err error) {
 		fmt.Println(err)
 	})

@@ -14,9 +14,9 @@ func File(filePath string) *fileStruct {
 }
 
 type fileTimeStruct struct {
-	ctime int64
-	mtime int64
-	atime int64
+	Ctime int64
+	Mtime int64
+	Atime int64
 }
 
 func (f *fileStruct) Time() *fileTimeStruct {
@@ -28,7 +28,7 @@ func (f *fileStruct) Time() *fileTimeStruct {
 	// atime := time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec)).Unix()
 
 	return &fileTimeStruct{
-		mtime: mtime,
+		Mtime: mtime,
 		// ctime: ctime,
 		// atime: atime,
 	}

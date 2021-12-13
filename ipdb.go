@@ -19,7 +19,7 @@ type ipLocationInfo struct {
 
 func getIPLocation(ip string, dbpath ...string) *ipLocationInfo {
 	if len(dbpath) == 0 {
-		if ip17modHadInit == false {
+		if !ip17modHadInit {
 			statikFS, err := fs.New()
 			Panicerr(err)
 
@@ -34,8 +34,8 @@ func getIPLocation(ip string, dbpath ...string) *ipLocationInfo {
 			ip17modHadInit = true
 		}
 	} else {
-		if ip17DBFileModifyTime == 0 || File(dbpath[0]).Time().mtime != ip17DBFileModifyTime {
-			ip17DBFileModifyTime = File(dbpath[0]).Time().mtime
+		if ip17DBFileModifyTime == 0 || File(dbpath[0]).Time().Mtime != ip17DBFileModifyTime {
+			ip17DBFileModifyTime = File(dbpath[0]).Time().Mtime
 
 			ip17mon.InitWithIpdb([]byte(Open(dbpath[0]).Read()))
 		}

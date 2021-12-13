@@ -79,7 +79,7 @@ type smuxServerSideConnection struct {
 	disableXOR bool
 }
 
-func (m *smuxServerSideListener) accept() chan *smuxServerSideConnection {
+func (m *smuxServerSideListener) Accept() chan *smuxServerSideConnection {
 	ch := make(chan *smuxServerSideConnection)
 
 	go func() {
@@ -106,10 +106,6 @@ func (m *smuxServerSideListener) accept() chan *smuxServerSideConnection {
 }
 
 func (m *smuxServerSideConnection) Send(data map[string]string, timeout ...int) {
-	m.send(data, timeout...)
-}
-
-func (m *smuxServerSideConnection) send(data map[string]string, timeout ...int) {
 	if len(timeout) != 0 {
 		m.stream.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
@@ -150,7 +146,7 @@ func (m *smuxServerSideConnection) send(data map[string]string, timeout ...int) 
 	m.stream.SetWriteDeadline(time.Time{})
 }
 
-func (m *smuxServerSideConnection) recv(timeout ...int) (data map[string]string) {
+func (m *smuxServerSideConnection) Recv(timeout ...int) (data map[string]string) {
 	if len(timeout) != 0 {
 		m.stream.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
@@ -233,7 +229,7 @@ func (m *smuxServerSideConnection) recv(timeout ...int) (data map[string]string)
 	return
 }
 
-func (m *smuxServerSideConnection) close() {
+func (m *smuxServerSideConnection) Close() {
 	if !m.isclose {
 		m.stream.Close()
 	}
@@ -288,7 +284,7 @@ type smuxClientSideConnection struct {
 	disableXOR bool
 }
 
-func (m *smuxClientSideSession) connect() *smuxClientSideConnection {
+func (m *smuxClientSideSession) Connect() *smuxClientSideConnection {
 	stream, err := m.session.OpenStream()
 	Panicerr(err)
 
@@ -302,7 +298,7 @@ func (m *smuxClientSideSession) connect() *smuxClientSideConnection {
 	return mm
 }
 
-func (m *smuxClientSideSession) close() {
+func (m *smuxClientSideSession) Close() {
 	if !m.isclose {
 		m.isclose = true
 		Try(func() {
@@ -311,7 +307,7 @@ func (m *smuxClientSideSession) close() {
 	}
 }
 
-func (m *smuxClientSideConnection) send(data map[string]string, timeout ...int) {
+func (m *smuxClientSideConnection) Send(data map[string]string, timeout ...int) {
 	if len(timeout) != 0 {
 		m.stream.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
@@ -352,7 +348,7 @@ func (m *smuxClientSideConnection) send(data map[string]string, timeout ...int) 
 	m.stream.SetWriteDeadline(time.Time{})
 }
 
-func (m *smuxClientSideConnection) recv(timeout ...int) (data map[string]string) {
+func (m *smuxClientSideConnection) Recv(timeout ...int) (data map[string]string) {
 	if len(timeout) != 0 {
 		m.stream.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
@@ -435,7 +431,7 @@ func (m *smuxClientSideConnection) recv(timeout ...int) (data map[string]string)
 	return
 }
 
-func (m *smuxClientSideConnection) close() {
+func (m *smuxClientSideConnection) Close() {
 	if !m.isclose {
 		m.stream.Close()
 	}

@@ -38,7 +38,7 @@ func tcpListen(host string, port int) *tcpServerSideListener {
 	return &tcpServerSideListener{listener: l}
 }
 
-func (m *tcpServerSideListener) accept() chan *TcpServerSideConn {
+func (m *tcpServerSideListener) Accept() chan *TcpServerSideConn {
 	ch := make(chan *TcpServerSideConn)
 
 	go func() {
@@ -59,26 +59,26 @@ func (m *tcpServerSideListener) accept() chan *TcpServerSideConn {
 	return ch
 }
 
-func (m *tcpServerSideListener) close() {
+func (m *tcpServerSideListener) Close() {
 	if !m.isclose {
 		m.isclose = true
 		m.listener.Close()
 	}
 }
 
-func (m *TcpServerSideConn) close() {
+func (m *TcpServerSideConn) Close() {
 	if !m.isclose {
 		m.isclose = true
 		m.Conn.Close()
 	}
 }
 
-func (m *TcpServerSideConn) send(str string) {
+func (m *TcpServerSideConn) Send(str string) {
 	_, err := m.Conn.Write([]byte(str))
 	Panicerr(err)
 }
 
-func (m *TcpServerSideConn) recv(buffersize int) string {
+func (m *TcpServerSideConn) Recv(buffersize int) string {
 	reply := make([]byte, buffersize)
 	n, err := m.Conn.Read(reply)
 	Panicerr(err)
@@ -102,7 +102,7 @@ func tcpConnect(host string, port int, timeout ...int) *tcpClientSideConn {
 	return &tcpClientSideConn{conn: conn, isclose: false}
 }
 
-func (m *tcpClientSideConn) send(str string, timeout ...int) {
+func (m *tcpClientSideConn) Send(str string, timeout ...int) {
 	if len(timeout) != 0 {
 		m.conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
@@ -110,7 +110,7 @@ func (m *tcpClientSideConn) send(str string, timeout ...int) {
 	Panicerr(err)
 }
 
-func (m *tcpClientSideConn) recv(buffersize int, timeout ...int) string {
+func (m *tcpClientSideConn) Recv(buffersize int, timeout ...int) string {
 	if len(timeout) != 0 {
 		m.conn.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
@@ -120,7 +120,7 @@ func (m *tcpClientSideConn) recv(buffersize int, timeout ...int) string {
 	return string(reply[:n])
 }
 
-func (m *tcpClientSideConn) close() {
+func (m *tcpClientSideConn) Close() {
 	if !m.isclose {
 		m.isclose = true
 		err := m.conn.Close()

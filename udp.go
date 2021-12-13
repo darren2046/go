@@ -34,19 +34,19 @@ func udpConnect(host string, port int) udpClientSideConn {
 	return udpClientSideConn{conn: conn}
 }
 
-func (m *udpClientSideConn) send(str string) {
+func (m *udpClientSideConn) Send(str string) {
 	_, err := fmt.Fprintf(m.conn, str)
 	Panicerr(err)
 }
 
-func (m *udpClientSideConn) close() {
+func (m *udpClientSideConn) Close() {
 	if !m.isclose {
 		m.isclose = true
 		m.conn.Close()
 	}
 }
 
-func (m *udpClientSideConn) recv(buffersize int) string {
+func (m *udpClientSideConn) Recv(buffersize int) string {
 	p := make([]byte, buffersize)
 	n, err := bufio.NewReader(m.conn).Read(p)
 	Panicerr(err)
@@ -70,7 +70,7 @@ func udpListen(host string, port int) udpServerSideConn {
 	return udpServerSideConn{conn: ser}
 }
 
-func (m *udpServerSideConn) recvfrom(buffersize int, timeout ...int) (string, *net.UDPAddr) {
+func (m *udpServerSideConn) Recvfrom(buffersize int, timeout ...int) (string, *net.UDPAddr) {
 	if len(timeout) != 0 {
 		m.conn.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
@@ -80,7 +80,7 @@ func (m *udpServerSideConn) recvfrom(buffersize int, timeout ...int) (string, *n
 	return string(p[:n]), remoteaddr
 }
 
-func (m *udpServerSideConn) sendto(data string, address *net.UDPAddr, timeout ...int) {
+func (m *udpServerSideConn) Sendto(data string, address *net.UDPAddr, timeout ...int) {
 	if len(timeout) != 0 {
 		m.conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
@@ -88,7 +88,7 @@ func (m *udpServerSideConn) sendto(data string, address *net.UDPAddr, timeout ..
 	Panicerr(err)
 }
 
-func (m *udpServerSideConn) close() {
+func (m *udpServerSideConn) Close() {
 	if !m.isclose {
 		m.isclose = true
 		m.conn.Close()

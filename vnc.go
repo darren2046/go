@@ -364,14 +364,14 @@ func (m *vncKeyStruct) Ctrl_e() *vncKeyStruct {
 	return m
 }
 
-func (m *vncKeyStruct) delete() *vncKeyStruct {
+func (m *vncKeyStruct) Delete() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Delete, true)
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Delete, false)
 	sleep(m.delay)
 	return m
 }
 
-func (m *vncKeyStruct) tab() *vncKeyStruct {
+func (m *vncKeyStruct) Tab() *vncKeyStruct {
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Tab, true)
 	m.vc.KeyEvent(vncNonAsciiKeyMap.Tab, false)
 	sleep(m.delay)

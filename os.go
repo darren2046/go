@@ -2,7 +2,6 @@ package golanglibs
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -196,8 +195,7 @@ func walk(path string) chan string {
 func getenv(varname string) string {
 	e, exist := os.LookupEnv(varname)
 	if !exist {
-		err := errors.New("Env not exists")
-		Panicerr(err)
+		Panicerr("Env not exists")
 	}
 	return e
 }
@@ -250,8 +248,7 @@ func systemWithShell(command string, timeoutSecond ...interface{}) int {
 	}
 
 	if shell == "" {
-		err := errors.New("Shell not found")
-		Panicerr(err)
+		Panicerr("Shell not found")
 	}
 
 	var statuscode int

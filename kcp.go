@@ -30,7 +30,6 @@ func init() {
 
 var kcp_ping uint32 = 4000000000
 var kcp_pong uint32 = 4000000001
-var kcp_close uint32 = 4000000002
 var kcp_heartbeat_second int = 20
 
 func kcpRecvSendChanIsClosed(ch chan map[string]string) bool {
@@ -74,7 +73,7 @@ func kcpListen(host string, port int, key string, salt string) *kcpServerSideLis
 	return &kcpServerSideListener{listener: l}
 }
 
-func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
+func (m *kcpServerSideListener) Accept() chan *kcpServerSideConn {
 	ch := make(chan *kcpServerSideConn)
 
 	go func() {
@@ -85,7 +84,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 				if err != nil {
 					if String("io: read/write on closed pipe").In(err.Error()) || String("use of closed network connection").In(err.Error()) {
 						close(ch)
-						m.close()
+						m.Close()
 					}
 					Panicerr(err)
 				}
@@ -174,9 +173,6 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 						n, err := mc.conn.Read(totalblen)
 						if err != nil {
 							if mc.isclose || String("io: read/write on closed pipe").In(err.Error()) {
-								if mc.isclose {
-								} else {
-								}
 								mc.isclose = true
 								if !kcpRecvSendChanIsClosed(mc.recvchan) {
 									close(mc.recvchan)
@@ -267,7 +263,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 							if !kcpRecvSendChanIsClosed(mc.sendchan) {
 								close(mc.sendchan)
 							}
-							mc.close()
+							mc.Close()
 							break
 						}
 						sleep(1)
@@ -283,14 +279,14 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 	return ch
 }
 
-func (m *kcpServerSideListener) close() {
+func (m *kcpServerSideListener) Close() {
 	if !m.isclose {
 		m.isclose = true
 		m.listener.Close()
 	}
 }
 
-func (m *kcpServerSideConn) close() {
+func (m *kcpServerSideConn) Close() {
 	if !m.isclose {
 		m.isclose = true
 		Try(func() {
@@ -305,7 +301,7 @@ func (m *kcpServerSideConn) close() {
 	}
 }
 
-func (m *kcpServerSideConn) send(data map[string]string) {
+func (m *kcpServerSideConn) Send(data map[string]string) {
 	if m.isclose {
 		err := errors.New("连接已关闭，不可发送数据")
 		Panicerr(err)
@@ -313,7 +309,7 @@ func (m *kcpServerSideConn) send(data map[string]string) {
 	m.sendchan <- data
 }
 
-func (m *kcpServerSideConn) recv(timeoutSecond ...int) (res map[string]string) {
+func (m *kcpServerSideConn) Recv(timeoutSecond ...int) (res map[string]string) {
 	if m.isclose {
 		err := errors.New("连接已关闭，不可收取数据")
 		Panicerr(err)
@@ -326,7 +322,6 @@ func (m *kcpServerSideConn) recv(timeoutSecond ...int) (res map[string]string) {
 			case data, ok := <-m.recvchan:
 				if ok {
 					res = data
-					break
 				}
 			default:
 				sleep(0.1)
@@ -517,7 +512,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 					}
 				}
 				if Time.Now()-m.heartbeatTime > Float64(kcp_heartbeat_second)*3 {
-					m.close()
+					m.Close()
 				}
 				sleep(kcp_heartbeat_second)
 			}
@@ -528,7 +523,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 	return m
 }
 
-func (m *kcpClientSideConn) send(data map[string]string) {
+func (m *kcpClientSideConn) Send(data map[string]string) {
 	if m.isclose {
 		err := errors.New("连接已关闭，不可发送数据")
 		Panicerr(err)
@@ -536,7 +531,7 @@ func (m *kcpClientSideConn) send(data map[string]string) {
 	m.sendchan <- data
 }
 
-func (m *kcpClientSideConn) recv(timeoutSecond ...int) (res map[string]string) {
+func (m *kcpClientSideConn) Recv(timeoutSecond ...int) (res map[string]string) {
 	if m.isclose {
 		err := errors.New("连接已关闭，不可收取数据")
 		Panicerr(err)
@@ -549,7 +544,6 @@ func (m *kcpClientSideConn) recv(timeoutSecond ...int) (res map[string]string) {
 			case data, ok := <-m.recvchan:
 				if ok {
 					res = data
-					break
 				}
 			default:
 				sleep(0.1)
@@ -569,7 +563,7 @@ func (m *kcpClientSideConn) recv(timeoutSecond ...int) (res map[string]string) {
 	return
 }
 
-func (m *kcpClientSideConn) close() {
+func (m *kcpClientSideConn) Close() {
 	if !m.isclose {
 		m.isclose = true
 		m.conn.Close()

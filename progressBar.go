@@ -11,7 +11,7 @@ type progressBarStruct struct {
 
 func getProgressBar(title string, total int64, showBytes ...bool) *progressBarStruct {
 	var showBytesOption progressbar.Option
-	if len(showBytes) != 0 && showBytes[0] == true {
+	if len(showBytes) != 0 && showBytes[0] {
 		showBytesOption = progressbar.OptionShowBytes(true)
 	} else {
 		showBytesOption = progressbar.OptionShowBytes(false)

@@ -126,19 +126,19 @@ func sslClientWrapper(conn net.Conn, cfg ...SSLCfg) *sslClientSideConn {
 	return &sslClientSideConn{conn: tconn}
 }
 
-func (m *sslClientSideConn) send(str string) {
+func (m *sslClientSideConn) Send(str string) {
 	_, err := m.conn.Write([]byte(str))
 	Panicerr(err)
 }
 
-func (m *sslClientSideConn) recv(buffersize int) string {
+func (m *sslClientSideConn) Recv(buffersize int) string {
 	reply := make([]byte, buffersize)
 	n, err := m.conn.Read(reply)
 	Panicerr(err)
 	return string(reply[:n])
 }
 
-func (m *sslClientSideConn) close() {
+func (m *sslClientSideConn) Close() {
 	err := m.conn.Close()
 	Panicerr(err)
 }

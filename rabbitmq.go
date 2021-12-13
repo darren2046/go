@@ -25,6 +25,7 @@ func getRabbitMQ(rabbitMQURL string, queueName string) *rabbitConnectionStruct {
 		false,     // no-wait
 		nil,       // arguments
 	)
+	Panicerr(err)
 
 	return &rabbitConnectionStruct{
 		connection: conn,

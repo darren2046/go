@@ -25,7 +25,7 @@ func kcpRawListen(host string, port int, key string, salt string) *kcpRawServerS
 	return &kcpRawServerSideListener{listener: l}
 }
 
-func (m *kcpRawServerSideListener) accept() chan *kcp.UDPSession {
+func (m *kcpRawServerSideListener) Accept() chan *kcp.UDPSession {
 	ch := make(chan *kcp.UDPSession)
 
 	go func() {

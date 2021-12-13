@@ -15,7 +15,7 @@ type TryConfig struct {
 	sleep int // sleep seconds between retry
 }
 
-func throw() {
+func Throw() {
 	panic("_____rethrow")
 }
 

@@ -154,7 +154,7 @@ func (m *cloudflareDomainStruct) SetProxied(subdomain string, proxied bool) {
 	for _, v := range m.List() {
 		//lg.trace(v.Name, domain, proxied)
 		if v.Name == subdomain {
-			if v.Proxiable == false && proxied == true {
+			if !v.Proxiable && proxied {
 				panic(newerr("类型为" + v.Type + "的dns记录无法设置cdn代理加速"))
 			} else if v.Proxied != proxied {
 				v.OriginalCloudflareRecord.Proxied = &proxied

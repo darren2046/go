@@ -326,7 +326,7 @@ func (m *databaseOrmStruct) Get() (res []gorose.Data) {
 
 func (m *databaseOrmStruct) Paginate(pagesize int, page int) []gorose.Data {
 	offset := pagesize * (page - 1)
-	return m.Limit(pagesize).offset(offset).Get()
+	return m.Limit(pagesize).Offset(offset).Get()
 }
 
 func (m *databaseOrmStruct) First() (res gorose.Data) {
@@ -372,7 +372,7 @@ func (m *databaseOrmStruct) First() (res gorose.Data) {
 	return
 }
 
-func (m *databaseOrmStruct) find(id int) gorose.Data {
+func (m *databaseOrmStruct) Find(id int) gorose.Data {
 	return m.Where("id", "=", id).First()
 }
 
@@ -413,7 +413,7 @@ func (m *databaseOrmStruct) Count() (res int64) {
 	return
 }
 
-func (m *databaseOrmStruct) exists() (res bool) {
+func (m *databaseOrmStruct) Exists() (res bool) {
 	if m.Count() == 0 {
 		res = false
 	} else {
@@ -423,12 +423,12 @@ func (m *databaseOrmStruct) exists() (res bool) {
 	return
 }
 
-func (m *databaseOrmStruct) chunk(limit int, callback func([]gorose.Data) error) {
+func (m *databaseOrmStruct) Chunk(limit int, callback func([]gorose.Data) error) {
 	err := m.orm.Chunk(limit, callback)
 	Panicerr(err)
 }
 
-func (m *databaseOrmStruct) buildSQL() (string, []interface{}) {
+func (m *databaseOrmStruct) BuildSQL() (string, []interface{}) {
 	if m.lockby != Os.GoroutineID() {
 		m.lock.Acquire()
 		m.lockby = Os.GoroutineID()
@@ -442,7 +442,7 @@ func (m *databaseOrmStruct) buildSQL() (string, []interface{}) {
 	return sql, param
 }
 
-func (m *databaseOrmStruct) data(data interface{}) *databaseOrmStruct {
+func (m *databaseOrmStruct) Data(data interface{}) *databaseOrmStruct {
 	if m.lockby != Os.GoroutineID() {
 		m.lock.Acquire()
 		m.lockby = Os.GoroutineID()
@@ -451,7 +451,7 @@ func (m *databaseOrmStruct) data(data interface{}) *databaseOrmStruct {
 	return m
 }
 
-func (m *databaseOrmStruct) offset(offset int) *databaseOrmStruct {
+func (m *databaseOrmStruct) Offset(offset int) *databaseOrmStruct {
 	if m.lockby != Os.GoroutineID() {
 		m.lock.Acquire()
 		m.lockby = Os.GoroutineID()
@@ -460,7 +460,7 @@ func (m *databaseOrmStruct) offset(offset int) *databaseOrmStruct {
 	return m
 }
 
-func (m *databaseOrmStruct) insertGetID() (num int64) {
+func (m *databaseOrmStruct) InsertGetID() (num int64) {
 	if m.lockby != Os.GoroutineID() {
 		m.lock.Acquire()
 		m.lockby = Os.GoroutineID()
@@ -603,7 +603,7 @@ func (m *databaseOrmStruct) Delete() (num int64) {
 	return
 }
 
-func (m *databaseStruct) tables() (res []string) {
+func (m *databaseStruct) Tables() (res []string) {
 	if m.driver == "mysql" {
 		for _, v := range m.Query("show tables;") {
 			for _, i := range v {
@@ -618,8 +618,8 @@ func (m *databaseStruct) tables() (res []string) {
 	return
 }
 
-func (m *databaseStruct) createTable(tableName string, engineName ...string) *databaseOrmStruct {
-	if !Array(m.tables()).Has(tableName) {
+func (m *databaseStruct) CreateTable(tableName string, engineName ...string) *databaseOrmStruct {
+	if !Array(m.Tables()).Has(tableName) {
 		if len(engineName) != 0 && m.driver != "mysql" {
 			Panicerr("SQLite不支持设定存储引擎")
 		}

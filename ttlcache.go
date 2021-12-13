@@ -79,11 +79,8 @@ func (cache *ttlCacheSCache) cleanup() {
 func (cache *ttlCacheSCache) startCleanupTimer() {
 	ticker := time.Tick(3 * time.Second) // 3秒刷一次缓存
 	go (func() {
-		for {
-			select {
-			case <-ticker:
-				cache.cleanup()
-			}
+		for range ticker {
+			cache.cleanup()
 		}
 	})()
 }
@@ -113,7 +110,7 @@ func (m *ttlCacheStruct) Set(key string, value string) {
 
 func (m *ttlCacheStruct) Get(key string) string {
 	value, exists := m.cache.get(key)
-	if exists != true {
+	if !exists {
 		Panicerr("Key " + key + " not found in cache")
 	}
 	return value
