@@ -63,7 +63,7 @@ func (m *fileIOStruct) Readline() string {
 			if len(line) != 0 {
 				return line
 			}
-			panicerr(err)
+			Panicerr(err)
 		}
 		bs := string(b)
 		if bs == "\n" {
@@ -100,14 +100,14 @@ func (m *fileIOStruct) Read(num ...int) string {
 	var err error
 	if len(num) == 0 {
 		bytes, err = ioutil.ReadAll(m.fd)
-		panicerr(err)
+		Panicerr(err)
 		m.Close()
 	} else {
 		buffer := make([]byte, num[0])
 		i, err := io.ReadAtLeast(m.fd, buffer, num[0])
 		if err != nil {
 			if !String("EOF").In(err.Error()) {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 		bytes = buffer[:i]
@@ -118,7 +118,7 @@ func (m *fileIOStruct) Read(num ...int) string {
 
 func (m *fileIOStruct) Seek(num int64) {
 	_, err := m.fd.Seek(num, 0)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func Open(args ...string) *fileIOStruct {
@@ -140,7 +140,7 @@ func Open(args ...string) *fileIOStruct {
 	if string(mode[0]) == "w" {
 		fd, err = os.OpenFile(path, os.O_TRUNC|os.O_CREATE|os.O_WRONLY, 0644)
 	}
-	panicerr(err)
+	Panicerr(err)
 	return &fileIOStruct{
 		path: path,
 		fd:   fd,

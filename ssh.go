@@ -28,7 +28,7 @@ func getSSH(user string, pass string, host string, port int) *sshStruct {
 	}
 
 	client, err := ssh.Dial("tcp", host+":"+Str(port), sshConfig)
-	panicerr(err)
+	Panicerr(err)
 
 	return &sshStruct{
 		client: client,
@@ -47,7 +47,7 @@ func (m *sshStruct) Exec(cmd string) (output string, status int) {
 	session, err := m.client.NewSession()
 	if err != nil {
 		m.client.Close()
-		panicerr(err)
+		Panicerr(err)
 	}
 
 	out, err := session.CombinedOutput(cmd)
@@ -58,7 +58,7 @@ func (m *sshStruct) Exec(cmd string) (output string, status int) {
 			o := String(err.Error()).Split()
 			status = Int(o[len(o)-1])
 		} else {
-			panicerr(err)
+			Panicerr(err)
 		}
 	} else {
 		status = 0
@@ -68,40 +68,40 @@ func (m *sshStruct) Exec(cmd string) (output string, status int) {
 
 func (m *sshStruct) PushFile(local string, remote string) {
 	sftp, err := sftp.NewClient(m.client)
-	panicerr(err)
+	Panicerr(err)
 	defer sftp.Close()
 
 	fr, err := sftp.Create(remote)
-	panicerr(err)
+	Panicerr(err)
 
 	fl, err := os.Open(local)
-	panicerr(err)
+	Panicerr(err)
 
 	io.Copy(fr, fl)
 
 	err = fr.Close()
-	panicerr(err)
+	Panicerr(err)
 
 	err = fl.Close()
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *sshStruct) PullFile(remote string, local string) {
 	sftp, err := sftp.NewClient(m.client)
-	panicerr(err)
+	Panicerr(err)
 	defer sftp.Close()
 
 	fr, err := sftp.Open(remote)
-	panicerr(err)
+	Panicerr(err)
 
 	fl, err := os.Create(local)
-	panicerr(err)
+	Panicerr(err)
 
 	io.Copy(fl, fr)
 
 	err = fr.Close()
-	panicerr(err)
+	Panicerr(err)
 
 	err = fl.Close()
-	panicerr(err)
+	Panicerr(err)
 }

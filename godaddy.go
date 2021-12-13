@@ -53,10 +53,10 @@ func getGodaddy(key string, secret string) *godaddyStruct {
 func (m *godaddyStruct) List() (res []godaddyDomainInfoStruct) {
 	resp := httpGet("https://api.godaddy.com/v1/domains", m.header)
 	if resp.statusCode != 200 {
-		panicerr(resp.content)
+		Panicerr(resp.content)
 	}
 	err := json.Unmarshal([]byte(resp.content), &res)
-	panicerr(err)
+	Panicerr(err)
 	return
 }
 
@@ -70,10 +70,10 @@ func (m *godaddyStruct) Domain(domainName string) *godaddyDomainStruct {
 func (m *godaddyDomainStruct) List() (res []godaddyRecord) {
 	resp := httpGet("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", m.header)
 	if resp.statusCode != 200 {
-		panicerr(resp.content)
+		Panicerr(resp.content)
 	}
 	err := json.Unmarshal([]byte(resp.content), &res)
-	panicerr(err)
+	Panicerr(err)
 	return
 }
 
@@ -117,7 +117,7 @@ func (m *godaddyDomainStruct) Delete(name string, dtype string, value string) {
 
 	resp := httpPutJSON("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", records, m.header)
 	if resp.statusCode != 200 {
-		panicerr(resp.content)
+		Panicerr(resp.content)
 	}
 }
 
@@ -139,7 +139,7 @@ func (m *godaddyDomainStruct) Modify(recordName string, srcRecordType string, sr
 	}
 	resp := httpPutJSON("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", records, m.header)
 	if resp.statusCode != 200 {
-		panicerr(resp.content)
+		Panicerr(resp.content)
 	}
 }
 
@@ -160,7 +160,7 @@ func (m *godaddyDomainStruct) Add(recordName string, recordType string, recordVa
 
 	resp := httpPutJSON("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", records, m.header)
 	if resp.statusCode != 200 {
-		panicerr(resp.content)
+		Panicerr(resp.content)
 	}
 }
 

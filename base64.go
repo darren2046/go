@@ -29,6 +29,6 @@ func base64Decode(str string) string {
 	}
 
 	data, err := base64.StdEncoding.DecodeString(str)
-	panicerr(err)
+	Panicerr(err)
 	return string(data)
 }

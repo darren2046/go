@@ -13,22 +13,22 @@ import (
 
 func resizeImg(srcPath string, dstPath string, width int, height ...int) {
 	file, err := os.Open(srcPath)
-	panicerr(err)
+	Panicerr(err)
 
 	var img image.Image
 	ftype := fileType(srcPath)
 	if ftype == "jpg" {
 		img, err = jpeg.Decode(file)
-		panicerr(err)
+		Panicerr(err)
 	} else if ftype == "png" {
 		img, err = png.Decode(file)
-		panicerr(err)
+		Panicerr(err)
 	} else if ftype == "webp" {
 		img, err = webp.Decode(file)
-		panicerr(err)
+		Panicerr(err)
 	} else {
 		err = errors.New("只支持读取jpg、png或者webp格式图片")
-		panicerr(err)
+		Panicerr(err)
 	}
 	file.Close()
 
@@ -56,7 +56,7 @@ func resizeImg(srcPath string, dstPath string, width int, height ...int) {
 	m := resize.Resize(Uint(resizeWidth), Uint(resizeHeight), img, resize.Lanczos3)
 
 	out, err := os.Create(dstPath)
-	panicerr(err)
+	Panicerr(err)
 	defer out.Close()
 
 	if String(dstPath).EndsWith(".jpg") || String(dstPath).EndsWith(".jpeg") {
@@ -68,8 +68,8 @@ func resizeImg(srcPath string, dstPath string, width int, height ...int) {
 	} else {
 		// err = errors.New("只支持导出jpg、png或者webp，以文件扩展名来判定。")
 		err = errors.New("只支持导出jpg或者png，以文件扩展名来判定。")
-		panicerr(err)
+		Panicerr(err)
 	}
 
-	panicerr(err)
+	Panicerr(err)
 }

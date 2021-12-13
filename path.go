@@ -36,7 +36,7 @@ func init() {
 
 func pathIsSymlink(path string) bool {
 	fi, err := os.Lstat(path)
-	panicerr(err)
+	Panicerr(err)
 	if fi.Mode()&os.ModeSymlink == os.ModeSymlink {
 		return true
 	} else {
@@ -46,7 +46,7 @@ func pathIsSymlink(path string) bool {
 
 func abspath(path string) string {
 	str, err := filepath.Abs(path)
-	panicerr(err)
+	Panicerr(err)
 	return str
 }
 
@@ -69,7 +69,7 @@ func pathIsFile(path string) bool {
 
 func pathIsDir(path string) bool {
 	fd, err := os.Stat(path)
-	panicerr(err)
+	Panicerr(err)
 	fm := fd.Mode()
 	return fm.IsDir()
 }
@@ -80,7 +80,7 @@ func pathBasename(path string) string {
 
 func pathBasedir(path string) string {
 	str, err := filepath.Abs(filepath.Dir(path))
-	panicerr(err)
+	Panicerr(err)
 	return str
 }
 

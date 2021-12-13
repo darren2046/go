@@ -21,12 +21,12 @@ func getIPLocation(ip string, dbpath ...string) *ipLocationInfo {
 	if len(dbpath) == 0 {
 		if ip17modHadInit == false {
 			statikFS, err := fs.New()
-			panicerr(err)
+			Panicerr(err)
 
 			ipdbfd, err := statikFS.Open("/qqwry.ipdb")
-			panicerr(err)
+			Panicerr(err)
 			ipdbBytes, err := ioutil.ReadAll(ipdbfd)
-			panicerr(err)
+			Panicerr(err)
 			ipdbfd.Close()
 
 			ip17mon.InitWithIpdb(ipdbBytes)
@@ -42,7 +42,7 @@ func getIPLocation(ip string, dbpath ...string) *ipLocationInfo {
 	}
 
 	loc, err := ip17mon.Find(ip)
-	panicerr(err)
+	Panicerr(err)
 
 	return &ipLocationInfo{
 		City:    loc.City,

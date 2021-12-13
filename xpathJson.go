@@ -12,14 +12,14 @@ type xpathJsonStruct struct {
 
 func getXPathJson(jsonstr string) *xpathJsonStruct {
 	doc, err := jsonquery.Parse(strings.NewReader(jsonstr))
-	panicerr(err)
+	Panicerr(err)
 	return &xpathJsonStruct{
 		doc: doc,
 	}
 }
 
 func (m *xpathJsonStruct) Exists(expr string) bool {
-	return try(func() {
+	return Try(func() {
 		m.First(expr).Text()
 	}).Error == nil
 }

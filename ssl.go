@@ -8,9 +8,9 @@ import (
 
 type sslStruct struct {
 	Listen        func(host string, port int, key string, crt string) *tcpServerSideListener
-	ServerWrapper func(conn net.Conn, key string, crt string) *tcpServerSideConn
-	Connect       func(host string, port int, cfg ...sslCfg) *sslClientSideConn
-	ClientWrapper func(conn net.Conn, cfg ...sslCfg) *sslClientSideConn
+	ServerWrapper func(conn net.Conn, key string, crt string) *TcpServerSideConn
+	Connect       func(host string, port int, cfg ...SSLCfg) *sslClientSideConn
+	ClientWrapper func(conn net.Conn, cfg ...SSLCfg) *sslClientSideConn
 }
 
 var sslstruct sslStruct
@@ -29,25 +29,25 @@ func init() {
 
 func sslListen(host string, port int, key string, crt string) *tcpServerSideListener {
 	cert, err := tls.X509KeyPair([]byte(crt), []byte(key))
-	panicerr(err)
+	Panicerr(err)
 
 	tlsCfg := &tls.Config{Certificates: []tls.Certificate{cert}}
 
 	listener, err := tls.Listen("tcp4", host+":"+Str(port), tlsCfg)
-	panicerr(err)
+	Panicerr(err)
 
 	return &tcpServerSideListener{listener: listener}
 }
 
-func sslServerWrapper(conn net.Conn, key string, crt string) *tcpServerSideConn {
+func sslServerWrapper(conn net.Conn, key string, crt string) *TcpServerSideConn {
 	cert, err := tls.X509KeyPair([]byte(crt), []byte(key))
-	panicerr(err)
+	Panicerr(err)
 
 	tlsCfg := &tls.Config{Certificates: []tls.Certificate{cert}}
 
 	tconn := tls.Server(conn, tlsCfg)
 
-	return &tcpServerSideConn{conn: tconn}
+	return &TcpServerSideConn{Conn: tconn}
 }
 
 // SSL - Client
@@ -56,14 +56,14 @@ type sslClientSideConn struct {
 	conn *tls.Conn
 }
 
-type sslCfg struct {
+type SSLCfg struct {
 	InsecureSkipVerify  bool     // true为跳过证书验证
-	additionRootCA      []string // 额外的用来验证证书的CA证书
-	domain              string   // 需要认证的域名, 也会在请求证书的时候提供
-	withoutSystemRootCA bool     // true为不使用系统内置的CA
+	AdditionRootCA      []string // 额外的用来验证证书的CA证书
+	Domain              string   // 需要认证的域名, 也会在请求证书的时候提供
+	WithoutSystemRootCA bool     // true为不使用系统内置的CA
 }
 
-func sslConnect(host string, port int, cfg ...sslCfg) *sslClientSideConn {
+func sslConnect(host string, port int, cfg ...SSLCfg) *sslClientSideConn {
 	servAddr := host + ":" + Str(port)
 
 	tcfg := tls.Config{}
@@ -71,9 +71,9 @@ func sslConnect(host string, port int, cfg ...sslCfg) *sslClientSideConn {
 		if cfg[0].InsecureSkipVerify {
 			tcfg.InsecureSkipVerify = cfg[0].InsecureSkipVerify
 		}
-		if len(cfg[0].additionRootCA) != 0 {
+		if len(cfg[0].AdditionRootCA) != 0 {
 			var rootCAs *x509.CertPool
-			if cfg[0].withoutSystemRootCA {
+			if cfg[0].WithoutSystemRootCA {
 				rootCAs = x509.NewCertPool()
 			} else {
 				rootCAs, _ = x509.SystemCertPool()
@@ -81,30 +81,30 @@ func sslConnect(host string, port int, cfg ...sslCfg) *sslClientSideConn {
 					rootCAs = x509.NewCertPool()
 				}
 			}
-			for _, ca := range cfg[0].additionRootCA {
+			for _, ca := range cfg[0].AdditionRootCA {
 				rootCAs.AppendCertsFromPEM([]byte(ca))
 			}
 			tcfg.RootCAs = rootCAs
 		}
-		if cfg[0].domain != "" {
-			tcfg.ServerName = cfg[0].domain
+		if cfg[0].Domain != "" {
+			tcfg.ServerName = cfg[0].Domain
 		}
 	}
 
 	conn, err := tls.Dial("tcp", servAddr, &tcfg)
-	panicerr(err)
+	Panicerr(err)
 	return &sslClientSideConn{conn: conn}
 }
 
-func sslClientWrapper(conn net.Conn, cfg ...sslCfg) *sslClientSideConn {
+func sslClientWrapper(conn net.Conn, cfg ...SSLCfg) *sslClientSideConn {
 	tcfg := tls.Config{}
 	if len(cfg) != 0 {
 		if cfg[0].InsecureSkipVerify {
 			tcfg.InsecureSkipVerify = cfg[0].InsecureSkipVerify
 		}
-		if len(cfg[0].additionRootCA) != 0 {
+		if len(cfg[0].AdditionRootCA) != 0 {
 			var rootCAs *x509.CertPool
-			if cfg[0].withoutSystemRootCA {
+			if cfg[0].WithoutSystemRootCA {
 				rootCAs = x509.NewCertPool()
 			} else {
 				rootCAs, _ = x509.SystemCertPool()
@@ -112,13 +112,13 @@ func sslClientWrapper(conn net.Conn, cfg ...sslCfg) *sslClientSideConn {
 					rootCAs = x509.NewCertPool()
 				}
 			}
-			for _, ca := range cfg[0].additionRootCA {
+			for _, ca := range cfg[0].AdditionRootCA {
 				rootCAs.AppendCertsFromPEM([]byte(ca))
 			}
 			tcfg.RootCAs = rootCAs
 		}
-		if cfg[0].domain != "" {
-			tcfg.ServerName = cfg[0].domain
+		if cfg[0].Domain != "" {
+			tcfg.ServerName = cfg[0].Domain
 		}
 	}
 
@@ -128,17 +128,17 @@ func sslClientWrapper(conn net.Conn, cfg ...sslCfg) *sslClientSideConn {
 
 func (m *sslClientSideConn) send(str string) {
 	_, err := m.conn.Write([]byte(str))
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *sslClientSideConn) recv(buffersize int) string {
 	reply := make([]byte, buffersize)
 	n, err := m.conn.Read(reply)
-	panicerr(err)
+	Panicerr(err)
 	return string(reply[:n])
 }
 
 func (m *sslClientSideConn) close() {
 	err := m.conn.Close()
-	panicerr(err)
+	Panicerr(err)
 }

@@ -2,6 +2,7 @@ package golanglibs
 
 import (
 	"context"
+	"crypto/tls"
 	"crypto/x509"
 	"net"
 	"strconv"
@@ -9,6 +10,7 @@ import (
 	"time"
 
 	"github.com/cavaliercoder/grab"
+	"github.com/dustin/go-humanize"
 	"github.com/h2non/filetype"
 	"github.com/hpcloud/tail"
 	"github.com/icrowley/fake"
@@ -41,6 +43,7 @@ type funcsStruct struct {
 	Int2ip                 func(ipnr int64) string
 	Ip2int                 func(ipnr string) int64
 	Zh2PinYin              func(zh string) (ress []string)
+	Fmtsize                func(num uint64) string
 }
 
 var Funcs funcsStruct
@@ -70,7 +73,28 @@ func init() {
 		Int2ip:                 int2ip,
 		Ip2int:                 ip2int,
 		Zh2PinYin:              zh2PinYin,
+		Fmtsize:                fmtsize,
 	}
+}
+
+func fmtsize(num uint64) string {
+	return humanize.Bytes(num)
+}
+
+func getRemoteServerCert(host string, port ...int) []*x509.Certificate {
+	var p string
+	if len(port) == 0 {
+		p = "443"
+	} else {
+		p = Str(port[0])
+	}
+
+	conn, err := tls.Dial("tcp", host+":"+Str(p), nil)
+	if err != nil {
+		panic("Server doesn't support SSL certificate err: " + err.Error())
+	}
+
+	return conn.ConnectionState().PeerCertificates
 }
 
 func int2ip(ipnr int64) string {
@@ -150,7 +174,7 @@ func wget(url string, cfg ...WgetCfg) (filename string) {
 			i++
 
 			if i > retry && err != nil {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 	}
@@ -165,7 +189,7 @@ func getcname(hostname string, dnsserver ...string) (res string) {
 	var err error
 	if len(dnsserver) == 0 {
 		res, err = net.LookupCNAME(hostname)
-		panicerr(err)
+		Panicerr(err)
 		if String(res).RStrip(".").Get() == hostname {
 			res = ""
 		}
@@ -184,7 +208,7 @@ func getcname(hostname string, dnsserver ...string) (res string) {
 			},
 		}
 		res, err = r.LookupCNAME(context.Background(), hostname)
-		panicerr(err)
+		Panicerr(err)
 		if String(hostname).RStrip(".").Get() == hostname {
 			res = ""
 		}
@@ -195,7 +219,7 @@ func getcname(hostname string, dnsserver ...string) (res string) {
 func gethostbyname(hostname string, dnsserver ...string) (res []string) {
 	if len(dnsserver) == 0 {
 		ips, err := net.LookupIP(hostname)
-		panicerr(err)
+		Panicerr(err)
 		if ips != nil {
 			for _, v := range ips {
 				if v.To4() != nil || v.To16() != nil {
@@ -218,7 +242,7 @@ func gethostbyname(hostname string, dnsserver ...string) (res []string) {
 			},
 		}
 		ips, err := r.LookupHost(context.Background(), hostname)
-		panicerr(err)
+		Panicerr(err)
 		for _, ip := range ips {
 			if net.ParseIP(ip) != nil {
 				res = append(res, ip)
@@ -231,7 +255,7 @@ func gethostbyname(hostname string, dnsserver ...string) (res []string) {
 func fileType(fpath string) string {
 	kind, err := filetype.Match([]byte(Open(fpath).Read()))
 
-	panicerr(err)
+	Panicerr(err)
 
 	if kind == filetype.Unknown {
 		return ""
@@ -295,7 +319,7 @@ func nslookup(name string, querytype string, dnsService ...string) [][]string {
 		break
 	}
 
-	panicerr(err)
+	Panicerr(err)
 
 	return dst
 }

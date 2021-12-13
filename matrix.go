@@ -11,7 +11,7 @@ type matrixStruct struct {
 
 func getMatrix(homeserverURL string) *matrixStruct {
 	cli, err := gomatrix.NewClient(homeserverURL, "", "")
-	panicerr(err)
+	Panicerr(err)
 
 	return &matrixStruct{cli: cli}
 }
@@ -22,7 +22,7 @@ func (c *matrixStruct) Login(username string, password string) string {
 		User:     username,
 		Password: password,
 	})
-	panicerr(err)
+	Panicerr(err)
 
 	c.SetToken(resp.UserID, resp.AccessToken)
 
@@ -41,5 +41,5 @@ func (c *matrixStruct) SetRoomID(roomID string) *matrixStruct {
 
 func (c *matrixStruct) Send(text string) {
 	_, err := c.cli.SendText(c.roomID, text)
-	panicerr(err)
+	Panicerr(err)
 }

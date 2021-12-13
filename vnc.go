@@ -13,7 +13,7 @@ type VNCCfg struct {
 
 type vncStruct struct {
 	nc    net.Conn
-	vc    *vnc.ClientConn
+	VC    *vnc.ClientConn
 	lastX int
 	lastY int
 	delay interface{} // wait after actions
@@ -179,7 +179,7 @@ var vncAsciiKeyMap = map[string][]uint32{
 
 func getVNC(server string, cfg ...VNCCfg) *vncStruct {
 	nc, err := net.Dial("tcp", server)
-	panicerr(err)
+	Panicerr(err)
 
 	auth := []vnc.ClientAuth{}
 	var delay interface{} = 0
@@ -196,44 +196,44 @@ func getVNC(server string, cfg ...VNCCfg) *vncStruct {
 	})
 	if err != nil {
 		nc.Close()
-		panicerr(err)
+		Panicerr(err)
 	}
 
 	return &vncStruct{
 		nc:    nc,
-		vc:    vc,
+		VC:    vc,
 		delay: delay,
 	}
 }
 
 func (m *vncStruct) Close() {
-	m.vc.Close()
+	m.VC.Close()
 	m.nc.Close()
 }
 
 func (m *vncStruct) Move(x, y int) *vncStruct {
 	m.lastX = x
 	m.lastY = y
-	err := m.vc.PointerEvent(0, Uint16(x), Uint16(y))
-	panicerr(err)
+	err := m.VC.PointerEvent(0, Uint16(x), Uint16(y))
+	Panicerr(err)
 	sleep(m.delay)
 	return m
 }
 
 func (m *vncStruct) Click() *vncStruct {
-	err := m.vc.PointerEvent(1, Uint16(m.lastX), Uint16(m.lastY))
-	panicerr(err)
-	err = m.vc.PointerEvent(0, Uint16(m.lastX), Uint16(m.lastY))
-	panicerr(err)
+	err := m.VC.PointerEvent(1, Uint16(m.lastX), Uint16(m.lastY))
+	Panicerr(err)
+	err = m.VC.PointerEvent(0, Uint16(m.lastX), Uint16(m.lastY))
+	Panicerr(err)
 	sleep(m.delay)
 	return m
 }
 
 func (m *vncStruct) RightClick() *vncStruct {
-	err := m.vc.PointerEvent(4, Uint16(m.lastX), Uint16(m.lastY))
-	panicerr(err)
-	err = m.vc.PointerEvent(0, Uint16(m.lastX), Uint16(m.lastY))
-	panicerr(err)
+	err := m.VC.PointerEvent(4, Uint16(m.lastX), Uint16(m.lastY))
+	Panicerr(err)
+	err = m.VC.PointerEvent(0, Uint16(m.lastX), Uint16(m.lastY))
+	Panicerr(err)
 	sleep(m.delay)
 	return m
 }
@@ -244,10 +244,10 @@ func (m *vncStruct) Input(s string) *vncStruct {
 		// 顺序按那数组里面的按键, 然后反顺序放开
 		if Map(vncAsciiKeyMap).Has(c) {
 			for _, k := range vncAsciiKeyMap[c] {
-				m.vc.KeyEvent(k, true)
+				m.VC.KeyEvent(k, true)
 			}
 			for i := len(vncAsciiKeyMap[c]) - 1; i >= 0; i-- {
-				m.vc.KeyEvent(vncAsciiKeyMap[c][i], false)
+				m.VC.KeyEvent(vncAsciiKeyMap[c][i], false)
 			}
 		}
 		if c == "\n" {
@@ -264,7 +264,7 @@ type vncKeyStruct struct {
 }
 
 func (m *vncStruct) Key() *vncKeyStruct {
-	return &vncKeyStruct{vc: m.vc, delay: m.delay}
+	return &vncKeyStruct{vc: m.VC, delay: m.delay}
 }
 
 func (m *vncKeyStruct) Enter() *vncKeyStruct {

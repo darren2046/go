@@ -14,7 +14,7 @@ func getCrontab() *crontabStruct {
 
 func (m *crontabStruct) Add(schedule string, fn interface{}, args ...interface{}) {
 	err := m.c.AddJob(schedule, fn, args...)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *crontabStruct) Destory() {

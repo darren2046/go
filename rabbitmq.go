@@ -12,10 +12,10 @@ type rabbitConnectionStruct struct {
 
 func getRabbitMQ(rabbitMQURL string, queueName string) *rabbitConnectionStruct {
 	conn, err := amqp.Dial(rabbitMQURL)
-	panicerr(err)
+	Panicerr(err)
 
 	ch, err := conn.Channel()
-	panicerr(err)
+	Panicerr(err)
 
 	q, err := ch.QueueDeclare(
 		queueName, // name
@@ -43,7 +43,7 @@ func (m *rabbitConnectionStruct) Send(data map[string]string) {
 			ContentType: "text/plain",
 			Body:        []byte(map2bin(data)),
 		})
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *rabbitConnectionStruct) Recv() chan map[string]string {
@@ -56,7 +56,7 @@ func (m *rabbitConnectionStruct) Recv() chan map[string]string {
 		false,        // no-wait
 		nil,          // args
 	)
-	panicerr(err)
+	Panicerr(err)
 
 	resch := make(chan map[string]string)
 	go func() {

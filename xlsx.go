@@ -14,10 +14,10 @@ func getXlsx(path string) *xlsxStruct {
 	if !pathExists(path) {
 		f := excelize.NewFile()
 		err := f.SaveAs(path)
-		panicerr(err)
+		Panicerr(err)
 	}
 	k, err := excelize.OpenFile(path)
-	panicerr(err)
+	Panicerr(err)
 	return &xlsxStruct{f: k}
 }
 
@@ -29,7 +29,7 @@ type xlsxSheetStruct struct {
 func (c *xlsxStruct) GetSheet(name string) *xlsxSheetStruct {
 	name = strings.Title(name)
 	if !Array(c.f.GetSheetList()).Has(name) {
-		Lg.trace("make new sheet")
+		Lg.Trace("make new sheet")
 		c.f.NewSheet(name)
 	}
 	return &xlsxSheetStruct{
@@ -40,13 +40,13 @@ func (c *xlsxStruct) GetSheet(name string) *xlsxSheetStruct {
 
 func (c *xlsxSheetStruct) Get(coordinate string) string {
 	s, err := c.x.f.GetCellValue(c.sheet, coordinate)
-	panicerr(err)
+	Panicerr(err)
 	return s
 }
 
 func (c *xlsxSheetStruct) Set(coordinate string, value string) *xlsxSheetStruct {
 	err := c.x.f.SetCellValue(c.sheet, coordinate, value)
-	panicerr(err)
+	Panicerr(err)
 	return c
 }
 

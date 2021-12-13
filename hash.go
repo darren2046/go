@@ -27,7 +27,7 @@ func init() {
 
 func sha1File(path string) string {
 	data, err := ioutil.ReadFile(path)
-	panicerr(err)
+	Panicerr(err)
 	hash := sha1.New()
 	hash.Write([]byte(data))
 	return hex.EncodeToString(hash.Sum(nil))
@@ -47,7 +47,7 @@ func md5sum(str string) string {
 
 func md5File(path string) string {
 	data, err := ioutil.ReadFile(path)
-	panicerr(err)
+	Panicerr(err)
 	hash := md5.New()
 	hash.Write([]byte(data))
 	return hex.EncodeToString(hash.Sum(nil))

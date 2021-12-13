@@ -99,7 +99,7 @@ func httpHead(uri string, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -123,12 +123,12 @@ func httpHead(uri string, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -145,12 +145,12 @@ func httpHead(uri string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -161,13 +161,13 @@ func httpHead(uri string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}
@@ -226,7 +226,7 @@ func httpPostFile(uri string, filePath string, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -250,12 +250,12 @@ func httpPostFile(uri string, filePath string, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -272,12 +272,12 @@ func httpPostFile(uri string, filePath string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -288,13 +288,13 @@ func httpPostFile(uri string, filePath string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}
@@ -353,7 +353,7 @@ func httpPostRaw(uri string, body string, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -377,12 +377,12 @@ func httpPostRaw(uri string, body string, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -399,12 +399,12 @@ func httpPostRaw(uri string, body string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -415,13 +415,13 @@ func httpPostRaw(uri string, body string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}
@@ -480,7 +480,7 @@ func httpPostJSON(uri string, json interface{}, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -504,12 +504,12 @@ func httpPostJSON(uri string, json interface{}, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -526,12 +526,12 @@ func httpPostJSON(uri string, json interface{}, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -542,13 +542,13 @@ func httpPostJSON(uri string, json interface{}, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}
@@ -608,7 +608,7 @@ func httpPost(uri string, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -632,12 +632,12 @@ func httpPost(uri string, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -654,12 +654,12 @@ func httpPost(uri string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -670,13 +670,13 @@ func httpPost(uri string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}
@@ -737,7 +737,7 @@ func httpGet(uri string, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -761,12 +761,12 @@ func httpGet(uri string, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -783,12 +783,12 @@ func httpGet(uri string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -799,13 +799,13 @@ func httpGet(uri string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}
@@ -864,7 +864,7 @@ func httpPutJSON(uri string, json interface{}, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -888,12 +888,12 @@ func httpPutJSON(uri string, json interface{}, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -910,12 +910,12 @@ func httpPutJSON(uri string, json interface{}, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -926,13 +926,13 @@ func httpPutJSON(uri string, json interface{}, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}
@@ -992,7 +992,7 @@ func httpPut(uri string, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -1016,12 +1016,12 @@ func httpPut(uri string, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -1038,12 +1038,12 @@ func httpPut(uri string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -1054,13 +1054,13 @@ func httpPut(uri string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}
@@ -1119,7 +1119,7 @@ func httpPutRaw(uri string, body string, args ...interface{}) httpResp {
 			}
 			if vv.httpProxy != "" {
 				u, err := url.Parse(vv.httpProxy)
-				panicerr(err)
+				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
 			timeoutRetryTimes = vv.timeoutRetryTimes
@@ -1143,12 +1143,12 @@ func httpPutRaw(uri string, body string, args ...interface{}) httpResp {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 				timeouttimes += 1
 				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					panicerr(err)
+					Panicerr(err)
 				} else {
 					continue
 				}
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 
@@ -1165,12 +1165,12 @@ func httpPutRaw(uri string, body string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
-					panicerr(err)
+					Panicerr(err)
 				}
 			}
 		} else {
@@ -1181,13 +1181,13 @@ func httpPutRaw(uri string, body string, args ...interface{}) httpResp {
 				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
 					timeouttimes += 1
 					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						panicerr(err)
+						Panicerr(err)
 					} else {
 						continue
 					}
 				} else {
 					if !String("unexpected EOF").In(err.Error()) {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 			}

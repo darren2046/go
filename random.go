@@ -45,7 +45,7 @@ func randomChoice(array interface{}) interface{} {
 	arr := reflect.ValueOf(array)
 
 	if arr.Kind() != reflect.Array && arr.Kind() != reflect.Slice {
-		panicerr("Invalid data type of param \"array\": Not an Array")
+		Panicerr("Invalid data type of param \"array\": Not an Array")
 	}
 
 	return arr.Index(rand.Intn(arr.Len())).Interface()

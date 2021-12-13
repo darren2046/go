@@ -21,12 +21,12 @@ func refindAll(pattern string, text string, multiline ...bool) [][]string {
 		pattern = "(?s)" + pattern
 	}
 	r, err := regexp.Compile(pattern)
-	panicerr(err)
+	Panicerr(err)
 	return r.FindAllStringSubmatch(text, -1)
 }
 
 func reReplace(pattern string, newstring string, text string) string {
 	r, err := regexp.Compile(pattern)
-	panicerr(err)
+	Panicerr(err)
 	return r.ReplaceAllString(text, newstring)
 }

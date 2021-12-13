@@ -14,23 +14,23 @@ func getNats(server string) *natsStruct {
 		server,
 		nats.DisconnectErrHandler(func(c *nats.Conn, err error) {
 			if err != nil {
-				Lg.trace("Disconnected due to: " + err.Error() + ", trying to reconnect")
+				Lg.Trace("Disconnected due to: " + err.Error() + ", trying to reconnect")
 			} else {
-				Lg.trace("Disconnected normally")
+				Lg.Trace("Disconnected normally")
 			}
 		}),
 		nats.ReconnectHandler(func(c *nats.Conn) {
-			Lg.trace("Reconnected [" + c.ConnectedUrl() + "]")
+			Lg.Trace("Reconnected [" + c.ConnectedUrl() + "]")
 		}),
 		nats.ClosedHandler(func(c *nats.Conn) {
 			if err := c.LastError(); err != nil {
-				Lg.trace("Connection closed due to: " + c.LastError().Error())
+				Lg.Trace("Connection closed due to: " + c.LastError().Error())
 			} else {
-				Lg.trace("Connection closed normally")
+				Lg.Trace("Connection closed normally")
 			}
 		}),
 	)
-	panicerr(err)
+	Panicerr(err)
 	return &natsStruct{
 		conn: conn,
 	}
@@ -50,7 +50,7 @@ func (m *natsStruct) Subject(subject string) *subjectNatsStruct {
 
 func (m *subjectNatsStruct) Publish(message string) {
 	err := m.conn.Publish(m.subject, []byte(message))
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *subjectNatsStruct) Subscribe() chan string {
@@ -60,7 +60,7 @@ func (m *subjectNatsStruct) Subscribe() chan string {
 			subscribeChan <- string(msg.Data)
 		})
 		if err != nil {
-			Lg.trace("Error while subscribe subject \"" + m.subject + "\":" + err.Error())
+			Lg.Trace("Error while subscribe subject \"" + m.subject + "\":" + err.Error())
 			close(subscribeChan)
 		}
 	}()
@@ -69,5 +69,5 @@ func (m *subjectNatsStruct) Subscribe() chan string {
 
 func (m *subjectNatsStruct) Flush() {
 	err := m.conn.Flush()
-	panicerr(err)
+	Panicerr(err)
 }

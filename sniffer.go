@@ -112,11 +112,11 @@ package golanglibs
 // 		handle, err = pcap.OpenLive(interfaceName, 4096, promisc[0], getTimeDuration(0.3))
 // 	}
 
-// 	panicerr(err)
+// 	Panicerr(err)
 // 	//defer handle.Close()
 
 // 	err = handle.SetBPFFilter(filterString)
-// 	panicerr(err)
+// 	Panicerr(err)
 
 // 	pkgchan := make(chan *networkPacketStruct)
 

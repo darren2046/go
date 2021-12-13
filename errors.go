@@ -72,7 +72,7 @@ func newerr(msg interface{}) *errorStruct {
 	}
 }
 
-func panicerr(err interface{}) {
+func Panicerr(err interface{}) {
 	switch t := err.(type) {
 	case string:
 		// lg.trace("1")

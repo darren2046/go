@@ -30,13 +30,13 @@ type udpClientSideConn struct {
 
 func udpConnect(host string, port int) udpClientSideConn {
 	conn, err := net.Dial("udp", host+":"+Str(port))
-	panicerr(err)
+	Panicerr(err)
 	return udpClientSideConn{conn: conn}
 }
 
 func (m *udpClientSideConn) send(str string) {
 	_, err := fmt.Fprintf(m.conn, str)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *udpClientSideConn) close() {
@@ -49,7 +49,7 @@ func (m *udpClientSideConn) close() {
 func (m *udpClientSideConn) recv(buffersize int) string {
 	p := make([]byte, buffersize)
 	n, err := bufio.NewReader(m.conn).Read(p)
-	panicerr(err)
+	Panicerr(err)
 	return string(p[:n])
 }
 
@@ -66,7 +66,7 @@ func udpListen(host string, port int) udpServerSideConn {
 		IP:   net.ParseIP(host),
 	}
 	ser, err := net.ListenUDP("udp", &addr)
-	panicerr(err)
+	Panicerr(err)
 	return udpServerSideConn{conn: ser}
 }
 
@@ -76,7 +76,7 @@ func (m *udpServerSideConn) recvfrom(buffersize int, timeout ...int) (string, *n
 	}
 	p := make([]byte, buffersize)
 	n, remoteaddr, err := m.conn.ReadFromUDP(p)
-	panicerr(err)
+	Panicerr(err)
 	return string(p[:n]), remoteaddr
 }
 
@@ -85,7 +85,7 @@ func (m *udpServerSideConn) sendto(data string, address *net.UDPAddr, timeout ..
 		m.conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
 	_, err := m.conn.WriteToUDP([]byte(data), address)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *udpServerSideConn) close() {

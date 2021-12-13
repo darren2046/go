@@ -39,7 +39,7 @@ func getAlidns(accessKeyID string, accessKeySecret string) *alidnsStruct {
 
 	config.Endpoint = tea.String("dns.aliyuncs.com")
 	client, err := alidns20150109.NewClient(config)
-	panicerr(err)
+	Panicerr(err)
 
 	return &alidnsStruct{
 		client:          client,
@@ -51,7 +51,7 @@ func getAlidns(accessKeyID string, accessKeySecret string) *alidnsStruct {
 func (m *alidnsStruct) Total() (TotalCount int64) {
 	describeDomainsRequest := &alidns20150109.DescribeDomainsRequest{}
 	result, err := m.client.DescribeDomains(describeDomainsRequest)
-	panicerr(err)
+	Panicerr(err)
 	TotalCount = *result.Body.TotalCount
 	return
 }
@@ -62,7 +62,7 @@ func (m *alidnsStruct) List(PageSize int64, PageNumber int64) (res []alidnsDomai
 		PageNumber: &PageNumber,
 	}
 	result, err := m.client.DescribeDomains(describeDomainsRequest)
-	panicerr(err)
+	Panicerr(err)
 
 	for _, d := range result.Body.Domains.Domain {
 		res = append(res, alidnsDomainInfoStruct{
@@ -85,7 +85,7 @@ func (m *alidnsDomainStruct) List() (res []alidnsRecord) {
 	result, err := m.client.DescribeDomainRecords(&alidns20150109.DescribeDomainRecordsRequest{
 		DomainName: &m.DomainName,
 	})
-	panicerr(err)
+	Panicerr(err)
 	for _, r := range result.Body.DomainRecords.Record {
 		res = append(res, alidnsRecord{
 			ID:   *r.RecordId,
@@ -107,7 +107,7 @@ func (m *alidnsDomainStruct) Add(recordName string, recordType string, recordVal
 		Value:      &recordValue,
 	}
 	res, err := m.client.AddDomainRecord(addDomainRecordRequest)
-	panicerr(err)
+	Panicerr(err)
 	return *res.Body.RecordId
 }
 
@@ -127,7 +127,7 @@ func (m *alidnsDomainStruct) Delete(name string, dtype string, value string) {
 			_, err := m.client.DeleteDomainRecord(&alidns20150109.DeleteDomainRecordRequest{
 				RecordId: &d.ID,
 			})
-			panicerr(err)
+			Panicerr(err)
 		}
 	}
 }

@@ -137,7 +137,7 @@ func mathaverage(array interface{}) (avgresult float64) {
 	arr := reflect.ValueOf(array)
 
 	if arr.Kind() != reflect.Array && arr.Kind() != reflect.Slice {
-		panicerr("Invalid data type of param \"array\": Not an Array")
+		Panicerr("Invalid data type of param \"array\": Not an Array")
 	}
 
 	for i := 0; i < arr.Len(); i++ {
@@ -153,7 +153,7 @@ func mathsum(array interface{}) (sumresult float64) {
 	arr := reflect.ValueOf(array)
 
 	if arr.Kind() != reflect.Array && arr.Kind() != reflect.Slice {
-		panicerr("Invalid data type of param \"array\": Not an Array")
+		Panicerr("Invalid data type of param \"array\": Not an Array")
 	}
 
 	for i := 0; i < arr.Len(); i++ {

@@ -85,7 +85,7 @@ func getMySQL(host string, port int, user string, password string, db string, cf
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -98,7 +98,7 @@ func getMySQL(host string, port int, user string, password string, db string, cf
 	go func(m *databaseStruct) {
 		for {
 			sleep(3)
-			try(func() {
+			Try(func() {
 				m.engin.Ping()
 			})
 			if m.isclose {
@@ -120,7 +120,7 @@ func getSQLite(dbpath string) *databaseStruct {
 	}
 
 	engin, err := gorose.Open(config)
-	panicerr(err)
+	Panicerr(err)
 
 	m.engin = engin
 
@@ -130,7 +130,7 @@ func getSQLite(dbpath string) *databaseStruct {
 func (m *databaseStruct) Query(sql string, args ...interface{}) []gorose.Data {
 	db := m.engin.NewOrm()
 	res, err := db.Query(sql, args...)
-	panicerr(err)
+	Panicerr(err)
 
 	for idx, d := range res {
 		for k, v := range d {
@@ -150,7 +150,7 @@ func (m *databaseStruct) Close() {
 func (m *databaseStruct) Execute(sql string) int64 {
 	db := m.engin.NewOrm()
 	res, err := db.Execute(sql)
-	panicerr(err)
+	Panicerr(err)
 	return res
 }
 
@@ -299,7 +299,7 @@ func (m *databaseOrmStruct) Get() (res []gorose.Data) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -351,7 +351,7 @@ func (m *databaseOrmStruct) First() (res gorose.Data) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -398,7 +398,7 @@ func (m *databaseOrmStruct) Count() (res int64) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -425,7 +425,7 @@ func (m *databaseOrmStruct) exists() (res bool) {
 
 func (m *databaseOrmStruct) chunk(limit int, callback func([]gorose.Data) error) {
 	err := m.orm.Chunk(limit, callback)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *databaseOrmStruct) buildSQL() (string, []interface{}) {
@@ -434,7 +434,7 @@ func (m *databaseOrmStruct) buildSQL() (string, []interface{}) {
 		m.lockby = Os.GoroutineID()
 	}
 	sql, param, err := m.orm.BuildSql()
-	panicerr(err)
+	Panicerr(err)
 
 	m.lock.Release()
 	m.lockby = -1
@@ -481,7 +481,7 @@ func (m *databaseOrmStruct) insertGetID() (num int64) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -518,7 +518,7 @@ func (m *databaseOrmStruct) Insert() (num int64) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -553,7 +553,7 @@ func (m *databaseOrmStruct) Update(data ...interface{}) (num int64) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -589,7 +589,7 @@ func (m *databaseOrmStruct) Delete() (num int64) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -621,7 +621,7 @@ func (m *databaseStruct) tables() (res []string) {
 func (m *databaseStruct) createTable(tableName string, engineName ...string) *databaseOrmStruct {
 	if !Array(m.tables()).Has(tableName) {
 		if len(engineName) != 0 && m.driver != "mysql" {
-			panicerr("SQLite不支持设定存储引擎")
+			Panicerr("SQLite不支持设定存储引擎")
 		}
 		if m.driver == "mysql" {
 			if len(engineName) != 0 {
@@ -654,7 +654,7 @@ func (m *databaseOrmStruct) AddColumn(columnName string, columnType string, defa
 	if !Map(m.Columns()).Has(columnName) {
 		if !Array([]string{"int", "float", "string", "text", "datetime", "blob"}).Has(columnType) {
 			err := errors.New("只支持以下数据类型：\"int\", \"float\", \"string\", \"text\", \"datetime\", \"blob\"(SQLite支持, MySql不支持)")
-			panicerr(err)
+			Panicerr(err)
 		}
 		if m.driver == "mysql" {
 			if columnType == "int" {
@@ -669,7 +669,7 @@ func (m *databaseOrmStruct) AddColumn(columnName string, columnType string, defa
 				columnType = "DATETIME"
 			} else if columnType == "blob" {
 				columnType = "LONGBLOB"
-				panicerr("MySQL暂不支持blob")
+				Panicerr("MySQL暂不支持blob")
 			}
 		} else {
 			if columnType == "int" {

@@ -15,7 +15,7 @@
         * func LineChartWithNumberAndNumber([]float64, []float64, string, string, string, string) 以数据为x和y轴，做折线图
         * func BarChartWithNameAndNumber([]string, []float64, string, string, string) 以名字为x轴，数据为y轴，作柱状图, 注意：数据的数量会决定图片的宽度
         * func PieChartWithNameAndNumber([]string, []float64, string, string) 以x为名字，y的百分比为数据，做饼图
-    * func CloudflareDNS(string, string) \*cloudflare 
+    * func [CloudflareDNS](#toolscloudflaredns)(string, string) \*cloudflare 
         * func (m \*cloudflare) Add(domain string) cloudflare.Zone
         * func (m \*cloudflare) List() (res []cloudflareDomainInfo)
         * func (m \*cloudflare) Domain(domainName string) \*cloudflareDomain
@@ -32,7 +32,7 @@
     * func [Crontab](#toolscrontab)() \*crontab 定时任务
         * func (m \*crontab) Add(schedule string, fn interface{}, args ...interface{})
         * func (m \*crontab) Destory()
-    * func GodaddyDNS(string, string) \*godaddy
+    * func [GodaddyDNS](#toolsgodaddydns)(string, string) \*godaddy
         * func (m \*godaddy) List() (res []godaddyDomainInfo)
         * func (m \*godaddy) Domain(domainName string) \*godaddyDomain
             * func (m \*godaddyDomain) List() (res []godaddyRecord)
@@ -120,12 +120,12 @@
             * func (m \*databaseOrm) IndexExists(columnName ...string) (exists bool)
             * func (m \*databaseOrm) DropIndex(columnName ...string) \*databaseOrm
             * func (m \*databaseOrm) Columns() (res map[string]string)
-    * func RabbitMQ(string, string) \*rabbitConnection
+    * func [RabbitMQ](#toolsrabbitmq)(string, string) \*rabbitConnection
         * func (m \*rabbitConnection) Send(data map[string]string)
         * func (m \*rabbitConnection) Recv() chan map[string]string
     * func RateLimit(int) \*rateLimit
         * func (m \*rateLimit) Take()
-    * func Redis(string, int, string, int, ...redisConfig) \*Redis
+    * func [Redis](#toolsredis)(string, int, string, int, ...redisConfig) \*Redis
         * func (m \*Redis) Ping() string
         * func (m \*Redis) Del(key string)
         * func (m \*Redis) Set(key string, value string, ttl ...interface{})
@@ -133,7 +133,7 @@
         * func (m \*Redis) GetLock(key string, timeoutsec int) \*RedisLock
             * func (m \*RedisLock) acquire()
             * func (m \*RedisLock) Release()
-    * func Selenium(string) \*selenium
+    * func [Selenium](#toolsselenium)(string) \*selenium
         * func (c \*selenium) Close()
         * func (c \*selenium) Cookie() (co string)
         * func (c \*selenium) Url() string
@@ -149,7 +149,7 @@
             * func (c \*seleniumElement) Input(s string) \*seleniumElement
             * func (c \*seleniumElement) Submit() \*seleniumElement
             * func (c \*seleniumElement) PressEnter() \*seleniumElement
-    * func SSH(string, string, string, int) \*ssh
+    * func [SSH](#toolsssh)(string, string, string, int) \*ssh
         * func (m \*ssh) Close()
         * func (m \*ssh) Exec(cmd string) (output string, status int)
         * func (m \*ssh) PushFile(local string, remote string)
@@ -175,12 +175,12 @@
         * func (u \*url) Parse() \*urlComponents
         * func (u \*url) Encode() string
         * func (u \*url) Decode() string
-    * func TTLCache(interface {}) \*ttlCache
+    * func TTLCache(intervalInSecond interface {}) \*ttlCache
         * func (m \*ttlCache) Set(key string, value string)
         * func (m \*ttlCache) Get(key string) string
         * func (m \*ttlCache) Exists(key string) bool
         * func (m \*ttlCache) Count() int
-    * func VNC(string, ...VNCCfg) \*vnc
+    * func [VNC](#toolsvnc)(string, ...VNCCfg) \*vnc
         * func (m \*vnc) Close()
         * func (m \*vnc) Move(x, y int) \*vnc
         * func (m \*vnc) Click() \*vnc
@@ -204,23 +204,18 @@
         * func (c \*websocket) Send(text string)
         * func (c \*websocket) Recv(timeout ...int) string
         * func (c \*websocket) Close()
-    * func Xlsx(string) \*xlsx
+    * func [Xlsx](#toolsxlsx)(string) \*xlsx
         * func (c \*xlsx) Save()
         * func (c \*xlsx) Close()
         * func (c \*xlsx) GetSheet(name string) \*xlsxSheet
             * func (c \*xlsxSheet) Get(coordinate string) string
             * func (c \*xlsxSheet) Set(coordinate string, value string) \*xlsxSheet
-    * func XPath(string) \*xpath
+    * func [XPath](#toolsxpath)(string) \*xpath
         * func (m \*xpath) First(expr string) (res *xpath)
         * func (m \*xpath) Find(expr string) (res []*xpath)
         * func (m \*xpath) Text() string
         * func (m \*xpath) GetAttr(attr string) string
         * func (m \*xpath) Html() string
-    * func JsonXPath(string) \*xpathJson
-        * func (m \*xpathJson) Exists(expr string) bool
-        * func (m \*xpathJson) First(expr string) (res *xpathJson)
-        * func (m \*xpathJson) Find(expr string) (res []*xpathJson)
-        * func (m \*xpathJson) Text() string
 * Random
     * func Int(min, max int64) int64
     * func Choice(array interface{}) interface{}
@@ -229,7 +224,7 @@
     * func FindAll(pattern string, text string, multiline ...bool) [][]string
     * func Replace(pattern string, newstring string, text string) string
 * Socket
-    * KCP: kcp{
+    * [KCP](#socketkcp): kcp{
         * func Listen(string, int, string, string) \*kcpServerSideListener
         * func Connect(string, int, string, string) \*kcpClientSideConn
         * func RawListen(string, int, string, string) \*kcpRawServerSideListener
@@ -238,14 +233,14 @@
         * func ServerWrapper(io.ReadWriteCloser, ...SmuxConfig) \*smuxServerSideListener
         * func ClientWrapper(io.ReadWriteCloser, ...SmuxConfig) \*smuxClientSideSession
     * SSL: ssl{
-        * func Listen(string, int, string, string) \*tcpServerSideListener
-        * func ServerWrapper(net.Conn, string, string) \*tcpServerSideConn
+        * func [Listen](#socketssllisten)(string, int, string, string) \*tcpServerSideListener
+        * func [ServerWrapper](#socketsslserverwrapper)(net.Conn, string, string) \*tcpServerSideConn
         * func Connect(string, int, ...sslCfg) \*sslClientSideConn
         * func ClientWrapper(net.Conn, ...sslCfg) \*sslClientSideConn
     * TCP: tcp{
-        * func Listen(string, int) \*tcpServerSideListener
-        * func Connect(string, int, ...int) \*tcpClientSideConn
-    * UDP: udp{
+        * func [Listen](#sockettcplisten)(string, int) \*tcpServerSideListener
+        * func [Connect](#sockettcpconnect)(string, int, ...int) \*tcpClientSideConn
+    * [UDP](#socketudp): udp{
         * func Listen(string, int) udpServerSideConn
         * func Connect(string, int) udpClientSideConn
 * String
@@ -286,7 +281,7 @@
     * func Sleep(interface {})
     * func Strptime(string, string) int64
     * func Strftime(string, interface {}) string
-* Argparser(description string) \*argparseIni
+* [Argparser](#argparser)(description string) \*argparseIni
     * func (m \*argparseIni) Get(section, key, defaultValue, comment string) (res string)
     * func (m \*argparseIni) GetInt(section, key, defaultValue, comment string) int
     * func (m \*argparseIni) GetInt64(section, key, defaultValue, comment string) int64
@@ -299,8 +294,8 @@
     * func Encode(str string) string
     * func Decode(str string) string
 * Binary
-    * Map2bin func(m map[string]string) string
-    * Bin2map func(s string) (res map[string]string)
+    * func Map2bin(m map[string]string) string
+    * func Bin2map(s string) (res map[string]string)
 * Cmd
     * func GetOutput(command string, timeoutSecond ...interface{}) string
     * func GetStatusOutput(command string, timeoutSecond ...interface{}) (int, string)
@@ -336,12 +331,12 @@
     * func Inotify(path string) chan *fsnotifyFileEvent
     * func IPLocation(ip string, dbpath ...string) \*ipLocationInfo
     * func HightLightHTMLForCode(code string, codeType ...string) (html string)
-    * Markdown2html          func(md string) string
+    * func Markdown2html(md string) string
     * func CPUUsagePerProgress() (res map[int64]progressCPUUsage)
     * func ResizeImg(srcPath string, dstPath string, width int, height ...int)
     * func GetRSS(url string, config ...rssConfig) \*gofeed.Feed
-    * GbkToUtf8              func(s string) string
-    * Utf8ToGbk              func(s string) string
+    * func GbkToUtf8(s string) string
+    * func Utf8ToGbk(s string) string
     * func GetSnowflakeID(nodeNumber ...int) int64
     * func GetRemoteServerSSLCert(host string, port ...int) []*x509.Certificate
     * func Tailf(path string, startFromEndOfFile ...bool) chan *tail.Line
@@ -350,14 +345,15 @@
     * func Wget(url string, cfg ...WgetCfg) (filename string)
     * func Whois(s string, servers ...string) string
     * func IpInNet(ip string, Net string, mask ...string) bool
-    * Int2ip                 func(ipnr int64) string
-    * Ip2int                 func(ipnr string) int64
-    * Zh2PinYin              func(zh string) (ress []string)
+    * func Int2ip(ipnr int64) string
+    * func Ip2int(ipnr string) int64
+    * func Zh2PinYin(zh string) (ress []string)
+    * func Fmtsize(num uint64) string
 * Hash
-    * Md5sum   func(str string) string
-    * Md5File  func(path string) string
-    * Sha1sum  func(str string) string
-    * Sha1File func(path string) string
+    * func Md5sum(str string) string
+    * func Md5File(path string) string
+    * func Sha1sum(str string) string
+    * func Sha1File(path string) string
 * Html
     * func Encode(str string) string
     * func Decode(str string) string
@@ -378,6 +374,11 @@
     * func [Yaml2json](#jsonyaml2json)(y string) string 转换yaml到json
     * func [Json2yaml](#jsonjson2yaml)(j string) string 转换json到yaml, 注意：字段的顺序会改变
     * func Format(js string) string 格式化json字符串, 可以多次format，不报错，结果正常
+    * func [XPath](jsonxpath)(string) \*xpathJson
+        * func (m \*xpathJson) Exists(expr string) bool
+        * func (m \*xpathJson) First(expr string) (res *xpathJson)
+        * func (m \*xpathJson) Find(expr string) (res []*xpathJson)
+        * func (m \*xpathJson) Text() string
 * Math
     * func Abs(number float64) float64
     * func Sum(array interface{}) (sumresult float64)
@@ -418,6 +419,28 @@
     * func ProgressAlive(pid int) bool
     * func GoroutineID() int64
     * func Unlink(filename string)
+
+Others
+
+* func [Open](#open)(filePath string) *fileIOStruct
+* func [Try](#try)(f func(), trycfg ...TryConfig) exception
+* Lg *logStruct 
+    * func (m *logStruct) SetLevel(level string) 
+    * func (m *logStruct) GetLevel() string 
+    * func (m *logStruct) SetLogFile(path string, maxLogFileCount int, logFileSizeInMB ...int) 
+    * func (m *logStruct) Error(args ...interface{}) 
+    * func (m *logStruct) Warn(args ...interface{}) 
+    * func (m *logStruct) Info(args ...interface{}) 
+    * func (m *logStruct) Trace(args ...interface{}) 
+    * func (m *logStruct) Debug(args ...interface{}) 
+* func Chr(ascii int) string 
+* func Ord(char string) int 
+* func Repr(obj interface{}) string 
+* func Print(data ...interface{}) int 
+* func Printf(format string, data ...interface{}) int 
+* func Sprint(data ...interface{}) string 
+* func Range(num ...int) []int 
+* func Typeof(v interface{}) string 
 
 ## Json.Yaml2Json
 
@@ -814,6 +837,596 @@ func main() {
 	Print(k["a"]) // b
 }
 ```
+
+## Tools.RabbitMQ
+
+```go
+func main() {
+	go func() {
+		rb := Tools.RabbitMQ("amqp://guest:guest@rabbitmq-svc:5672/", "default")
+		rb.Send(map[string]string{"data": "Test Message"})
+	}()
+
+	go func() {
+		rb := Tools.RabbitMQ("amqp://guest:guest@rabbitmq-svc:5672/", "default")
+		msg := <-rb.Recv()
+		Lg.debug(msg)
+	}()
+
+	select {}
+}
+```
+
+## Tools.Redis
+
+```go
+func main() {
+	rdb := Tools.Redis("redis-svc", 6379, "", 1)
+	rdb.Set("key", "value")
+	fmt.Println(*rdb.Get("key")) // 如果key不存在返回nil, 存在则返回value的类型为string的指针
+	rdb.Set("ttl", "delete after 1 second", 1)
+	rdb.Set("ttl2", "delete after 0.5 second", 0.5)
+	rdb.Del("key")
+}
+```
+
+## Tools.Selenium
+
+```go
+func main() {
+	// 需要chromedriver在PATH环境变量所在的目录里面, 会先起一个服务, 然后连接, 返回一个客户端
+	sn := Tools.Selenium("https://example.com/auth/login")
+	defer sn.Close() // 关闭服务端和客户端
+
+	// 登录
+	Lg.Trace("选语言")
+	// 直接写select的下拉菜单的option的xpath
+	sn.First(`/html/body/div/div[1]/div[1]/div[2]/form/div[3]/div/select/option[2]`).click()
+	Lg.Trace("输入用户名")
+	sn.First(`//*[@id="login"]`).clear().input("user") // 先清空再输入
+	Lg.Trace("输入密码")
+	sn.First(`//*[@id="password"]`).clear().input("pass")
+	Lg.Trace("点击登录")
+	sn.First(`/html/body/div[1]/div[1]/div[1]/div[2]/form/center/div/input`).click()
+
+	// 查找单个会员信息
+	Lg.Trace("搜索单个会员帐号")
+	sn.First(`//*[@id="gotomemberinfo"]`).input("uid12345").pressEnter() // 输入并回车
+	vipLevel := sn.First(`/html/body/div[2]/div/div[1]/div[1]/div[3]/div/div/div/div[1]/fieldset[2]/div/div[1]/div[1]`).text()
+	Lg.Trace("VIP等级:", is.VipLevel)
+
+	Lg.Trace("直接查询接口")
+	url := sn.url() // 获取当前的url
+	uid := String(url).Split("/")[len(String(url).Split("/"))-1]
+	j := Http.Get("https://example.com/player_management/getDetails/"+uid, httpHeader{
+		"cookie": sn.Cookie(), // cookie的字符串
+	}).content
+	//Lg.Trace(j)
+	jj := Tools.JsonXPath(j)
+	length = jj.First("//Details/total").Text()
+	Lg.Trace("剩余时长:", is.length)
+
+
+	select {}
+}
+```
+
+## Tools.SSH
+
+```go
+func main() {
+	s := Tools.SSH("root", "root", "192.168.152.19", 22)
+	Print(s.Exec("id"))
+	s.PullFile("anaconda-ks.cfg", "tmp.file")
+	s.PushFile("main.go", "main.go")
+}
+```
+
+## Tools.VNC
+
+```go
+func main() {
+	v := Tools.VNC("192.168.3.49:5900", VNCCfg{Password: "r"}) // vncCfg可选
+	v.Move(237, 570).click()
+	v.Input("Hello world!\nHHHHHH") // 不支持中文, 只支持键盘上有的按键. 
+	
+	// Ctrl-C
+	v.VC.KeyEvent(vncNonAsciiKeyMap.Control, true)
+	v.VC.KeyEvent(vncAsciiKeyMap["c"][0], true)
+	v.VC.KeyEvent(vncAsciiKeyMap["c"][0], false)
+	v.VC.KeyEvent(vncNonAsciiKeyMap.Control, false)
+}
+```
+
+## Tools.Xlsx
+
+```go
+func main() {
+	// 不存在则新建, 会读取所有内容到内存
+	xlsx := Tools.Xlsx("Book1.xlsx")
+	// 不存在则新建, 表名字的第一个字母会大写
+	sheet1 := xlsx.GetSheet("sheet4")
+	// 设置B列第14行的值为value, 和C列第3行的值为key
+	sheet1.Set("B14", "value").Set("C3", "key")
+	// 获取值
+	fmt.Println(sheet1.Get("C3"))
+	// 关闭
+	xlsx.Close()
+}
+```
+
+## Tools.XPath
+
+准备个xml实例
+
+```xml
+<bookstore>
+
+<book category="cooking">
+  <title lang="en">Everyday Italian</title>
+  <author>Giada De Laurentiis</author>
+  <year>2005</year>
+  <price>30.00</price>
+</book>
+
+<book category="children">
+  <title lang="zh-cn">Harry Potter</title>
+  <author>J K. Rowling</author>
+  <year>2005</year>
+  <price>29.99</price>
+</book>
+
+<book category="web">
+  <title lang="zh-tw">XQuery Kick Start</title>
+  <author>James McGovern</author>
+  <author>Per Bothner</author>
+  <author>Kurt Cagle</author>
+  <author>James Linn</author>
+  <author>Vaidyanathan Nagarajan</author>
+  <year>2003</year>
+  <price>49.99</price>
+</book>
+
+<book category="web">
+  <title lang="zh-hk">Learning XML</title>
+  <author>Erik T. Ray</author>
+  <year>2003</year>
+  <price>39.95</price>
+</book>
+
+</bookstore> 
+```
+
+如下代码
+
+```go
+package main
+
+func main() {
+	content := Open("i.html").Read()
+	doc := Tools.XPath(content)
+	for _, title := range doc.Find("//title") {
+		Lg.Trace("获取lang属性: " + title.GetAttr("lang") + ". 获取title标签的文字: " + title.Text())
+	}
+
+	book := doc.Find("//bookstore/book[1]")[0]
+	Lg.Trace("只包含子节点的html: ", book.ChildHTML())
+
+	Lg.Trace("包含book标签本身的html: ", book.Html())
+
+	author := doc.Find("//bookstore/book[1]/author[2]")
+	Lg.Trace("在第一个book找不到第二个author:", author)
+}
+```
+
+输出
+
+```s
+02-10 00:54:10   1 [TRAC] (main.go:7) 获取lang属性: en. 获取title标签的文字: Everyday Italian
+02-10 00:54:10   1 [TRAC] (main.go:7) 获取lang属性: zh-cn. 获取title标签的文字: Harry Potter
+02-10 00:54:10   1 [TRAC] (main.go:7) 获取lang属性: zh-tw. 获取title标签的文字: XQuery Kick Start
+02-10 00:54:10   1 [TRAC] (main.go:7) 获取lang属性: zh-hk. 获取title标签的文字: Learning XML
+02-10 00:54:10   1 [TRAC] (main.go:11) 只包含子节点的html:  
+                        <title lang="en">Everyday Italian</title>
+                        <author>Giada De Laurentiis</author>
+                        <year>2005</year>
+                        <price>30.00</price>
+02-10 00:54:10   1 [TRAC] (main.go:13) 包含book标签本身的html:  <book category="cooking">
+                        <title lang="en">Everyday Italian</title>
+                        <author>Giada De Laurentiis</author>
+                        <year>2005</year>
+                        <price>30.00</price>
+                      </book>
+02-10 00:54:10   1 [TRAC] (main.go:16) 在第一个book找不到第二个author: []
+```
+
+## Socket.KCP
+
+注意: 
+
+1. 没有TCP的连接这个概念, 所以需要手动维护连接. 
+  1.1 客户端的Connect实际上不会发送任何数据到服务端, 需要随便发送一个东西, 服务端才会收到连接, 类似于TCP的SYN包
+  1.2 NAT网关上面有个UDP的超时时间, 如果超时了, 那服务端发送的数据就到不了客户端了, 这里实现了心跳，20秒一次，客户端发给服务端。如果服务端3次20秒都没收到心跳，则关闭连接。如果客户端3次20秒没有收到心跳的回复，也关闭连接。
+  1.3 如果发送数据包， 发送之后程序立刻就退出或者关闭连接了，那么这个发送是没有成功的，sleep一下，等它发送完，最好等对端有回应确认
+  1.4 任意一端关闭了连接，另一端是不知道的，另一端发送或者读取会timeout，timeout时间是120秒。（应该120秒内还没timeout，就会被心跳goroutine关掉连接）
+2. 其它的
+  1.1 写入一个关闭的链接就抛异常， 调用send，在另一个goroutine关闭链接也是这样
+
+```go
+package main
+
+var key string = "demo key keykeykeykeykeykeykey"
+var salt string = "demo salt saltsaltsaltsaltsaltsalt"
+
+var lg *logStruct
+
+func main() {
+	args := Argparser("test kcp")
+	side := args.Get("", "side", "s", "\"c\" for client, \"s\" for server")
+	addr := args.Get("", "addr", "127.0.0.1", "address for listen or connect to")
+	port := args.GetInt("", "port", "12345", "port for listen or connect to")
+	args.ParseArgs()
+
+  // 客户端
+	if side == "c" {
+		c := Socket.KCP.Connect(addr, port, key, salt)
+		c.Send("1", "2", "3")
+    Time.Sleep(1) // 等待1秒， 让数据都发出去， 再退出
+  // 服务端
+	} else if side == "s" {
+		k := Socket.KCP.Listen(addr, port, key, salt)
+		c := <-k.Accept()
+    Print(c.Recv(10)) // 收到[]string{"1", "2", "3"}, 如果10秒内没收到, 得到nil
+	}
+}
+```
+
+## Socket.TCP.Connect
+
+```go
+func main() {
+	c := Socket.TCP.Connect("localhost", 8888)
+	defer c.Close()
+	c.Send("GET / HTTP/1.1\r\n\r\n")
+	fmt.Println(c.Recv(1024))
+}
+```
+
+## Socket.TCP.Listen
+
+```go
+func main() {
+	l := Socket.TCP.Listen("0.0.0.0", 8899)
+	defer l.Close()
+
+	for c := range l.Accept() {
+		fmt.Println(c.Recv(1024))
+		c.Send("HTTP/1.1 200 OK\r\n\r\n")
+		c.Close()
+	}
+}
+```
+
+## Socket.SSL.Listen
+
+```go
+func main() {
+	crt := `-----BEGIN CERTIFICATE-----
+-----END CERTIFICATE-----`
+	key := `-----BEGIN PRIVATE KEY-----
+-----END PRIVATE KEY-----`
+	cacrt := `-----BEGIN CERTIFICATE-----
+-----END CERTIFICATE-----`
+	if os.Args[1] == "s" {
+		Lg.Trace("SSL Server started.")
+		sl := Socket.SSL.Listen("0.0.0.0", 7789, key, crt)
+		for sc := range sl.Accept() {
+			go func(sc *TcpServerSideConn) {
+				defer sc.Close()
+				try(func() {
+					for {
+						sc.Send(sc.Recv(1024))
+					}
+				}).Except(func(e error) {
+					Lg.Trace("Error:", e)
+				})
+			}(sc)
+		}
+	} else if os.Args[1] == "c" {
+		Lg.Trace("SSL Client started")
+		sc := Socket.SSL.Connect("127.0.0.1", 7789, SSLCfg{Domain: "k.example.it", AdditionRootCA: []string{cacrt}})
+		for {
+			sc.Send(Time.Strftime("%Y-%m-%d %H:%M:%S", Time.Now()))
+			fmt.Println(sc.Recv(1024))
+			Time.Sleep(1)
+		}
+	}
+}
+```
+
+## Socket.SSL.ServerWrapper
+
+```go
+func main() {
+	crt := `-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----`
+	key := `-----BEGIN PRIVATE KEY-----
+...
+-----END PRIVATE KEY-----`
+	cacrt := `-----BEGIN CERTIFICATE-----
+...
+-----END CERTIFICATE-----`
+
+	if os.Args[1] == "s" {
+		tl := Socket.TCP.Listen("0.0.0.0", 65432)
+		tc := <-tl.Accept()
+
+		buf := tc.Recv(10)
+		Lg.Trace("Receive from TCP:", buf)
+
+		sc := Socket.SSL.ServerWrapper(tc.Conn, key, crt)
+
+		buf = sc.Recv(10)
+		Lg.Trace("Receive from SSL:", buf)
+	} else {
+		tc := Socket.TCP.Connect("127.0.0.1", 65432)
+		tc.Send("Hello TCP!")
+
+		sc := Socket.SSL.ClientWrapper(
+			tc.Conn,
+			SSLCfg{
+				WithoutSystemRootCA: true,
+				AdditionRootCA:      []string{cacrt},
+				Domain:              "k.example.it",
+			})
+
+		sc.Send("Hello SSL!")
+
+		Time.Sleep(1)
+	}
+}
+```
+
+## Socket.UDP
+
+Connect
+
+```go
+func main() {
+	c := Socket.UDP.Connect("localhost", 8899)
+	defer c.Close()
+	c.Send("Hello World!")
+	fmt.Println(c.Recv(1024))
+}
+```
+
+Listen
+
+```go
+func main() {
+	c := Socket.UDP.Listen("0.0.0.0", 8899)
+	defer c.Close()
+	data, addr := c.Recvfrom(1024)
+	fmt.Println(data)
+	c.Sendto("You are welcome!", addr)
+}
+```
+
+## Argparser
+
+* -b在后台执行
+* -c指定配置文件, 如果没有指定, 会寻找二进制目录下的配置文件, 以及当前工作目录下的配置文件, 查找规则例如二进制文件名字为app, 则查找app.ini文件
+* -h查看帮助, 可以直接在命令行指定
+* 可以通过环境变量指定, 指定的名字参考命令行方式
+* 参数读取优先级, 首先命令行指定, 其次环境变量, 然后读配置文件, 如果都没有, 就使用内置的默认值
+
+```go
+type argStruct struct {
+	InCluster      bool
+	ConfigFile     string
+	Namespace      string
+	TelegramAPIKey string
+	TelegramChatID int64
+}
+
+func main() {
+	args := new(argStruct)
+	a := Argparser("kubernetes的pod程序崩溃通知程序")
+	args.InCluster = a.GetBool("", "InCluster", "false", "是否在集群内部, 如果不在集群内部需要指定config文件")
+	args.ConfigFile = a.Get("", "ConfigFile", "", "如果不在集群内部, 需要指定配置文件")
+	args.Namespace = a.Get("", "Namespace", "", "需要监听事件的namespace, 逗号分割, 默认为空, 即监听所有")
+	args.TelegramAPIKey = a.Get("", "TelegramAPIKey", "", "telegram bot的api key")
+	args.TelegramChatID = a.GetInt64("", "TelegramChatID", "0", "telegram bot需要发送通知到的group或者channel的id")
+	a.ParseArgs()
+}
+```
+
+## Json.XPath
+
+```go
+package main
+
+import (
+	"fmt"
+	"strings"
+)
+
+func main() {
+	s := `{
+		"name": "John",
+		"age"      : 26,
+		"address"  : {
+		  "streetAddress": "naist street",
+		  "city"         : "Nara",
+		  "postalCode"   : "630-0192"
+		},
+		"phoneNumbers": [
+		  {
+			"type"  : "iPhone",
+			"number": "0123-4567-8888"
+		  },
+		  {
+			"type"  : "home",
+			"number": "0123-4567-8910"
+		  }
+    	],
+		"brothers": [
+			"john",
+			"jack",
+		]
+    	"nullvalue": null
+	}`
+	x := Json.XPath(s)
+	name := x.First("//name").Text()
+	fmt.Printf("Name: %s\n", name)
+
+	var a []string
+	for _, n := range x.Find("//phoneNumbers/*/number") {
+		a = append(a, n.Text())
+	}
+	fmt.Printf("All phone number: %s\n", strings.Join(a, ","))
+
+	if n := x.First("//address/streetAddress"); n != nil {
+		fmt.Printf("address: %s\n", n.Text())
+	}
+
+	for _, b := range j.Find("//brothers/*") {
+		Print(b.Text())
+	}
+
+  fmt.Println("First phone number:", x.First("//phoneNumbers[1]/*/number").Text()) // 这里有个*, 因为数组的话会额外加一个元素element在xml里面, 去包含
+  
+  Lg.Debug(x.First("//nullvalue").Text()) // ""
+}
+```
+
+输出
+
+```
+Name: John
+All phone number: 0123-4567-8888,0123-4567-8910
+address: naist street
+First phone number: 0123-4567-8888
+```
+
+## Tools.GodaddyDNS
+
+```go
+func main() {
+	gd := Tools.GodaddyDNS("333", "222")
+	Print(gd.List())                                  // 获取域名列表
+	dm := gd.Domain("yletx.com")                      // 处理单个主域名
+	dm.Add("googledns", "A", "8.8.8.8")               // 增
+	dm.Add("googledns_cname", "CNAME", "twitter.com") // 增
+	dm.Add("googledns_txt", "TXT", "by twitter")      // 增
+	dm.Delete("googledns")                            // 删，需要传入名称、类型、值，如果传入空字符串则忽略这一项目的判断
+	dm.Modify("googledns", "A", "1.1.1.1")            // 改
+	Print(dm.List())                                  // 查
+}
+```
+
+## Tools.CloudflareDNS
+
+整体来说, 操作接口跟godaddy的没什么区别, 是多了一个添加域名, 以及是否开启cdn. 返回的域名的列表, 信息没有godaddy的多. 
+
+```go
+package main
+
+func main() {
+	cf := Tools.CloudflareDNS("ip5lwomzy87ohjuoacfzvqup591ipsqi", "example@gmail.com")
+
+	// 添加cloudflare还没有接管的域名
+	cf.Add("example.com")
+
+	Lg.Trace("获取域名列表")
+	for _, i := range cf.List() {
+		if i.Status == "active" {
+			Print(i)
+			break
+		}
+	}
+
+	dm := cf.Domain("example.com")
+
+	Lg.Trace("获取域名的记录列表")
+	for _, i := range dm.List() {
+		Print(i)
+	}
+
+	Lg.Trace("添加dns记录")
+	dm.Add("@", "A", "8.8.8.8")
+	dm.Add("arecord", "a", "7.7.7.7")
+	dm.Add("cnamerecord", "cname", "google.com")
+	dm.Add("txtrecord", "txt", "this is a text")
+
+	Lg.Trace("删除所有a记录")
+	dm.Delete("", "a", "")
+
+	Lg.Trace("修改指定a记录")
+	dm.Add("@", "A", "8.8.8.8")
+	Time.Sleep(5) // 连续添加, 后面这个会加不上, 不知道休眠多少秒, 就随便5秒吧
+	dm.Add("@", "A", "6.6.6.6")
+	dm.Add("arecord", "a", "7.7.7.7")
+	// 修改指定a记录
+	dm.Modify("@", "a", "8.8.8.8", "a", "5.5.5.5")
+
+	Lg.Trace("设置开启cdn")
+	dm.SetProxied("@", true)
+
+	Lg.Trace("删除所有记录")
+	dm.Delete("", "", "")
+}
+```
+
+## Open
+
+```go
+func main() {
+	for line := range Open("/etc/passwd").Readlines() { // 返回一个chan, for循环处理
+		fmt.Println(line) // 要循环完，才会close，所以不要在这里面break
+	}
+
+	fd := Open("/etc/passwd") // 默认打开模式是r
+	defer fd.Close()
+	fmt.Println(fd.Readline()) // 打印一行， 需要手动调用close
+	fmt.Println(fd.Readline()) // 再打印一行， 需要手动调用close
+	fmt.Println(fd.Read(10))   // 打印10个字符， 需要手动调用close
+	fmt.Println(fd.Read())     // 打印所有, 会自动close
+
+	fd = Open("text.txt", "w") // 以写方式打开文件
+	defer fd.Close()
+	fd.Write("this is a test text")
+	fd.Close()
+
+	fd = Open("text.txt", "rb") // 二进制打开，read函数返回字节数组
+	defer fd.Close()
+	fmt.Println(fd.Read(5))
+
+	fd = Open("text.txt", "a") // 以追加写方式打开文件
+	defer fd.Close()
+	fd.Write(" append text 中文")
+	fd.close()
+}
+```
+
+# Try
+
+```go
+func main() {
+	try(func() {
+		toBool("abc")
+	}).except(func(err error) {
+		fmt.Println(err)
+	})
+}
+```
+
+
+
+
+
+
 
 
 

@@ -17,7 +17,7 @@ func inotify(path string) chan *fsnotifyFileEventStruct {
 	watchList := make(map[string]struct{})
 
 	watcher, err := fsnotify.NewWatcher()
-	panicerr(err)
+	Panicerr(err)
 
 	go func() {
 		// 1秒内有同样的事件在同样的路径, 则忽略
@@ -34,7 +34,7 @@ func inotify(path string) chan *fsnotifyFileEventStruct {
 						action = "create"
 						if pathIsDir(ev.Name) {
 							err := watcher.Add(ev.Name)
-							panicerr(err)
+							Panicerr(err)
 							watchList[ev.Name] = struct{}{}
 						}
 					} else if ev.Op == fsnotify.Chmod {
@@ -49,7 +49,7 @@ func inotify(path string) chan *fsnotifyFileEventStruct {
 							for range Range(100) {
 								if pathExists(ev.Name) {
 									err = watcher.Add(ev.Name)
-									panicerr(err)
+									Panicerr(err)
 									watchList[ev.Name] = struct{}{}
 									break
 								}
@@ -81,20 +81,20 @@ func inotify(path string) chan *fsnotifyFileEventStruct {
 					}
 				}
 			case err := <-watcher.Errors:
-				panicerr(err)
+				Panicerr(err)
 			}
 		}
 	}()
 
 	err = watcher.Add(path)
-	panicerr(err)
+	Panicerr(err)
 	watchList[path] = struct{}{}
 
 	if pathIsDir(path) {
 		for p := range walk(path) {
 			if pathIsDir(p) {
 				err := watcher.Add(p)
-				panicerr(err)
+				Panicerr(err)
 				watchList[p] = struct{}{}
 			}
 		}

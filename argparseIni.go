@@ -43,7 +43,7 @@ func Argparser(description string) *argparseIniStruct {
 	if len(cfgPath) != 0 {
 		if pathExists(cfgPath) {
 			cfg, err = ini.Load(cfgPath)
-			panicerr(err)
+			Panicerr(err)
 		} else {
 			cfg = ini.Empty()
 		}

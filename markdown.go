@@ -96,10 +96,10 @@ func getHightLightHTML(code string, codeType ...string) string {
 		s = styles.Fallback
 	}
 	it, err := l.Tokenise(nil, code)
-	panicerr(err)
+	Panicerr(err)
 
 	var buf bytes.Buffer
 	err = f.Format(&buf, s, it)
-	panicerr(err)
+	Panicerr(err)
 	return buf.String()
 }

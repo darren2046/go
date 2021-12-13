@@ -1,13 +1,10 @@
 package golanglibs
 
 import (
-	"crypto/tls"
-	"crypto/x509"
 	"reflect"
 	"unicode/utf8"
 
 	reprlib "github.com/alecthomas/repr"
-	"github.com/dustin/go-humanize"
 	"github.com/k0kubun/pp"
 )
 
@@ -45,7 +42,7 @@ func Print(data ...interface{}) int {
 	pp.SetColorScheme(scheme)
 
 	num, err := pp.Println(data...)
-	panicerr(err)
+	Panicerr(err)
 	return num
 }
 
@@ -68,7 +65,7 @@ func Printf(format string, data ...interface{}) int {
 	pp.SetColorScheme(scheme)
 
 	num, err := pp.Printf(format, data...)
-	panicerr(err)
+	Panicerr(err)
 	return num
 }
 
@@ -96,7 +93,7 @@ func Sprint(data ...interface{}) string {
 
 func Range(num ...int) []int {
 	if len(num) != 1 && len(num) != 2 {
-		panicerr("需要1～2个参数")
+		Panicerr("需要1～2个参数")
 	}
 	var a []int
 	var start int
@@ -116,24 +113,4 @@ func Range(num ...int) []int {
 
 func Typeof(v interface{}) string {
 	return reflect.TypeOf(v).String()
-}
-
-func Fmtsize(num uint64) string {
-	return humanize.Bytes(num)
-}
-
-func getRemoteServerCert(host string, port ...int) []*x509.Certificate {
-	var p string
-	if len(port) == 0 {
-		p = "443"
-	} else {
-		p = Str(port[0])
-	}
-
-	conn, err := tls.Dial("tcp", host+":"+Str(p), nil)
-	if err != nil {
-		panic("Server doesn't support SSL certificate err: " + err.Error())
-	}
-
-	return conn.ConnectionState().PeerCertificates
 }

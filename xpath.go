@@ -13,7 +13,7 @@ type xpathStruct struct {
 
 func getXPath(htmlString string) *xpathStruct {
 	doc, err := htmlquery.Parse(strings.NewReader(htmlString))
-	panicerr(err)
+	Panicerr(err)
 	return &xpathStruct{
 		doc: doc,
 	}

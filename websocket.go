@@ -38,7 +38,7 @@ func (c *websocketStruct) Recv(timeout ...int) string {
 		case resp := <-c.recvMsgChan:
 			return resp
 		case <-time.After(getTimeDuration(timeout[0])):
-			panicerr("Timeout while recving data")
+			Panicerr("Timeout while recving data")
 		}
 	} else {
 		return <-c.recvMsgChan

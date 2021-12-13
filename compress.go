@@ -32,13 +32,13 @@ func lzmaCompressString(text string) string {
 	defer buf.Reset()
 
 	w, err := xz.NewWriter(&buf)
-	panicerr(err)
+	Panicerr(err)
 
 	_, err = io.WriteString(w, text)
-	panicerr(err)
+	Panicerr(err)
 
 	err = w.Close()
-	panicerr(err)
+	Panicerr(err)
 
 	return buf.String()
 }
@@ -50,11 +50,11 @@ func lzmaDecompressString(text string) string {
 	defer buf.Reset()
 
 	r, err := xz.NewReader(&buf)
-	panicerr(err)
+	Panicerr(err)
 
 	dbuf := new(strings.Builder)
 	_, err = io.Copy(dbuf, r)
-	panicerr(err)
+	Panicerr(err)
 	return dbuf.String()
 }
 
@@ -63,10 +63,10 @@ func zlibCompressString(text string) string {
 
 	w := zlib.NewWriter(&buf)
 	_, err := w.Write([]byte(text))
-	panicerr(err)
+	Panicerr(err)
 
 	err = w.Close()
-	panicerr(err)
+	Panicerr(err)
 
 	return buf.String()
 }
@@ -78,11 +78,11 @@ func zlibDecompressString(text string) string {
 	defer buf.Reset()
 
 	r, err := zlib.NewReader(&buf)
-	panicerr(err)
+	Panicerr(err)
 
 	dbuf := new(strings.Builder)
 	_, err = io.Copy(dbuf, r)
-	panicerr(err)
+	Panicerr(err)
 
 	return dbuf.String()
 }

@@ -25,7 +25,7 @@ func (m *tableStruct) SetMaxCellWidth(width ...int) {
 
 func (m *tableStruct) AddRow(row ...interface{}) {
 	if len(row) != len(m.header) {
-		panicerr("添加的数据个数跟表头的个数对不上")
+		Panicerr("添加的数据个数跟表头的个数对不上")
 	}
 	m.row = append(m.row, row)
 }

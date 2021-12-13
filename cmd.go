@@ -45,7 +45,7 @@ func (m *execCmdStruct) Write(p []byte) (n int, err error) {
 	for _, pp := range p {
 		ps := string(pp)
 		if ps == "\n" {
-			try(func() {
+			Try(func() {
 				m.out <- m.buf
 			})
 			m.buf = ""
@@ -67,12 +67,12 @@ func tailCmdOutput(command string) chan string {
 		err := cmd.Start()
 		if err != nil {
 			close(w.out)
-			panicerr(err)
+			Panicerr(err)
 		}
 		err = cmd.Wait()
 		close(w.out)
 		if err != nil {
-			panicerr(err)
+			Panicerr(err)
 		}
 	}()
 	return w.out
@@ -110,7 +110,7 @@ func getStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int
 	}
 
 	if !Cmd.Exists(parts[0]) {
-		panicerr("Command not exists")
+		Panicerr("Command not exists")
 	}
 
 	var shell string
@@ -123,7 +123,7 @@ func getStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int
 
 	if shell == "" {
 		err := errors.New("Shell not found")
-		panicerr(err)
+		Panicerr(err)
 	}
 
 	var statuscode int
@@ -194,7 +194,7 @@ func getStatusOutput(command string, timeoutSecond ...interface{}) (int, string)
 	}
 
 	if !Cmd.Exists(parts[0]) {
-		panicerr("Command not exists")
+		Panicerr("Command not exists")
 	}
 
 	var statuscode int

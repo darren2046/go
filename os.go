@@ -76,7 +76,7 @@ func init() {
 
 func unlink(filename string) {
 	err := os.RemoveAll(filename)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func goroutineID() int64 {
@@ -97,7 +97,7 @@ func goroutineID() int64 {
 
 func progressAlive(pid int) bool {
 	if pid <= 0 {
-		panicerr(fmt.Errorf("invalid pid %v", pid))
+		Panicerr(fmt.Errorf("invalid pid %v", pid))
 	}
 	proc, err := os.FindProcess(pid)
 	if err != nil {
@@ -127,7 +127,7 @@ func progressAlive(pid int) bool {
 // 	var at time.Time
 // 	if len(atime) == 0 {
 // 		fi, err := os.Stat(fpath)
-// 		panicerr(err)
+// 		Panicerr(err)
 // 		//mtime := fi.ModTime()
 // 		stat := fi.Sys().(*syscall.Stat_t)
 // 		at = time.Unix(int64(stat.Atim.Sec), int64(stat.Atim.Nsec))
@@ -137,18 +137,18 @@ func progressAlive(pid int) bool {
 // 	}
 
 // 	err := os.Chtimes(fpath, at, time.Unix(strptime("%Y-%m-%d %H:%M:%S", mtime), 0))
-// 	panicerr(err)
+// 	Panicerr(err)
 // }
 
 func getTempDirPath() string {
 	dir, err := ioutil.TempDir("", "systemd-private-")
-	panicerr(err)
+	Panicerr(err)
 	return dir
 }
 
 func getTempFilePath() string {
 	file, err := ioutil.TempFile("", "systemd-private-")
-	panicerr(err)
+	Panicerr(err)
 	defer os.Remove(file.Name())
 
 	return file.Name()
@@ -165,7 +165,7 @@ func getSelfDir() string {
 
 func listdir(path string) (res []string) {
 	files, err := ioutil.ReadDir(path)
-	panicerr(err)
+	Panicerr(err)
 
 	for _, f := range files {
 		res = append(res, f.Name())
@@ -197,7 +197,7 @@ func getenv(varname string) string {
 	e, exist := os.LookupEnv(varname)
 	if !exist {
 		err := errors.New("Env not exists")
-		panicerr(err)
+		Panicerr(err)
 	}
 	return e
 }
@@ -209,7 +209,7 @@ func envexists(varname string) bool {
 
 func gethostname() string {
 	name, err := os.Hostname()
-	panicerr(err)
+	Panicerr(err)
 	return name
 }
 
@@ -238,7 +238,7 @@ func systemWithShell(command string, timeoutSecond ...interface{}) int {
 	}
 
 	if !Cmd.Exists(parts[0]) {
-		panicerr("Command not exists")
+		Panicerr("Command not exists")
 	}
 
 	var shell string
@@ -251,7 +251,7 @@ func systemWithShell(command string, timeoutSecond ...interface{}) int {
 
 	if shell == "" {
 		err := errors.New("Shell not found")
-		panicerr(err)
+		Panicerr(err)
 	}
 
 	var statuscode int
@@ -317,7 +317,7 @@ func system(command string, timeoutSecond ...interface{}) int {
 	}
 
 	if !Cmd.Exists(parts[0]) {
-		panicerr("Command not exists")
+		Panicerr("Command not exists")
 	}
 
 	var statuscode int
@@ -366,39 +366,39 @@ func system(command string, timeoutSecond ...interface{}) int {
 
 func copyFile(filePath, dest string) {
 	fd1, err := os.Open(filePath)
-	panicerr(err)
+	Panicerr(err)
 	defer fd1.Close()
 	fd2, err := os.OpenFile(dest, os.O_WRONLY|os.O_CREATE, 0644)
-	panicerr(err)
+	Panicerr(err)
 	defer fd2.Close()
 	_, err = io.Copy(fd2, fd1)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func rename(filePath, newPosition string) {
 	err := os.Rename(filePath, newPosition)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func move(filePath, newPosition string) {
 	err := os.Rename(filePath, newPosition)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func mkdir(filename string) {
 	err := os.MkdirAll(filename, 0755)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func getcwd() string {
 	dir, err := os.Getwd()
-	panicerr(err)
+	Panicerr(err)
 	return dir
 }
 
 func touch(filePath string) {
 	fd, err := os.OpenFile(filePath, os.O_RDONLY|os.O_CREATE, 0666)
-	panicerr(err)
+	Panicerr(err)
 	fd.Close()
 }
 

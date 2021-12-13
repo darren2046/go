@@ -13,10 +13,10 @@ type kcpRawServerSideListener struct {
 
 func kcpRawListen(host string, port int, key string, salt string) *kcpRawServerSideListener {
 	block, err := kcp.NewAESBlockCrypt(pbkdf2.Key([]byte(key), []byte(salt), 4096, 32, sha256.New))
-	panicerr(err)
+	Panicerr(err)
 
 	l, err := kcp.ListenWithOptions(host+":"+Str(port), block, 10, 3)
-	panicerr(err)
+	Panicerr(err)
 
 	l.SetDSCP(46)
 	l.SetReadBuffer(4194304)
@@ -36,7 +36,7 @@ func (m *kcpRawServerSideListener) accept() chan *kcp.UDPSession {
 					close(ch)
 					break
 				}
-				panicerr(err)
+				Panicerr(err)
 			}
 
 			c.SetNoDelay(0, 20, 2, 1)
@@ -53,9 +53,9 @@ func (m *kcpRawServerSideListener) accept() chan *kcp.UDPSession {
 
 func kcpRawConnect(host string, port int, key string, salt string) *kcp.UDPSession {
 	block, err := kcp.NewAESBlockCrypt(pbkdf2.Key([]byte(key), []byte(salt), 4096, 32, sha256.New))
-	panicerr(err)
+	Panicerr(err)
 	conn, err := kcp.DialWithOptions(host+":"+Str(port), block, 10, 3)
-	panicerr(err)
+	Panicerr(err)
 
 	conn.SetMtu(1400)
 	conn.SetWriteDelay(false)

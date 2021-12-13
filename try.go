@@ -19,7 +19,7 @@ func throw() {
 	panic("_____rethrow")
 }
 
-func try(f func(), trycfg ...TryConfig) (e exception) {
+func Try(f func(), trycfg ...TryConfig) (e exception) {
 	if len(trycfg) == 0 {
 		e = exception{nil}
 		defer func() {
@@ -57,7 +57,7 @@ func try(f func(), trycfg ...TryConfig) (e exception) {
 	return
 }
 
-func (e exception) except(f func(err error)) error {
+func (e exception) Except(f func(err error)) error {
 	if e.Error != nil {
 		defer func() {
 			if err := recover(); err != nil {

@@ -15,10 +15,10 @@ func getAES(key string) *aesStruct {
 
 func (a aesStruct) Encrypt(plaintext string) string {
 	block, err := aes.NewCipher(a.key)
-	panicerr(err)
+	Panicerr(err)
 	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
 	iv := ciphertext[:aes.BlockSize]
-	panicerr(err)
+	Panicerr(err)
 	cipher.NewCFBEncrypter(block, iv).XORKeyStream(ciphertext[aes.BlockSize:],
 		[]byte(plaintext))
 	return string(ciphertext)
@@ -29,7 +29,7 @@ func (a aesStruct) Decrypt(d string) string {
 	ciphertext := []byte(d)
 	//ciphertext, err := hex.DecodeString(d)
 	block, err := aes.NewCipher(a.key)
-	panicerr(err)
+	Panicerr(err)
 	if len(ciphertext) < aes.BlockSize {
 		panic(newerr("ciphertext too short"))
 	}

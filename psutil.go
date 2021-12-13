@@ -29,7 +29,7 @@ func getSystemProgressCPUUsage() (res map[int64]progressCPUUsageStruct) {
 		if !String(pid).Isdigit() {
 			continue
 		}
-		try(func() {
+		Try(func() {
 			a := String(Open("/proc/" + pid + "/stat").Read()).Split()
 			totalProcessSlice1 := Float64(Int(a[13]) + Int(a[14]) + Int(a[15]) + Int(a[16]))
 			pg[pid] = totalProcessSlice1
@@ -53,7 +53,7 @@ func getSystemProgressCPUUsage() (res map[int64]progressCPUUsageStruct) {
 		if !String(pid).Isdigit() {
 			continue
 		}
-		try(func() {
+		Try(func() {
 			a := String(Open("/proc/" + pid + "/stat").Read()).Split()
 			totalProcessSlice2 := Float64(Int(a[13]) + Int(a[14]) + Int(a[15]) + Int(a[16]))
 			_, found := pg[pid]

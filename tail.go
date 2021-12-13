@@ -6,7 +6,7 @@ import (
 
 func tailf(path string, startFromEndOfFile ...bool) chan *tail.Line {
 	if !pathExists(path) {
-		panicerr("Cannot open file \"" + path + "\": no such file or directory")
+		Panicerr("Cannot open file \"" + path + "\": no such file or directory")
 	}
 	var t *tail.Tail
 	var err error
@@ -21,7 +21,7 @@ func tailf(path string, startFromEndOfFile ...bool) chan *tail.Line {
 		}
 	}
 
-	panicerr(err)
+	Panicerr(err)
 
 	return t.Lines
 }

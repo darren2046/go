@@ -6,7 +6,7 @@ func TestNats() {
 
 	go func() {
 		for msg := range subj.Subscribe() {
-			Lg.trace(msg)
+			Lg.Trace(msg)
 		}
 	}()
 

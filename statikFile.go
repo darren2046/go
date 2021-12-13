@@ -59,7 +59,7 @@ func (m *statikFileStruct) Readline() string {
 			if len(line) != 0 {
 				return line
 			}
-			panicerr(err)
+			Panicerr(err)
 		}
 		bs := string(b)
 		if bs == "\n" {
@@ -78,12 +78,12 @@ func (m *statikFileStruct) Read(num ...int) string {
 	var err error
 	if len(num) == 0 {
 		bytes, err = ioutil.ReadAll(m.fd)
-		panicerr(err)
+		Panicerr(err)
 		m.Close()
 	} else {
 		buffer := make([]byte, num[0])
 		_, err := io.ReadAtLeast(m.fd, buffer, num[0])
-		panicerr(err)
+		Panicerr(err)
 		bytes = buffer
 	}
 
@@ -92,19 +92,19 @@ func (m *statikFileStruct) Read(num ...int) string {
 
 func (m *statikFileStruct) Seek(num int64) {
 	_, err := m.fd.Seek(num, 0)
-	panicerr(err)
+	Panicerr(err)
 }
 
 func statikOpen(path string) *statikFileStruct {
 	statikFS, err := fs.New()
-	panicerr(err)
+	Panicerr(err)
 
 	if !String(path).StartsWith("/") {
 		path = "/" + path
 	}
 
 	fd, err := statikFS.Open(path)
-	panicerr(err)
+	Panicerr(err)
 
 	return &statikFileStruct{
 		path: path,

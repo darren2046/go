@@ -40,7 +40,7 @@ type cloudflareDomainStruct struct {
 
 func getCloudflare(key string, email string) *cloudflareStruct {
 	api, err := cloudflare.New(key, email)
-	panicerr(err)
+	Panicerr(err)
 	return &cloudflareStruct{
 		api:   api,
 		key:   key,
@@ -50,13 +50,13 @@ func getCloudflare(key string, email string) *cloudflareStruct {
 
 func (m *cloudflareStruct) Add(domain string) cloudflare.Zone {
 	zone, err := m.api.CreateZone(context.Background(), domain, false, cloudflare.Account{}, "full")
-	panicerr(err)
+	Panicerr(err)
 	return zone
 }
 
 func (m *cloudflareStruct) List() (res []cloudflareDomainInfoStruct) {
 	zones, err := m.api.ListZones(context.Background())
-	panicerr(err)
+	Panicerr(err)
 	for _, zone := range zones {
 		res = append(res, cloudflareDomainInfoStruct{
 			CreatedAt:   zone.CreatedOn,
@@ -71,7 +71,7 @@ func (m *cloudflareStruct) List() (res []cloudflareDomainInfoStruct) {
 
 func (m *cloudflareStruct) Domain(domainName string) *cloudflareDomainStruct {
 	id, err := m.api.ZoneIDByName(domainName)
-	panicerr(err)
+	Panicerr(err)
 	return &cloudflareDomainStruct{
 		api:        m.api,
 		DomainID:   id,
@@ -81,7 +81,7 @@ func (m *cloudflareStruct) Domain(domainName string) *cloudflareDomainStruct {
 
 func (m *cloudflareDomainStruct) List() (res []cloudflareRecord) {
 	records, err := m.api.DNSRecords(context.Background(), m.DomainID, cloudflare.DNSRecord{})
-	panicerr(err)
+	Panicerr(err)
 
 	var name string
 	for _, record := range records {
@@ -120,7 +120,7 @@ func (m *cloudflareDomainStruct) Delete(name string) {
 		// lg.debug(v)
 		if name == v.Name {
 			err := m.api.DeleteDNSRecord(context.Background(), m.DomainID, v.ID)
-			panicerr(err)
+			Panicerr(err)
 		}
 	}
 }
@@ -146,7 +146,7 @@ func (m *cloudflareDomainStruct) Add(recordName string, recordType string, recor
 		Priority: &p,
 		Proxied:  &prox,
 	})
-	panicerr(err)
+	Panicerr(err)
 	return resp
 }
 

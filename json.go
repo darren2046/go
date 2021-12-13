@@ -15,6 +15,7 @@ type jsonStruct struct {
 	Yaml2json func(y string) string
 	Json2yaml func(j string) string
 	Format    func(js string) string
+	XPath     func(jsonstr string) *xpathJsonStruct
 }
 
 var Json jsonStruct
@@ -27,13 +28,14 @@ func init() {
 		Yaml2json: yaml2json,
 		Json2yaml: json2yaml,
 		Format:    formatJson,
+		XPath:     getXPathJson,
 	}
 }
 
 func formatJson(js string) string {
 	var prettyJSON bytes.Buffer
 	if err := json.Indent(&prettyJSON, []byte(js), "", "    "); err != nil {
-		panicerr(err)
+		Panicerr(err)
 	}
 	return prettyJSON.String()
 }
@@ -41,17 +43,17 @@ func formatJson(js string) string {
 func yaml2json(y string) string {
 	goyaml.FutureLineWrap()
 	outBytes, err := yaml.YAMLToJSON([]byte(y))
-	panicerr(err)
+	Panicerr(err)
 	return Str(outBytes)
 }
 
 func json2yaml(j string) string {
 	if !Json.Valid(j) {
-		panicerr("Not a json string")
+		Panicerr("Not a json string")
 	}
 	goyaml.FutureLineWrap()
 	outBytes, err := yaml.JSONToYAML([]byte(j))
-	panicerr(err)
+	Panicerr(err)
 	return Str(outBytes)
 }
 
@@ -68,13 +70,13 @@ func jsonDumps(v interface{}, pretty ...bool) string {
 	encoder.SetEscapeHTML(false)
 	err := encoder.Encode(v)
 
-	panicerr(err)
+	Panicerr(err)
 	return String(buffer.String()).Strip().Get()
 }
 
 func jsonLoads(str string) map[string]interface{} {
 	var dat map[string]interface{}
 	err := json.Unmarshal([]byte(str), &dat)
-	panicerr(err)
+	Panicerr(err)
 	return dat
 }

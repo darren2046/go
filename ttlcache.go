@@ -114,7 +114,7 @@ func (m *ttlCacheStruct) Set(key string, value string) {
 func (m *ttlCacheStruct) Get(key string) string {
 	value, exists := m.cache.get(key)
 	if exists != true {
-		panicerr("Key " + key + " not found in cache")
+		Panicerr("Key " + key + " not found in cache")
 	}
 	return value
 }

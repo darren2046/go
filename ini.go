@@ -17,7 +17,7 @@ func getIni(fpath ...string) *iniStruct {
 		cfgPath = fpath[0]
 		if pathExists(cfgPath) {
 			cfg, err = ini.Load(fpath[0])
-			panicerr(err)
+			Panicerr(err)
 		} else {
 			cfg = ini.Empty()
 		}
@@ -67,7 +67,7 @@ func (m *iniStruct) Set(SectionKeyValueComment ...string) {
 		m.cfg.Section(SectionKeyValueComment[0]).Key(SectionKeyValueComment[1]).SetValue(SectionKeyValueComment[2])
 		m.cfg.Section(SectionKeyValueComment[0]).Key(SectionKeyValueComment[1]).Comment = SectionKeyValueComment[3]
 	} else {
-		panicerr("按顺序指定section, key, value(以及comment)")
+		Panicerr("按顺序指定section, key, value(以及comment)")
 	}
 }
 

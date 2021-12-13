@@ -43,7 +43,7 @@ func getRedis(host string, port int, password string, db int, cfg ...redisConfig
 
 func (m *RedisStruct) Ping() string {
 	pong, err := m.rdb.Ping(m.ctx).Result()
-	panicerr(err)
+	Panicerr(err)
 	return pong
 }
 
@@ -64,7 +64,7 @@ func (m *RedisStruct) Del(key string) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -102,7 +102,7 @@ func (m *RedisStruct) Set(key string, value string, ttl ...interface{}) {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -128,7 +128,7 @@ func (m *RedisStruct) Get(key string) *string {
 				errortimes += 1
 				sleep(3)
 			} else {
-				panicerr(err)
+				Panicerr(err)
 			}
 		} else {
 			break
@@ -164,7 +164,7 @@ func (m *RedisLockStruct) acquire() {
 
 	for {
 		b, err := m.redis.rdb.SetNX(m.redis.ctx, m.key, 1, getTimeDuration(m.timeoutsec)).Result()
-		panicerr(err)
+		Panicerr(err)
 		if b {
 			return
 		} else {
@@ -175,5 +175,5 @@ func (m *RedisLockStruct) acquire() {
 
 func (m *RedisLockStruct) Release() {
 	_, err := m.redis.rdb.Del(m.redis.ctx, m.key).Result()
-	panicerr(err)
+	Panicerr(err)
 }

@@ -38,7 +38,7 @@ func strptime(format, strtime string) int64 {
 	format = strings.ReplaceAll(format, "%M", "04")
 	format = strings.ReplaceAll(format, "%S", "05")
 	t, err := time.Parse(format, strtime)
-	panicerr(err)
+	Panicerr(err)
 
 	_, offset := time.Now().Zone()
 	return t.Unix() - Int64(offset)

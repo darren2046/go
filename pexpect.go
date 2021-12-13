@@ -19,7 +19,7 @@ type pexpectStruct struct {
 
 func (m *pexpectStruct) Sendline(msg string) {
 	_, err := m.ptmx.Write([]byte(msg + "\n"))
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *pexpectStruct) Close() {
@@ -84,7 +84,7 @@ func pexpect(command string) *pexpectStruct {
 	}
 
 	if !cmdExists(parts[0]) {
-		panicerr("Command not exists")
+		Panicerr("Command not exists")
 	}
 
 	cmd := exec.Command(parts[0], parts[1:]...)
@@ -96,7 +96,7 @@ func pexpect(command string) *pexpectStruct {
 		Rows: 60,
 		Cols: 1024,
 	})
-	panicerr(err)
+	Panicerr(err)
 
 	go func() {
 		buf := make([]byte, 4096)

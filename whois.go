@@ -6,7 +6,7 @@ import (
 
 func whois(s string, servers ...string) string {
 	result, err := wwwhoisgo.Whois(s, servers...)
-	panicerr(err)
+	Panicerr(err)
 	return result
 }
 
@@ -27,7 +27,7 @@ func getDomainWhoisInfo(domain string) string {
 		//lg.trace("尝试查找顶级域" + suffix + "的whois服务器")
 		s := Re.FindAll("whois:(.+)", whois(suffix, "whois.iana.org"))
 		if len(s) == 0 {
-			panicerr("找不到顶级域" + suffix + "的whois服务器")
+			Panicerr("找不到顶级域" + suffix + "的whois服务器")
 		}
 		dws = String(s[0][1]).Strip().Get()
 

@@ -20,7 +20,7 @@ func getTelegraph(AuthorName string) *telegraphStruct {
 		ShortName:  randomStr(6, "abcdefghijklmn1234567890"),
 		AuthorName: AuthorName,
 	})
-	panicerr(err)
+	Panicerr(err)
 	return &telegraphStruct{
 		account: account,
 	}
@@ -28,7 +28,7 @@ func getTelegraph(AuthorName string) *telegraphStruct {
 
 func (m *telegraphStruct) Post(title string, content string) *telegraphPageInfo {
 	tcontent, err := telegraph.ContentFormat(content)
-	panicerr(err)
+	Panicerr(err)
 
 	page, err := m.account.CreatePage(telegraph.Page{
 		URL:        "this-is-a-test-url",
@@ -36,7 +36,7 @@ func (m *telegraphStruct) Post(title string, content string) *telegraphPageInfo 
 		AuthorName: m.account.AuthorName,
 		Content:    tcontent,
 	}, true)
-	panicerr(err)
+	Panicerr(err)
 	return &telegraphPageInfo{
 		author:  page.AuthorName,
 		title:   page.Title,

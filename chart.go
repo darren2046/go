@@ -37,14 +37,14 @@ func drawLineChartWithTimeSeries(timestampX []int64, dataY []float64, xtitle str
 	}
 
 	// statikFS, err := fs.New()
-	// panicerr(err)
+	// Panicerr(err)
 
 	// simHeiFile, err := statikFS.Open("/SimHei.ttf")
-	// panicerr(err)
+	// Panicerr(err)
 	// fontBytes, err := ioutil.ReadAll(simHeiFile)
-	// panicerr(err)
+	// Panicerr(err)
 	// font, err := truetype.Parse(fontBytes)
-	// panicerr(err)
+	// Panicerr(err)
 	// simHeiFile.Close()
 
 	graph := chart.Chart{
@@ -92,7 +92,7 @@ func drawLineChartWithTimeSeries(timestampX []int64, dataY []float64, xtitle str
 	}
 
 	f, err := os.Create(fpath)
-	panicerr(err)
+	Panicerr(err)
 	defer f.Close()
 	graph.Render(chart.PNG, f)
 }
@@ -103,14 +103,14 @@ func drawLineChartWithNumberSeries(dataX []float64, dataY []float64, xtitle stri
 	}
 
 	// statikFS, err := fs.New()
-	// panicerr(err)
+	// Panicerr(err)
 
 	// simHeiFile, err := statikFS.Open("/SimHei.ttf")
-	// panicerr(err)
+	// Panicerr(err)
 	// fontBytes, err := ioutil.ReadAll(simHeiFile)
-	// panicerr(err)
+	// Panicerr(err)
 	// font, err := truetype.Parse(fontBytes)
-	// panicerr(err)
+	// Panicerr(err)
 	// simHeiFile.Close()
 
 	graph := chart.Chart{
@@ -157,7 +157,7 @@ func drawLineChartWithNumberSeries(dataX []float64, dataY []float64, xtitle stri
 	}
 
 	f, err := os.Create(fpath)
-	panicerr(err)
+	Panicerr(err)
 	defer f.Close()
 	graph.Render(chart.PNG, f)
 }
@@ -168,14 +168,14 @@ func drawBarChartWithNumberSeries(dataX []string, dataY []float64, ytitle string
 	}
 
 	// statikFS, err := fs.New()
-	// panicerr(err)
+	// Panicerr(err)
 
 	// simHeiFile, err := statikFS.Open("/SimHei.ttf")
-	// panicerr(err)
+	// Panicerr(err)
 	// fontBytes, err := ioutil.ReadAll(simHeiFile)
-	// panicerr(err)
+	// Panicerr(err)
 	// font, err := truetype.Parse(fontBytes)
-	// panicerr(err)
+	// Panicerr(err)
 	// simHeiFile.Close()
 
 	var chartValue []chart.Value
@@ -209,7 +209,7 @@ func drawBarChartWithNumberSeries(dataX []string, dataY []float64, ytitle string
 	}
 
 	f, err := os.Create(fpath)
-	panicerr(err)
+	Panicerr(err)
 	defer f.Close()
 	graph.Render(chart.PNG, f)
 }
@@ -220,14 +220,14 @@ func drawPieChartWithNumberSeries(dataX []string, dataY []float64, title string,
 	}
 
 	// statikFS, err := fs.New()
-	// panicerr(err)
+	// Panicerr(err)
 
 	// simHeiFile, err := statikFS.Open("/SimHei.ttf")
-	// panicerr(err)
+	// Panicerr(err)
 	// fontBytes, err := ioutil.ReadAll(simHeiFile)
-	// panicerr(err)
+	// Panicerr(err)
 	// font, err := truetype.Parse(fontBytes)
-	// panicerr(err)
+	// Panicerr(err)
 	// simHeiFile.Close()
 
 	var chartValue []chart.Value
@@ -247,7 +247,7 @@ func drawPieChartWithNumberSeries(dataX []string, dataY []float64, title string,
 	}
 
 	f, err := os.Create(fpath)
-	panicerr(err)
+	Panicerr(err)
 	defer f.Close()
 	graph.Render(chart.PNG, f)
 }

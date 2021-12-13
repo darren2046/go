@@ -27,13 +27,13 @@ func getRSS(url string, config ...rssConfig) *gofeed.Feed {
 	var err error
 	if retryOnError {
 		for {
-			if err := try(func() {
+			if err := Try(func() {
 				content := httpGet(url, cfg).content
 
 				// lg.trace("获取到的内容是:", content)
 
 				feed, err = fp.ParseString(content)
-				panicerr(err)
+				Panicerr(err)
 			}).Error; err == nil {
 				break
 			} else {
@@ -48,7 +48,7 @@ func getRSS(url string, config ...rssConfig) *gofeed.Feed {
 		// lg.trace("获取到的内容是:", content)
 
 		feed, err = fp.ParseString(content)
-		panicerr(err)
+		Panicerr(err)
 	}
 
 	return feed

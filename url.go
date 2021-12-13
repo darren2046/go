@@ -23,7 +23,7 @@ func getUrl(url string) *urlStruct {
 
 func (u *urlStruct) Parse() *urlComponents {
 	uu, err := url.Parse(u.url)
-	panicerr(err)
+	Panicerr(err)
 
 	pass, _ := uu.User.Password()
 
@@ -58,6 +58,6 @@ func (u *urlStruct) Encode() string {
 
 func (u *urlStruct) Decode() string {
 	str, err := url.QueryUnescape(u.url)
-	panicerr(err)
+	Panicerr(err)
 	return str
 }

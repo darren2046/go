@@ -10,7 +10,7 @@ import (
 // 有一定的次数限制, 具体多少未知, 但很少, 到限制就hang住
 func gen2zh(text string) string {
 	s, err := gtranslate.Translate(text, language.English, language.Chinese)
-	panicerr(err)
+	Panicerr(err)
 	return s
 }
 
@@ -55,7 +55,7 @@ func baiduTranslateAnyToZH(text string) string {
 	}
 
 	if bres.ErrorCode != "" && len(bres.TransResult) == 0 {
-		panicerr("翻译出错, 状态码 " + bres.ErrorCode + ", 原因为 " + bres.ErrorMsg)
+		Panicerr("翻译出错, 状态码 " + bres.ErrorCode + ", 原因为 " + bres.ErrorMsg)
 	}
 	return bres.TransResult[0].Dst
 }

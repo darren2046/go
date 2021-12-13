@@ -12,6 +12,6 @@ func getSnowflakeID(nodeNumber ...int) int64 {
 	} else {
 		node, err = snowflake.NewNode(1)
 	}
-	panicerr(err)
+	Panicerr(err)
 	return node.Generate().Int64()
 }

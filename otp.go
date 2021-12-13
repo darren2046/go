@@ -20,6 +20,6 @@ func (m *totpStruct) Validate(pass string) bool {
 
 func (m *totpStruct) Password() string {
 	p, err := pquernatotp.GenerateCode(m.key, time.Now())
-	panicerr(err)
+	Panicerr(err)
 	return p
 }

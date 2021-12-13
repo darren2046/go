@@ -21,8 +21,8 @@ func init() {
 
 // TCP - Server
 
-type tcpServerSideConn struct {
-	conn    net.Conn
+type TcpServerSideConn struct {
+	Conn    net.Conn
 	isclose bool
 }
 
@@ -33,13 +33,13 @@ type tcpServerSideListener struct {
 
 func tcpListen(host string, port int) *tcpServerSideListener {
 	l, err := net.Listen("tcp", host+":"+Str(port))
-	panicerr(err)
+	Panicerr(err)
 
 	return &tcpServerSideListener{listener: l}
 }
 
-func (m *tcpServerSideListener) accept() chan *tcpServerSideConn {
-	ch := make(chan *tcpServerSideConn)
+func (m *tcpServerSideListener) accept() chan *TcpServerSideConn {
+	ch := make(chan *TcpServerSideConn)
 
 	go func() {
 		for {
@@ -49,9 +49,9 @@ func (m *tcpServerSideListener) accept() chan *tcpServerSideConn {
 				if String("use of closed network connection").In(err.Error()) {
 					break
 				}
-				panicerr(err)
+				Panicerr(err)
 			}
-			ct := &tcpServerSideConn{conn: c, isclose: false}
+			ct := &TcpServerSideConn{Conn: c, isclose: false}
 			ch <- ct
 		}
 	}()
@@ -66,22 +66,22 @@ func (m *tcpServerSideListener) close() {
 	}
 }
 
-func (m *tcpServerSideConn) close() {
+func (m *TcpServerSideConn) close() {
 	if !m.isclose {
 		m.isclose = true
-		m.conn.Close()
+		m.Conn.Close()
 	}
 }
 
-func (m *tcpServerSideConn) send(str string) {
-	_, err := m.conn.Write([]byte(str))
-	panicerr(err)
+func (m *TcpServerSideConn) send(str string) {
+	_, err := m.Conn.Write([]byte(str))
+	Panicerr(err)
 }
 
-func (m *tcpServerSideConn) recv(buffersize int) string {
+func (m *TcpServerSideConn) recv(buffersize int) string {
 	reply := make([]byte, buffersize)
-	n, err := m.conn.Read(reply)
-	panicerr(err)
+	n, err := m.Conn.Read(reply)
+	Panicerr(err)
 	return string(reply[:n])
 }
 
@@ -95,10 +95,10 @@ type tcpClientSideConn struct {
 func tcpConnect(host string, port int, timeout ...int) *tcpClientSideConn {
 	servAddr := host + ":" + Str(port)
 	tcpAddr, err := net.ResolveTCPAddr("tcp", servAddr)
-	panicerr(err)
+	Panicerr(err)
 
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
-	panicerr(err)
+	Panicerr(err)
 	return &tcpClientSideConn{conn: conn, isclose: false}
 }
 
@@ -107,7 +107,7 @@ func (m *tcpClientSideConn) send(str string, timeout ...int) {
 		m.conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
 	_, err := m.conn.Write([]byte(str))
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (m *tcpClientSideConn) recv(buffersize int, timeout ...int) string {
@@ -116,7 +116,7 @@ func (m *tcpClientSideConn) recv(buffersize int, timeout ...int) string {
 	}
 	reply := make([]byte, buffersize)
 	n, err := m.conn.Read(reply)
-	panicerr(err)
+	Panicerr(err)
 	return string(reply[:n])
 }
 
@@ -124,6 +124,6 @@ func (m *tcpClientSideConn) close() {
 	if !m.isclose {
 		m.isclose = true
 		err := m.conn.Close()
-		panicerr(err)
+		Panicerr(err)
 	}
 }

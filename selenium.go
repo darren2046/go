@@ -15,7 +15,7 @@ type seleniumStruct struct {
 func getSelenium(url string) *seleniumStruct {
 	// firefoxDriverPath = "/usr/local/bin/geckodriver"
 	chromeDriverPath, err := exec.LookPath("chromedriver")
-	panicerr(err)
+	Panicerr(err)
 	servicePort := Int(randint(30000, 65535))
 
 	opts := []selenium.ServiceOption{
@@ -23,15 +23,15 @@ func getSelenium(url string) *seleniumStruct {
 	}
 	// selenium.SetDebug(true)
 	service, err := selenium.NewChromeDriverService(chromeDriverPath, servicePort, opts...)
-	panicerr(err)
+	Panicerr(err)
 
 	// Connect to the WebDriver instance running locally.
 	caps := selenium.Capabilities{"browserName": "chrome"}
 	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", servicePort))
-	panicerr(err)
+	Panicerr(err)
 
 	err = wd.Get(url)
-	panicerr(err)
+	Panicerr(err)
 
 	return &seleniumStruct{
 		service: service,
@@ -46,7 +46,7 @@ func (c *seleniumStruct) Close() {
 
 func (c *seleniumStruct) Cookie() (co string) {
 	cookies, err := c.driver.GetCookies()
-	panicerr(err)
+	Panicerr(err)
 	var coo []string
 	for _, cookie := range cookies {
 		coo = append(coo, cookie.Name+"="+cookie.Value)
@@ -56,36 +56,36 @@ func (c *seleniumStruct) Cookie() (co string) {
 
 func (c *seleniumStruct) Url() string {
 	u, err := c.driver.CurrentURL()
-	panicerr(err)
+	Panicerr(err)
 	return u
 }
 
 func (c *seleniumStruct) ScrollRight(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy("+Str(pixel)+",0);", []interface{}{})
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (c *seleniumStruct) ScrollLeft(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy("+Str(pixel*-1)+",0);", []interface{}{})
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (c *seleniumStruct) ScrollUp(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy(0, "+Str(pixel*-1)+");", []interface{}{})
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (c *seleniumStruct) ScrollDown(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy(0, "+Str(pixel)+");", []interface{}{})
-	panicerr(err)
+	Panicerr(err)
 }
 
 func (c *seleniumStruct) ResizeWindow(width int, height int) *seleniumStruct {
 	cur, err := c.driver.CurrentWindowHandle()
-	panicerr(err)
+	Panicerr(err)
 
 	err = c.driver.ResizeWindow(cur, width, height)
-	panicerr(err)
+	Panicerr(err)
 
 	return c
 }
@@ -97,7 +97,7 @@ type seleniumElementStruct struct {
 func (c *seleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStruct {
 	if len(nowait) != 0 && nowait[0] {
 		we, err := c.driver.FindElement(selenium.ByXPATH, xpath)
-		panicerr(err)
+		Panicerr(err)
 		return &seleniumElementStruct{element: we}
 	} else {
 		for {
@@ -113,31 +113,31 @@ func (c *seleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStru
 
 func (c *seleniumElementStruct) Clear() *seleniumElementStruct {
 	err := c.element.Clear()
-	panicerr(err)
+	Panicerr(err)
 	return c
 }
 
 func (c *seleniumElementStruct) Click() *seleniumElementStruct {
 	err := c.element.Click()
-	panicerr(err)
+	Panicerr(err)
 	return c
 }
 
 func (c *seleniumElementStruct) Text() string {
 	s, err := c.element.Text()
-	panicerr(err)
+	Panicerr(err)
 	return s
 }
 
 func (c *seleniumElementStruct) Input(s string) *seleniumElementStruct {
 	err := c.element.SendKeys(s)
-	panicerr(err)
+	Panicerr(err)
 	return c
 }
 
 func (c *seleniumElementStruct) Submit() *seleniumElementStruct {
 	err := c.element.Submit()
-	panicerr(err)
+	Panicerr(err)
 	return c
 }
 

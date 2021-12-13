@@ -62,10 +62,10 @@ type kcpServerSideListener struct {
 
 func kcpListen(host string, port int, key string, salt string) *kcpServerSideListener {
 	block, err := kcp.NewAESBlockCrypt(pbkdf2.Key([]byte(key), []byte(salt), 4096, 32, sha256.New))
-	panicerr(err)
+	Panicerr(err)
 
 	l, err := kcp.ListenWithOptions(host+":"+Str(port), block, 10, 3)
-	panicerr(err)
+	Panicerr(err)
 
 	l.SetDSCP(46)
 	l.SetReadBuffer(4194304)
@@ -80,14 +80,14 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 	go func() {
 		for {
 			var mc *kcpServerSideConn
-			if err := try(func() {
+			if err := Try(func() {
 				c, err := m.listener.AcceptKCP()
 				if err != nil {
 					if String("io: read/write on closed pipe").In(err.Error()) || String("use of closed network connection").In(err.Error()) {
 						close(ch)
 						m.close()
 					}
-					panicerr(err)
+					Panicerr(err)
 				}
 				//
 				c.SetNoDelay(0, 20, 2, 1)
@@ -115,7 +115,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 
 			// sender
 			go func(mc *kcpServerSideConn) {
-				try(func() {
+				Try(func() {
 					for {
 						// 如果连接，关闭，关掉chan，退出
 						if mc.isclose {
@@ -142,7 +142,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 									if mc.isclose {
 										break
 									} else {
-										panicerr(err)
+										Panicerr(err)
 									}
 								}
 
@@ -151,7 +151,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 									if mc.isclose {
 										break
 									} else {
-										panicerr(err)
+										Panicerr(err)
 									}
 								}
 							}
@@ -159,13 +159,13 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 
 						}
 					}
-				}).except(func(e error) {
+				}).Except(func(e error) {
 				})
 			}(mc)
 
 			// receiver
 			go func(mc *kcpServerSideConn) {
-				try(func() {
+				Try(func() {
 					for {
 						mc.conn.SetReadDeadline(time.Now().Add(time.Duration(mc.readtimeout) * time.Second))
 
@@ -183,7 +183,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 								}
 								break
 							} else {
-								panicerr(err)
+								Panicerr(err)
 							}
 						}
 						if n != 4 {
@@ -201,7 +201,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 								if mc.isclose {
 									break
 								} else {
-									panicerr(err)
+									Panicerr(err)
 								}
 							}
 							mc.heartbeatTime = Time.Now()
@@ -219,7 +219,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 									}
 									break
 								} else {
-									panicerr(err)
+									Panicerr(err)
 								}
 							}
 
@@ -234,7 +234,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 										if mc.isclose {
 											break
 										} else {
-											panicerr(err)
+											Panicerr(err)
 										}
 									}
 									mc.heartbeatTime = Time.Now()
@@ -248,14 +248,14 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 						res := bin2map(totaldata)
 						mc.recvchan <- res
 					}
-				}).except(func(e error) {
+				}).Except(func(e error) {
 				})
 			}(mc)
 
 			// heartbeat checker
 			// 如果连接被主动关闭，退出，如果3次没有收到心跳，关闭连接
 			go func(mc *kcpServerSideConn) {
-				try(func() {
+				Try(func() {
 					for {
 						if mc.isclose {
 							break
@@ -272,7 +272,7 @@ func (m *kcpServerSideListener) accept() chan *kcpServerSideConn {
 						}
 						sleep(1)
 					}
-				}).except(func(e error) {
+				}).Except(func(e error) {
 				})
 			}(mc)
 
@@ -293,7 +293,7 @@ func (m *kcpServerSideListener) close() {
 func (m *kcpServerSideConn) close() {
 	if !m.isclose {
 		m.isclose = true
-		try(func() {
+		Try(func() {
 			m.conn.Close()
 		})
 	}
@@ -308,7 +308,7 @@ func (m *kcpServerSideConn) close() {
 func (m *kcpServerSideConn) send(data map[string]string) {
 	if m.isclose {
 		err := errors.New("连接已关闭，不可发送数据")
-		panicerr(err)
+		Panicerr(err)
 	}
 	m.sendchan <- data
 }
@@ -316,7 +316,7 @@ func (m *kcpServerSideConn) send(data map[string]string) {
 func (m *kcpServerSideConn) recv(timeoutSecond ...int) (res map[string]string) {
 	if m.isclose {
 		err := errors.New("连接已关闭，不可收取数据")
-		panicerr(err)
+		Panicerr(err)
 	}
 	if len(timeoutSecond) == 0 {
 		res = <-m.recvchan
@@ -340,7 +340,7 @@ func (m *kcpServerSideConn) recv(timeoutSecond ...int) (res map[string]string) {
 	if res == nil {
 		if m.isclose {
 			err := errors.New("连接已关闭，不可收取数据")
-			panicerr(err)
+			Panicerr(err)
 		}
 	}
 	return
@@ -360,9 +360,9 @@ type kcpClientSideConn struct {
 
 func kcpConnect(host string, port int, key string, salt string) *kcpClientSideConn {
 	block, err := kcp.NewAESBlockCrypt(pbkdf2.Key([]byte(key), []byte(salt), 4096, 32, sha256.New))
-	panicerr(err)
+	Panicerr(err)
 	conn, err := kcp.DialWithOptions(host+":"+Str(port), block, 10, 3)
-	panicerr(err)
+	Panicerr(err)
 
 	conn.SetMtu(1400)
 	conn.SetWriteDelay(false)
@@ -385,7 +385,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 
 	// sender
 	go func(m *kcpClientSideConn) {
-		try(func() {
+		Try(func() {
 			for {
 				// 如果连接，关闭，关掉chan，退出
 				if m.isclose {
@@ -411,7 +411,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 							if m.isclose {
 								break
 							} else {
-								panicerr(err)
+								Panicerr(err)
 							}
 						}
 
@@ -420,20 +420,20 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 							if m.isclose {
 								break
 							} else {
-								panicerr(err)
+								Panicerr(err)
 							}
 						}
 					}
 				case <-time.After(getTimeDuration(1)):
 				}
 			}
-		}).except(func(e error) {
+		}).Except(func(e error) {
 		})
 	}(m)
 
 	// receiver
 	go func(m *kcpClientSideConn) {
-		try(func() {
+		Try(func() {
 			for {
 				m.conn.SetReadDeadline(time.Now().Add(time.Duration(m.readtimeout) * time.Second))
 
@@ -447,7 +447,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 						}
 						break
 					} else {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 				if n != 4 {
@@ -473,7 +473,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 							}
 							break
 						} else {
-							panicerr(err)
+							Panicerr(err)
 						}
 					}
 
@@ -492,13 +492,13 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 				res := bin2map(totaldata)
 				m.recvchan <- res
 			}
-		}).except(func(e error) {
+		}).Except(func(e error) {
 		})
 	}(m)
 
 	// heartbeat
 	go func(m *kcpClientSideConn) {
-		try(func() {
+		Try(func() {
 			for {
 				btlen := make([]byte, 4)
 				binary.LittleEndian.PutUint32(btlen, kcp_ping)
@@ -513,7 +513,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 						}
 						break
 					} else {
-						panicerr(err)
+						Panicerr(err)
 					}
 				}
 				if Time.Now()-m.heartbeatTime > Float64(kcp_heartbeat_second)*3 {
@@ -521,7 +521,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 				}
 				sleep(kcp_heartbeat_second)
 			}
-		}).except(func(e error) {
+		}).Except(func(e error) {
 		})
 	}(m)
 
@@ -531,7 +531,7 @@ func kcpConnect(host string, port int, key string, salt string) *kcpClientSideCo
 func (m *kcpClientSideConn) send(data map[string]string) {
 	if m.isclose {
 		err := errors.New("连接已关闭，不可发送数据")
-		panicerr(err)
+		Panicerr(err)
 	}
 	m.sendchan <- data
 }
@@ -539,7 +539,7 @@ func (m *kcpClientSideConn) send(data map[string]string) {
 func (m *kcpClientSideConn) recv(timeoutSecond ...int) (res map[string]string) {
 	if m.isclose {
 		err := errors.New("连接已关闭，不可收取数据")
-		panicerr(err)
+		Panicerr(err)
 	}
 	if len(timeoutSecond) == 0 {
 		res = <-m.recvchan
@@ -563,7 +563,7 @@ func (m *kcpClientSideConn) recv(timeoutSecond ...int) (res map[string]string) {
 	if res == nil {
 		if m.isclose {
 			err := errors.New("连接已关闭，不可收取数据")
-			panicerr(err)
+			Panicerr(err)
 		}
 	}
 	return

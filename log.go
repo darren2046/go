@@ -43,7 +43,7 @@ func getLogger() *logStruct {
 	}
 }
 
-func (m *logStruct) setLevel(level string) {
+func (m *logStruct) SetLevel(level string) {
 	if level == "trace" {
 		m.level = []string{"TRAC", "DEBU", "INFO", "WARN", "ERRO"}
 	} else if level == "debug" {
@@ -60,11 +60,11 @@ func (m *logStruct) setLevel(level string) {
 	m.levelString = level
 }
 
-func (m *logStruct) getLevel() string {
+func (m *logStruct) GetLevel() string {
 	return m.levelString
 }
 
-func (m *logStruct) setLogFile(path string, maxLogFileCount int, logFileSizeInMB ...int) {
+func (m *logStruct) SetLogFile(path string, maxLogFileCount int, logFileSizeInMB ...int) {
 	m.logDir = Os.Path.Basedir(path)
 	if !pathExists(m.logDir) {
 		mkdir(m.logDir)
@@ -94,7 +94,7 @@ func (m *logStruct) setLogFile(path string, maxLogFileCount int, logFileSizeInMB
 	m.maxlogfiles = maxLogFileCount
 }
 
-func (m *logStruct) error(args ...interface{}) {
+func (m *logStruct) Error(args ...interface{}) {
 	t := strftime("%m-%d %H:%M:%S", Time.Now())
 	level := "ERRO"
 
@@ -110,7 +110,7 @@ func (m *logStruct) error(args ...interface{}) {
 	m.show(t, level, msg, position)
 }
 
-func (m *logStruct) warn(args ...interface{}) {
+func (m *logStruct) Warn(args ...interface{}) {
 	t := strftime("%m-%d %H:%M:%S", Time.Now())
 	level := "WARN"
 
@@ -126,7 +126,7 @@ func (m *logStruct) warn(args ...interface{}) {
 	m.show(t, level, msg, position)
 }
 
-func (m *logStruct) info(args ...interface{}) {
+func (m *logStruct) Info(args ...interface{}) {
 	t := strftime("%m-%d %H:%M:%S", Time.Now())
 	level := "INFO"
 
@@ -142,7 +142,7 @@ func (m *logStruct) info(args ...interface{}) {
 	m.show(t, level, msg, position)
 }
 
-func (m *logStruct) trace(args ...interface{}) {
+func (m *logStruct) Trace(args ...interface{}) {
 	t := strftime("%m-%d %H:%M:%S", Time.Now())
 	level := "TRAC"
 
@@ -158,7 +158,7 @@ func (m *logStruct) trace(args ...interface{}) {
 	m.show(t, level, msg, position)
 }
 
-func (m *logStruct) debug(args ...interface{}) {
+func (m *logStruct) Debug(args ...interface{}) {
 	t := strftime("%m-%d %H:%M:%S", Time.Now())
 	level := "DEBU"
 
