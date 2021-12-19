@@ -1,3 +1,9 @@
+# golanglibs
+
+This is a toolkit that provide a lot of function or object that make programing easier like Python. 
+
+# Index
+
 * Tools
     * func Lock() \*lock
         * func (*lock) Acquire() 
@@ -484,6 +490,8 @@ Others
 * func Range(num ...int) []int 
 * func Typeof(v interface{}) string 
 
+# Example
+
 ## Json.Yaml2Json
 
 ```go
@@ -758,14 +766,6 @@ func main() {
 		AddColumn("start", "int").
 		AddColumn("duration", "int").
 		AddIndex("usercode")
-
-	// 如果不存在才创建
-	db.CreateTableIfNotExists("usercodes"). // 表存在，后面的也会执行
-		AddColumnIfNotExists("usercode", "string"). // 列存在，后面的也会执行
-		AddColumnIfNotExists("start", "int").
-		AddColumnIfNotExists("duration", "int").
-		AddIndexIfNotExists("start"). // 索引存在，后面的也会执行
-		AddIndexIfNotExists("duration")
 
 	// 临时使用的表
 	pg := getSQLite(":memory:").

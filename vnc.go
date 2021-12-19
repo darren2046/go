@@ -181,19 +181,22 @@ func getVNC(server string, cfg ...VNCCfg) *vncStruct {
 	nc, err := net.Dial("tcp", server)
 	Panicerr(err)
 
-	auth := []vnc.ClientAuth{}
+	vcc := &vnc.ClientConfig{
+		Exclusive: false,
+	}
 	var delay interface{} = 0
 	if len(cfg) != 0 {
 		if cfg[0].Password != "" {
-			auth = append(auth, &vnc.PasswordAuth{Password: cfg[0].Password})
+			vcc.Auth = []vnc.ClientAuth{
+				&vnc.PasswordAuth{
+					Password: cfg[0].Password,
+				},
+			}
 		}
 		delay = cfg[0].Delay
 	}
 
-	vc, err := vnc.Client(nc, &vnc.ClientConfig{
-		Auth:      auth,
-		Exclusive: false,
-	})
+	vc, err := vnc.Client(nc, vcc)
 	if err != nil {
 		nc.Close()
 		Panicerr(err)

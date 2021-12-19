@@ -13,53 +13,53 @@ import (
 )
 
 type stringStruct struct {
-	s string
+	S string
 }
 
 var SS func(s string) *stringStruct = String
 
 func String(s string) *stringStruct {
-	return &stringStruct{s: s}
+	return &stringStruct{S: s}
 }
 
 // Return the final string
 func (s *stringStruct) Get() string {
-	return s.s
+	return s.S
 }
 
 // Return the substring of the string
 func (s *stringStruct) Sub(start, end int) *stringStruct {
-	s.s = s.sub(start, end)
+	s.S = s.sub(start, end)
 	return s
 }
 
 func (s *stringStruct) Has(substr string) bool {
-	return strings.Contains(s.s, substr)
+	return strings.Contains(s.S, substr)
 }
 
 func (s *stringStruct) sub(start, end int) string {
 	start_str_idx := 0
 	i := 0
-	for j := range s.s {
+	for j := range s.S {
 		if i == start {
 			start_str_idx = j
 		}
 		if i == end {
-			return s.s[start_str_idx:j]
+			return s.S[start_str_idx:j]
 		}
 		i++
 	}
-	return s.s[start_str_idx:]
+	return s.S[start_str_idx:]
 }
 
 // Return the length of the string
 func (s *stringStruct) Len() int {
-	return len(s.s)
+	return len(s.S)
 }
 
 // Reverse the string
 func (s *stringStruct) Reverse() string {
-	runes := []rune(s.s)
+	runes := []rune(s.S)
 	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
 		runes[i], runes[j] = runes[j], runes[i]
 	}
@@ -79,43 +79,43 @@ func (s *stringStruct) Chunk(length int) (res []string) {
 
 // Calculate the length of a UTF-8 string
 func (s *stringStruct) Utf8Len() int {
-	return utf8.RuneCountInString(s.s)
+	return utf8.RuneCountInString(s.S)
 }
 
 // Repeat a string
 func (s *stringStruct) Repeat(count int) *stringStruct {
-	s.s = strings.Repeat(s.s, count)
+	s.S = strings.Repeat(s.S, count)
 	return s
 }
 
 // Shuffle a string
 func (s *stringStruct) Shuffle() *stringStruct {
-	runes := []rune(s.s)
+	runes := []rune(s.S)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	ss := make([]rune, len(runes))
 	for i, v := range r.Perm(len(runes)) {
 		ss[i] = runes[v]
 	}
-	s.s = string(ss)
+	s.S = string(ss)
 	return s
 }
 
 func (s *stringStruct) Index(substr string) int {
-	return strings.Index(s.s, substr)
+	return strings.Index(s.S, substr)
 }
 
 func (s *stringStruct) Replace(old, new string) *stringStruct {
-	s.s = strings.ReplaceAll(s.s, old, new)
+	s.S = strings.ReplaceAll(s.S, old, new)
 	return s
 }
 
 func (s *stringStruct) Upper() *stringStruct {
-	s.s = strings.ToUpper(s.s)
+	s.S = strings.ToUpper(s.S)
 	return s
 }
 
 func (s *stringStruct) Lower() *stringStruct {
-	s.s = strings.ToLower(s.s)
+	s.S = strings.ToLower(s.S)
 	return s
 }
 
@@ -125,29 +125,29 @@ func (s *stringStruct) Join(pieces []string) *stringStruct {
 	for _, str := range pieces {
 		buf.WriteString(str)
 		if l--; l > 0 {
-			buf.WriteString(s.s)
+			buf.WriteString(s.S)
 		}
 	}
-	s.s = buf.String()
+	s.S = buf.String()
 	return s
 }
 
 func (s *stringStruct) Strip(characterMask ...string) *stringStruct {
 	if len(characterMask) == 0 {
-		s.s = strings.TrimSpace(s.s)
+		s.S = strings.TrimSpace(s.S)
 	}
-	s.s = strings.Trim(s.s, characterMask[0])
+	s.S = strings.Trim(s.S, characterMask[0])
 	return s
 }
 
 func (s *stringStruct) Split(sep ...string) []string {
 	var a []string
 	if len(sep) != 0 {
-		for _, v := range strings.Split(s.s, sep[0]) {
+		for _, v := range strings.Split(s.S, sep[0]) {
 			a = append(a, String(v).Strip().Get())
 		}
 	} else {
-		for _, v := range strings.Split(s.s, " ") {
+		for _, v := range strings.Split(s.S, " ") {
 			if String(v).Strip().Get() != "" {
 				a = append(a, String(v).Strip().Get())
 			}
@@ -158,11 +158,11 @@ func (s *stringStruct) Split(sep ...string) []string {
 }
 
 func (s *stringStruct) Count(substr string) int {
-	return strings.Count(s.s, substr)
+	return strings.Count(s.S, substr)
 }
 
 func (s *stringStruct) EndsWith(substr string) (res bool) {
-	if len(substr) <= len(s.s) && s.s[len(s.s)-len(substr):] == substr {
+	if len(substr) <= len(s.S) && s.S[len(s.S)-len(substr):] == substr {
 		res = true
 	} else {
 		res = false
@@ -171,7 +171,7 @@ func (s *stringStruct) EndsWith(substr string) (res bool) {
 }
 
 func (s *stringStruct) StartsWith(substr string) (res bool) {
-	if len(substr) <= len(s.s) && s.s[:len(substr)] == substr {
+	if len(substr) <= len(s.S) && s.S[:len(substr)] == substr {
 		res = true
 	} else {
 		res = false
@@ -185,7 +185,7 @@ func (s *stringStruct) Splitlines(strip ...bool) []string {
 	if len(strip) != 0 {
 		tostrip = strip[0]
 	}
-	for _, v := range strings.Split(s.s, "\n") {
+	for _, v := range strings.Split(s.S, "\n") {
 		if tostrip {
 			a = append(a, String(v).Strip().Get())
 		} else {
@@ -197,27 +197,27 @@ func (s *stringStruct) Splitlines(strip ...bool) []string {
 }
 
 func (s *stringStruct) In(str string) bool {
-	return String(str).Index(s.s) != -1
+	return String(str).Index(s.S) != -1
 }
 
 func (s *stringStruct) LStrip(characterMask ...string) *stringStruct {
 	if len(characterMask) == 0 {
-		s.s = strings.TrimLeftFunc(s.s, unicode.IsSpace)
+		s.S = strings.TrimLeftFunc(s.S, unicode.IsSpace)
 	}
-	s.s = strings.TrimLeft(s.s, characterMask[0])
+	s.S = strings.TrimLeft(s.S, characterMask[0])
 	return s
 }
 
 func (s *stringStruct) RStrip(characterMask ...string) *stringStruct {
 	if len(characterMask) == 0 {
-		s.s = strings.TrimRightFunc(s.s, unicode.IsSpace)
+		s.S = strings.TrimRightFunc(s.S, unicode.IsSpace)
 	}
-	s.s = strings.TrimRight(s.s, characterMask[0])
+	s.S = strings.TrimRight(s.S, characterMask[0])
 	return s
 }
 
 func (ss *stringStruct) Isdigit() bool {
-	str := ss.s
+	str := ss.S
 	if str == "" {
 		return false
 	}
@@ -260,7 +260,7 @@ func (ss *stringStruct) Isdigit() bool {
 
 func (s *stringStruct) HasChinese() bool {
 	var count int
-	for _, v := range s.s {
+	for _, v := range s.S {
 		if unicode.Is(unicode.Han, v) {
 			count++
 			break
@@ -271,7 +271,7 @@ func (s *stringStruct) HasChinese() bool {
 
 func (s *stringStruct) Filter(charts ...string) *stringStruct {
 	var res string
-	strb := []byte(s.s)
+	strb := []byte(s.S)
 	var chartsb []byte
 	if len(charts) != 0 {
 		chartsb = []byte(charts[0])
@@ -283,32 +283,32 @@ func (s *stringStruct) Filter(charts ...string) *stringStruct {
 			res = res + string(c)
 		}
 	}
-	s.s = res
+	s.S = res
 	return s
 }
 
 func (s *stringStruct) RemoveHtmlTag() *stringStruct {
-	s.s = striphtmltags.StripTags(s.s)
+	s.S = striphtmltags.StripTags(s.S)
 	return s
 }
 
 func (s *stringStruct) RemoveNonUTF8Character() *stringStruct {
-	if !utf8.ValidString(s.s) {
-		v := make([]rune, 0, len(s.s))
-		for i, r := range s.s {
+	if !utf8.ValidString(s.S) {
+		v := make([]rune, 0, len(s.S))
+		for i, r := range s.S {
 			if r == utf8.RuneError {
-				_, size := utf8.DecodeRuneInString(s.s[i:])
+				_, size := utf8.DecodeRuneInString(s.S[i:])
 				if size == 1 {
 					continue
 				}
 			}
 			v = append(v, r)
 		}
-		s.s = string(v)
+		s.S = string(v)
 	}
 	return s
 }
 
 func (s *stringStruct) DetectLanguage() string {
-	return whatlanggo.Detect(s.s).Lang.String()
+	return whatlanggo.Detect(s.S).Lang.String()
 }
