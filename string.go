@@ -58,19 +58,20 @@ func (s *stringStruct) Len() int {
 }
 
 // Reverse the string
-func (s *stringStruct) Reverse() string {
+func (s *stringStruct) Reverse() *stringStruct {
 	runes := []rune(s.S)
 	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
 		runes[i], runes[j] = runes[j], runes[i]
 	}
-	return string(runes)
+	s.S = string(runes)
+	return s
 }
 
 // Split the string with specific length
-func (s *stringStruct) Chunk(length int) (res []string) {
+func (s *stringStruct) Chunk(length int) (res []*stringStruct) {
 	start := 0
 	for s.Len() > start {
-		substr := s.sub(start, start+length)
+		substr := s.Sub(start, start+length)
 		res = append(res, substr)
 		start = start + length
 	}
@@ -140,16 +141,16 @@ func (s *stringStruct) Strip(characterMask ...string) *stringStruct {
 	return s
 }
 
-func (s *stringStruct) Split(sep ...string) []string {
-	var a []string
+func (s *stringStruct) Split(sep ...string) []*stringStruct {
+	var a []*stringStruct
 	if len(sep) != 0 {
 		for _, v := range strings.Split(s.S, sep[0]) {
-			a = append(a, String(v).Strip().Get())
+			a = append(a, String(v).Strip())
 		}
 	} else {
 		for _, v := range strings.Split(s.S, " ") {
 			if String(v).Strip().Get() != "" {
-				a = append(a, String(v).Strip().Get())
+				a = append(a, String(v).Strip())
 			}
 		}
 	}
@@ -179,17 +180,17 @@ func (s *stringStruct) StartsWith(substr string) (res bool) {
 	return
 }
 
-func (s *stringStruct) Splitlines(strip ...bool) []string {
-	var a []string
+func (s *stringStruct) Splitlines(strip ...bool) []*stringStruct {
+	var a []*stringStruct
 	tostrip := false
 	if len(strip) != 0 {
 		tostrip = strip[0]
 	}
 	for _, v := range strings.Split(s.S, "\n") {
 		if tostrip {
-			a = append(a, String(v).Strip().Get())
+			a = append(a, String(v).Strip())
 		} else {
-			a = append(a, String(v).RStrip("\r").Get())
+			a = append(a, String(v).RStrip("\r"))
 		}
 	}
 
