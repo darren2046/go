@@ -16,6 +16,7 @@ import (
 )
 
 type osStruct struct {
+	Chdir           func(path string)
 	Mkdir           func(filename string)
 	Getcwd          func() string
 	Exit            func(status int)
@@ -46,6 +47,7 @@ var Os osStruct
 
 func init() {
 	Os = osStruct{
+		Chdir:           chdir,
 		Mkdir:           mkdir,
 		Getcwd:          getcwd,
 		Exit:            os.Exit,
@@ -405,4 +407,9 @@ func chmod(filePath string, mode os.FileMode) bool {
 
 func chown(filePath string, uid, gid int) bool {
 	return os.Chown(filePath, uid, gid) == nil
+}
+
+func chdir(path string) {
+	err := os.Chdir(path)
+	Panicerr(err)
 }
