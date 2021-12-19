@@ -52,10 +52,10 @@ func getGodaddy(key string, secret string) *godaddyStruct {
 
 func (m *godaddyStruct) List() (res []godaddyDomainInfoStruct) {
 	resp := httpGet("https://api.godaddy.com/v1/domains", m.header)
-	if resp.statusCode != 200 {
-		Panicerr(resp.content)
+	if resp.StatusCode != 200 {
+		Panicerr(resp.Content)
 	}
-	err := json.Unmarshal([]byte(resp.content), &res)
+	err := json.Unmarshal([]byte(resp.Content), &res)
 	Panicerr(err)
 	return
 }
@@ -69,10 +69,10 @@ func (m *godaddyStruct) Domain(domainName string) *godaddyDomainStruct {
 
 func (m *godaddyDomainStruct) List() (res []godaddyRecord) {
 	resp := httpGet("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", m.header)
-	if resp.statusCode != 200 {
-		Panicerr(resp.content)
+	if resp.StatusCode != 200 {
+		Panicerr(resp.Content)
 	}
-	err := json.Unmarshal([]byte(resp.content), &res)
+	err := json.Unmarshal([]byte(resp.Content), &res)
 	Panicerr(err)
 	return
 }
@@ -116,8 +116,8 @@ func (m *godaddyDomainStruct) Delete(name string, dtype string, value string) {
 	}
 
 	resp := httpPutJSON("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", records, m.header)
-	if resp.statusCode != 200 {
-		Panicerr(resp.content)
+	if resp.StatusCode != 200 {
+		Panicerr(resp.Content)
 	}
 }
 
@@ -138,8 +138,8 @@ func (m *godaddyDomainStruct) Modify(recordName string, srcRecordType string, sr
 		}
 	}
 	resp := httpPutJSON("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", records, m.header)
-	if resp.statusCode != 200 {
-		Panicerr(resp.content)
+	if resp.StatusCode != 200 {
+		Panicerr(resp.Content)
 	}
 }
 
@@ -159,8 +159,8 @@ func (m *godaddyDomainStruct) Add(recordName string, recordType string, recordVa
 	})
 
 	resp := httpPutJSON("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", records, m.header)
-	if resp.statusCode != 200 {
-		Panicerr(resp.content)
+	if resp.StatusCode != 200 {
+		Panicerr(resp.Content)
 	}
 }
 
@@ -185,8 +185,8 @@ func (m *godaddyDomainStruct) Add(recordName string, recordType string, recordVa
 // 	})
 
 // 	resp := httpPutJSON("https://api.godaddy.com/v1/domains/"+m.domainName+"/records", records, m.header)
-// 	if resp.statusCode != 200 {
+// 	if resp.StatusCode != 200 {
 // 		_, fn, line, _ := runtime.Caller(0)
-// 		panic(filepath.Base(fn) + ":" + strconv.Itoa(line+1) + " >> " + resp.content + " >> " + fmtDebugStack(string(debug.Stack())))
+// 		panic(filepath.Base(fn) + ":" + strconv.Itoa(line+1) + " >> " + resp.Content + " >> " + fmtDebugStack(string(debug.Stack())))
 // 	}
 // }

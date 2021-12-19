@@ -37,13 +37,13 @@ func (m *prometheusStruct) Query(query string, time ...float64) (res []prometheu
 	}
 	resp := httpPost(m.url, HttpParam{"query": query, "time": ttime})
 	// fmt.Println(resp.content)
-	if resp.statusCode != 200 {
-		Panicerr("查询Prometheus出错, 查询语句: " + query + ", 状态码: " + Str(resp.statusCode) + ", 错误消息:" + resp.content)
+	if resp.StatusCode != 200 {
+		Panicerr("查询Prometheus出错, 查询语句: " + query + ", 状态码: " + Str(resp.StatusCode) + ", 错误消息:" + resp.Content)
 	}
 	// fmt.Println(resp.content)
 
 	var por prometheusOriginalResultStruct
-	err := json.Unmarshal([]byte(resp.content), &por)
+	err := json.Unmarshal([]byte(resp.Content), &por)
 	Panicerr(err)
 	// lg.debug(por)
 	if por.Status != "success" {

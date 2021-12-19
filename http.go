@@ -43,10 +43,10 @@ type HttpHeader map[string]string
 type HttpParam map[string]interface{}
 
 type httpResp struct {
-	headers    map[string]string
-	content    string
-	statusCode int
-	url        string
+	Headers    map[string]string
+	Content    string
+	StatusCode int
+	URL        string
 }
 
 type HttpConfig struct {
@@ -178,10 +178,10 @@ func httpHead(uri string, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
@@ -305,10 +305,10 @@ func httpPostFile(uri string, filePath string, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
@@ -432,10 +432,10 @@ func httpPostRaw(uri string, body string, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
@@ -559,10 +559,10 @@ func httpPostJSON(uri string, json interface{}, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
@@ -687,10 +687,10 @@ func httpPost(uri string, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
@@ -816,10 +816,10 @@ func httpGet(uri string, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
@@ -943,10 +943,10 @@ func httpPutJSON(uri string, json interface{}, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
@@ -1071,10 +1071,10 @@ func httpPut(uri string, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
@@ -1198,9 +1198,9 @@ func httpPutRaw(uri string, body string, args ...interface{}) httpResp {
 	}
 
 	return httpResp{
-		content:    string(respBody),
-		headers:    headers,
-		statusCode: hresp.StatusCode,
-		url:        hresp.Request.URL.String(),
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }

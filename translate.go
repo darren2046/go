@@ -42,7 +42,7 @@ func baiduTranslateAnyToZH(text string) string {
 			"sign":  sign,
 		}
 
-		err := json.Unmarshal([]byte(httpGet(apiURL, params).content), &bres)
+		err := json.Unmarshal([]byte(httpGet(apiURL, params).Content), &bres)
 		if err == nil {
 			break
 		} else {

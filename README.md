@@ -347,7 +347,7 @@ This is a toolkit that provide a lot of function or object that make programing 
 * Cmd
     * func GetOutput(command string, timeoutSecond ...interface{}) string
     * func GetStatusOutput(command string, timeoutSecond ...interface{}) (int, string)
-    * func GetOutputWithShell(command string, timeoutSecond ...interface{}) string
+    * func GetOutputWithShell(command string, timeoutSecond ...interface{}) string 
     * func GetStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int, string)
     * func Tail(command string) chan string
     * func Exists(cmd string) bool
