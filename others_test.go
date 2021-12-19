@@ -7,3 +7,8 @@ func TestInArray(t *testing.T) {
 		t.Error("Error while check InArray")
 	}
 }
+
+func TestInput(t *testing.T) {
+	Print(Input("test: "))
+	Print(Input("Test[y/n]", "y"))
+}
