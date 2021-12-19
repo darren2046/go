@@ -13,15 +13,15 @@ func getSystemProgressCPUUsage() (res map[int64]progressCPUUsageStruct) {
 	pg := make(map[string]float64)
 	res = make(map[int64]progressCPUUsageStruct)
 
-	var line string
+	var line *stringStruct
 	for _, line = range String(Open("/proc/stat").Read()).Split("\n") {
-		if String("cpu ").In(line) {
+		if String("cpu ").In(line.S) {
 			break
 		}
 	}
 
 	var totalCPUSlice1 float64
-	for _, i := range String(line).Split()[2:] {
+	for _, i := range String(line.S).Split()[2:] {
 		totalCPUSlice1 = totalCPUSlice1 + Float64(i)
 	}
 
@@ -39,13 +39,13 @@ func getSystemProgressCPUUsage() (res map[int64]progressCPUUsageStruct) {
 	sleep(1)
 
 	for _, line = range String(Open("/proc/stat").Read()).Split("\n") {
-		if String("cpu ").In(line) {
+		if String("cpu ").In(line.S) {
 			break
 		}
 	}
 
 	var totalCPUSlice2 float64
-	for _, i := range String(line).Split()[2:] {
+	for _, i := range String(line.S).Split()[2:] {
 		totalCPUSlice2 = totalCPUSlice2 + Float64(i)
 	}
 
@@ -63,7 +63,7 @@ func getSystemProgressCPUUsage() (res map[int64]progressCPUUsageStruct) {
 					pid:  Int64(pid),
 					cpu:  cpuusage,
 					cmd:  String(Open("/proc/"+pid+"/cmdline").Read()).Replace("\x00", " ").Strip().Get(),
-					name: String(a[1]).Strip("()").Get(),
+					name: a[1].Strip("()").Get(),
 				}
 			}
 		})

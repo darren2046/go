@@ -3,6 +3,7 @@ package golanglibs
 import (
 	"bytes"
 	"math/rand"
+	"reflect"
 	"strings"
 	"time"
 	"unicode"
@@ -120,11 +121,20 @@ func (s *stringStruct) Lower() *stringStruct {
 	return s
 }
 
-func (s *stringStruct) Join(pieces []string) *stringStruct {
+func (s *stringStruct) Join(pieces interface{}) *stringStruct {
 	var buf bytes.Buffer
-	l := len(pieces)
-	for _, str := range pieces {
-		buf.WriteString(str)
+	arr := reflect.ValueOf(pieces)
+	l := arr.Len()
+
+	for i := 0; i < arr.Len(); i++ {
+		pie := arr.Index(i).Interface()
+
+		switch vv := pie.(type) {
+		case *stringStruct:
+			buf.WriteString(vv.S)
+		case string:
+			buf.WriteString(vv)
+		}
 		if l--; l > 0 {
 			buf.WriteString(s.S)
 		}
@@ -136,8 +146,9 @@ func (s *stringStruct) Join(pieces []string) *stringStruct {
 func (s *stringStruct) Strip(characterMask ...string) *stringStruct {
 	if len(characterMask) == 0 {
 		s.S = strings.TrimSpace(s.S)
+	} else {
+		s.S = strings.Trim(s.S, characterMask[0])
 	}
-	s.S = strings.Trim(s.S, characterMask[0])
 	return s
 }
 

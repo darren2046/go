@@ -37,35 +37,35 @@ func md2html(md string) string {
 	lang := ""
 	code := ""
 	for _, line := range String(htmlContent).Splitlines() {
-		if String(line).StartsWith("<pre><code") {
+		if line.StartsWith("<pre><code") {
 			insideCode = true
-			if !String("<pre><code>").In(line) {
-				res := Re.FindAll("<pre><code class=\"language-(.+?)\">", line)
+			if !String("<pre><code>").In(line.S) {
+				res := Re.FindAll("<pre><code class=\"language-(.+?)\">", line.S)
 				if len(res) != 0 {
-					line = String(line).Replace(res[0][0], "").Get()
+					line = line.Replace(res[0][0], "")
 					lang = res[0][1]
 				}
 			} else {
-				line = String(line).Replace("<pre><code>", "").Get()
+				line = line.Replace("<pre><code>", "")
 			}
 		}
-		if String(line).StartsWith("</code></pre>") {
+		if line.StartsWith("</code></pre>") {
 			insideCode = false
 			codeHTML := getHightLightHTML(Html.Decode(code), lang)
 			htmlCodeContent += codeHTML
 			code = ""
 			lang = ""
 		}
-		if !insideCode && !String(line).StartsWith("</code></pre>") {
+		if !insideCode && !line.StartsWith("</code></pre>") {
 			// res := reFindAll("\\[(.+?)\\]\\((.+?)\\)", line)
 			// if len(res) != 0 && !strIn("!"+res[0][0], line) {
 			// 	links = append(links, res[0])
 			// 	line = strReplace(line, res[0][0], "<a href=\""+res[0][2]+"\">"+res[0][1]+"</a>")
 			// }
-			htmlCodeContent += line + "\n"
+			htmlCodeContent += line.S + "\n"
 		}
 		if insideCode {
-			code += line + "\n"
+			code += line.S + "\n"
 		}
 	}
 

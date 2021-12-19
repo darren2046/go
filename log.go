@@ -72,7 +72,7 @@ func (m *logStruct) SetLogFile(path string, maxLogFileCount int, logFileSizeInMB
 
 	f := String(Os.Path.Basename(path)).Split(".")
 	m.logFileName = String(".").Join(f[:len(f)-1]).Get()
-	m.logFileSuffix = f[len(f)-1]
+	m.logFileSuffix = f[len(f)-1].S
 
 	var logpath string
 	if len(logFileSizeInMB) != 0 {

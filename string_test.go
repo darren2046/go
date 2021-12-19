@@ -30,3 +30,18 @@ func TestChr(t *testing.T) {
 		t.Error("Error while Chr")
 	}
 }
+
+func TestJoin(t *testing.T) {
+	if String(".").Join([]string{"a", "b", "c"}).S != "a.b.c" {
+		t.Error("Error while Join 1")
+	}
+	if String(".").Join(
+		String("a,b,c").Split(","),
+	).S != "a.b.c" {
+		t.Error("Error while Join 2")
+	}
+}
+
+func TestSplit(t *testing.T) {
+	Print(String("a,b,c").Split(","))
+}
