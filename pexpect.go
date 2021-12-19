@@ -55,6 +55,10 @@ func (m *pexpectStruct) ClearLog() {
 	m.bufall = ""
 }
 
+func (m *pexpectStruct) Wait() {
+	m.cmd.Wait()
+}
+
 func pexpect(command string) *pexpectStruct {
 	q := rune(0)
 	parts := strings.FieldsFunc(command, func(r rune) bool {
