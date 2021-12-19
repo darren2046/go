@@ -1,6 +1,7 @@
 package golanglibs
 
 import (
+	"fmt"
 	"reflect"
 	"unicode/utf8"
 
@@ -113,4 +114,10 @@ func Range(num ...int) []int {
 
 func Typeof(v interface{}) string {
 	return reflect.TypeOf(v).String()
+}
+
+func Input(prompt string) (input string) {
+	fmt.Print(prompt)
+	fmt.Scanln(&input)
+	return
 }
