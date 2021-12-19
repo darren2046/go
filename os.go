@@ -26,7 +26,7 @@ type osStruct struct {
 	Copy            func(filePath, dest string)
 	Rename          func(filePath, newPosition string)
 	Move            func(filePath, newPosition string)
-	Path            pathStruct
+	Path            *pathStruct
 	System          func(command string, timeoutSecond ...interface{}) int
 	SystemWithShell func(command string, timeoutSecond ...interface{}) int
 	Hostname        func() string
@@ -57,7 +57,7 @@ func init() {
 		Copy:            copyFile,
 		Rename:          rename,
 		Move:            move,
-		Path:            pathstruct,
+		Path:            &pathstruct,
 		System:          system,
 		SystemWithShell: systemWithShell,
 		Hostname:        gethostname,

@@ -137,6 +137,7 @@ func (m *logStruct) Info(args ...interface{}) {
 	msg := String(" ").Join(msgarr).Get()
 
 	_, file, no, _ := runtime.Caller(1)
+	Print(file, no)
 	position := Os.Path.Basename(file) + ":" + Str(no)
 
 	m.show(t, level, msg, position)
