@@ -121,6 +121,7 @@ func (s *stringStruct) Lower() *stringStruct {
 	return s
 }
 
+// pieces can be []string or []*stringStruct
 func (s *stringStruct) Join(pieces interface{}) *stringStruct {
 	var buf bytes.Buffer
 	arr := reflect.ValueOf(pieces)
@@ -134,6 +135,8 @@ func (s *stringStruct) Join(pieces interface{}) *stringStruct {
 			buf.WriteString(vv.S)
 		case string:
 			buf.WriteString(vv)
+		default:
+			Panicerr("Unsupport type in Join")
 		}
 		if l--; l > 0 {
 			buf.WriteString(s.S)
