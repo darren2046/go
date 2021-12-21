@@ -1,9 +1,17 @@
 package golanglibs
 
-// import "github.com/zcalusic/sysinfo"
+import (
+	"github.com/elastic/go-sysinfo/types"
+)
 
-// func getSysInfo() sysinfo.SysInfo {
-// 	var si sysinfo.SysInfo
-// 	si.GetSysInfo()
-// 	return si
-// }
+type sysinfoStruct struct {
+	HostInfo func() types.HostInfo
+}
+
+var sysinfostruct sysinfoStruct
+
+func init() {
+	sysinfostruct = sysinfoStruct{
+		HostInfo: getSysinfoHostInfo,
+	}
+}

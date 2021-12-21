@@ -65,6 +65,7 @@ require (
 	github.com/xtaci/kcp-go v5.4.20+incompatible
 	github.com/xtaci/smux v1.5.16
 	github.com/xuri/excelize/v2 v2.4.1
+	github.com/zcalusic/sysinfo v0.0.0-20210905121133-6fa2f969a900
 	gitlab.com/toby3d/telegraph v1.2.1
 	go.uber.org/ratelimit v0.2.0
 	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b
@@ -91,11 +92,14 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
+	github.com/elastic/go-sysinfo v1.7.1 // indirect
+	github.com/elastic/go-windows v1.0.1 // indirect
 	github.com/gohouse/golib v0.0.0-20210711163732-a5c22059eb75 // indirect
 	github.com/gohouse/t v0.0.0-20201007094014-630049a6bfe9 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/groupcache v0.0.0-20200121045136-8c9f03a8e57e // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
+	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/klauspost/compress v1.13.4 // indirect
@@ -114,6 +118,7 @@ require (
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/richardlehane/mscfb v1.0.3 // indirect
 	github.com/richardlehane/msoleps v1.0.1 // indirect
 	github.com/rivo/uniseg v0.2.0 // indirect
@@ -126,11 +131,12 @@ require (
 	github.com/valyala/fasthttp v1.8.0 // indirect
 	github.com/xtaci/lossyconn v0.0.0-20200209145036-adba10fffc37 // indirect
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3 // indirect
-	golang.org/x/sys v0.0.0-20210910150752-751e447fb3d0 // indirect
+	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b // indirect
 	golang.org/x/time v0.0.0-20201208040808-7e3f01d25324 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/ini.v1 v1.56.0 // indirect
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7 // indirect
+	howett.net/plist v1.0.0 // indirect
 )
