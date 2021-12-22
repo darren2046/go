@@ -225,14 +225,14 @@ This is a toolkit that provide a lot of function or object that make programing 
     * Sysinfo
         * Host
             * func Info() types.HostInfo
-	        * func Memory() *types.HostMemoryInfo
+	        * func Memory() \*types.HostMemoryInfo
 	        * func CPUTimes() types.CPUTimes
-        * func Process(pid int) *sysinfoProcessStruct
-            * func (p *sysinfoProcessStruct) Info() types.ProcessInfo {
-            * func (p *sysinfoProcessStruct) Memory() types.MemoryInfo {
-            * func (p *sysinfoProcessStruct) User() types.UserInfo {
-            * func (p *sysinfoProcessStruct) Parent() *sysinfoProcessStruct {
-            * func (p *sysinfoProcessStruct) CPUTimes() types.CPUTimes {
+        * func Process(pid int) \*sysinfoProcess
+            * func (p \*sysinfoProcess) Info() types.ProcessInfo {
+            * func (p \*sysinfoProcess) Memory() types.MemoryInfo {
+            * func (p \*sysinfoProcess) User() types.UserInfo {
+            * func (p \*sysinfoProcess) Parent() \*sysinfoProcess {
+            * func (p \*sysinfoProcess) CPUTimes() types.CPUTimes {
 * Random
     * func Int(min, max int64) int64
     * func Choice(array interface{}) interface{}
@@ -481,17 +481,17 @@ This is a toolkit that provide a lot of function or object that make programing 
 
 Others
 
-* func [Open](#open)(filePath string) *fileIOStruct
+* func [Open](#open)(filePath string) *fileIO
 * func [Try](#try)(f func(), trycfg ...TryConfig) exception
-* Lg *logStruct 
-    * func (m *logStruct) SetLevel(level string) 
-    * func (m *logStruct) GetLevel() string 
-    * func (m *logStruct) SetLogFile(path string, maxLogFileCount int, logFileSizeInMB ...int) 
-    * func (m *logStruct) Error(args ...interface{}) 
-    * func (m *logStruct) Warn(args ...interface{}) 
-    * func (m *logStruct) Info(args ...interface{}) 
-    * func (m *logStruct) Trace(args ...interface{}) 
-    * func (m *logStruct) Debug(args ...interface{}) 
+* Lg *log 
+    * func (m *log) SetLevel(level string) 
+    * func (m *log) GetLevel() string 
+    * func (m *log) SetLogFile(path string, maxLogFileCount int, logFileSizeInMB ...int) 
+    * func (m *log) Error(args ...interface{}) 
+    * func (m *log) Warn(args ...interface{}) 
+    * func (m *log) Info(args ...interface{}) 
+    * func (m *log) Trace(args ...interface{}) 
+    * func (m *log) Debug(args ...interface{}) 
 * func Chr(ascii int) string 
 * func Ord(char string) int 
 * func Repr(obj interface{}) string 
@@ -731,8 +731,8 @@ func main() {
 上例输出
 
 ```go
-[]main.prometheusResultStruct{
-  main.prometheusResultStruct{
+[]main.prometheusResult{
+  main.prometheusResult{
     Label: map[string]string{
       "instance":  "10.0.0.1:9100",
       "job":       "my-service-svc",
@@ -1111,7 +1111,7 @@ package main
 var key string = "demo key keykeykeykeykeykeykey"
 var salt string = "demo salt saltsaltsaltsaltsaltsalt"
 
-var lg *logStruct
+var lg *log
 
 func main() {
 	args := Argparser("test kcp")
