@@ -159,8 +159,6 @@ type databaseOrmStruct struct {
 	db     *databaseStruct
 	driver string
 	table  string
-	lock   *lockStruct
-	lockby int64
 }
 
 func (m *databaseStruct) Table(tbname string) *databaseOrmStruct {
@@ -170,8 +168,6 @@ func (m *databaseStruct) Table(tbname string) *databaseOrmStruct {
 		driver: m.driver,
 		table:  tbname,
 		db:     m,
-		lock:   getLock(), // 为了保证线程安全，链式操作当中要上锁，返回数据解锁。为了保证在多个线程中复用同一个databaseStruct的时候报错。
-		lockby: -1,
 	}
 }
 
@@ -184,10 +180,6 @@ func (m *databaseStruct) RenameTable(oldTableName string, newTableNname string) 
 }
 
 func (m *databaseOrmStruct) Fields(items ...string) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	var i []string
 	for _, v := range items {
 		i = append(i, "`"+v+"`")
@@ -197,92 +189,51 @@ func (m *databaseOrmStruct) Fields(items ...string) *databaseOrmStruct {
 }
 
 func (m *databaseOrmStruct) Where(key string, operator string, value interface{}) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.Where(key, operator, value)
 	return m
 }
 
 func (m *databaseOrmStruct) WhereIn(key string, value []interface{}) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.WhereIn(key, value)
 	return m
 }
 
 func (m *databaseOrmStruct) WhereNotIn(key string, value []interface{}) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.WhereNotIn(key, value)
 	return m
 }
 
 func (m *databaseOrmStruct) WhereNull(columnName string) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.WhereNull(columnName)
 	return m
 }
 
 func (m *databaseOrmStruct) WhereNotNull(columnName string) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.WhereNotNull(columnName)
 	return m
 }
 
 func (m *databaseOrmStruct) OrWhere(key string, operator string, value interface{}) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.OrWhere(key, operator, value)
 	return m
 }
 
 func (m *databaseOrmStruct) OrWhereIn(key string, value []interface{}) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.OrWhereIn(key, value)
 	return m
 }
 
 func (m *databaseOrmStruct) Orderby(item ...string) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.OrderBy(String(" ").Join(item).Get())
 	return m
 }
 
 func (m *databaseOrmStruct) Limit(number int) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.Limit(number)
 	return m
 }
 
 func (m *databaseOrmStruct) Get() (res []gorose.Data) {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
-
 	errortimes := 0
 	var err error
 	for {
@@ -310,9 +261,6 @@ func (m *databaseOrmStruct) Get() (res []gorose.Data) {
 
 	//print(m)
 
-	m.lock.Release()
-	m.lockby = -1
-
 	for idx, d := range res {
 		for k, v := range d {
 			if v != nil && Typeof(v) == "time.Time" {
@@ -330,11 +278,6 @@ func (m *databaseOrmStruct) Paginate(pagesize int, page int) []gorose.Data {
 }
 
 func (m *databaseOrmStruct) First() (res gorose.Data) {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
-
 	errortimes := 0
 	var err error
 	for {
@@ -360,9 +303,6 @@ func (m *databaseOrmStruct) First() (res gorose.Data) {
 
 	m.orm = m.db.Table(m.table).orm
 
-	m.lock.Release()
-	m.lockby = -1
-
 	for k, v := range res {
 		if v != nil && Typeof(v) == "time.Time" {
 			res[k] = Time.Strftime("%Y-%m-%d %H:%M:%S", v.(time.Time).Unix())
@@ -377,11 +317,6 @@ func (m *databaseOrmStruct) Find(id int) gorose.Data {
 }
 
 func (m *databaseOrmStruct) Count() (res int64) {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
-
 	errortimes := 0
 	var err error
 	for {
@@ -407,9 +342,6 @@ func (m *databaseOrmStruct) Count() (res int64) {
 
 	m.orm = m.db.Table(m.table).orm
 
-	m.lock.Release()
-	m.lockby = -1
-
 	return
 }
 
@@ -429,42 +361,23 @@ func (m *databaseOrmStruct) Chunk(limit int, callback func([]gorose.Data) error)
 }
 
 func (m *databaseOrmStruct) BuildSQL() (string, []interface{}) {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	sql, param, err := m.orm.BuildSql()
 	Panicerr(err)
-
-	m.lock.Release()
-	m.lockby = -1
 
 	return sql, param
 }
 
 func (m *databaseOrmStruct) Data(data interface{}) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.Data(data)
 	return m
 }
 
 func (m *databaseOrmStruct) Offset(offset int) *databaseOrmStruct {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	m.orm.Offset(offset)
 	return m
 }
 
 func (m *databaseOrmStruct) InsertGetID() (num int64) {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	errortimes := 0
 	var err error
 	for {
@@ -490,18 +403,10 @@ func (m *databaseOrmStruct) InsertGetID() (num int64) {
 
 	m.orm = m.db.Table(m.table).orm
 
-	m.lock.Release()
-	m.lockby = -1
-
 	return
 }
 
 func (m *databaseOrmStruct) Insert() (num int64) {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
-
 	errortimes := 0
 	var err error
 	for {
@@ -526,17 +431,10 @@ func (m *databaseOrmStruct) Insert() (num int64) {
 	}
 	m.orm = m.db.Table(m.table).orm
 
-	m.lock.Release()
-	m.lockby = -1
-
 	return
 }
 
 func (m *databaseOrmStruct) Update(data ...interface{}) (num int64) {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
 	errortimes := 0
 	var err error
 	for {
@@ -561,18 +459,10 @@ func (m *databaseOrmStruct) Update(data ...interface{}) (num int64) {
 	}
 	m.orm = m.db.Table(m.table).orm
 
-	m.lock.Release()
-	m.lockby = -1
-
 	return
 }
 
 func (m *databaseOrmStruct) Delete() (num int64) {
-	if m.lockby != Os.GoroutineID() {
-		m.lock.Acquire()
-		m.lockby = Os.GoroutineID()
-	}
-
 	errortimes := 0
 	var err error
 	for {
@@ -596,9 +486,6 @@ func (m *databaseOrmStruct) Delete() (num int64) {
 		}
 	}
 	m.orm = m.db.Table(m.table).orm
-
-	m.lock.Release()
-	m.lockby = -1
 
 	return
 }
@@ -656,36 +543,29 @@ func (m *databaseOrmStruct) AddColumn(columnName string, columnType string, defa
 			err := errors.New("只支持以下数据类型：\"int\", \"float\", \"string\", \"text\", \"datetime\", \"blob\"(SQLite支持, MySql不支持)")
 			Panicerr(err)
 		}
-		if m.driver == "mysql" {
-			if columnType == "int" {
-				columnType = "bigint"
-			} else if columnType == "float" {
-				columnType = "double"
-			} else if columnType == "string" {
-				columnType = "VARCHAR(256)"
-			} else if columnType == "text" {
-				columnType = "LONGTEXT"
-			} else if columnType == "datetime" {
-				columnType = "DATETIME"
-			} else if columnType == "blob" {
-				columnType = "LONGBLOB"
-				Panicerr("MySQL暂不支持blob")
-			}
-		} else {
-			if columnType == "int" {
-				columnType = "INTEGER"
-			} else if columnType == "float" {
-				columnType = "REAL"
-			} else if columnType == "string" {
-				columnType = "VARCHAR"
-			} else if columnType == "text" {
-				columnType = "LONGTEXT"
-			} else if columnType == "datetime" {
-				columnType = "DATETIME"
-			} else if columnType == "blob" {
-				columnType = "BLOB"
-			}
+
+		columnTypeMaps := map[string]map[string]string{
+			"mysql": {
+				"int":      "bigint",
+				"float":    "double",
+				"string":   "VARCHAR(256)",
+				"text":     "LONGTEXT",
+				"datetime": "DATETIME",
+			},
+			"sqlite3": {
+				"int":      "INTEGER",
+				"float":    "REAL",
+				"string":   "VARCHAR",
+				"text":     "LONGTEXT",
+				"datetime": "DATETIME",
+				"blob":     "BLOB",
+			},
 		}
+
+		if m.driver == "mysql" && columnType == "blob" {
+			Panicerr("MySQL暂不支持blob")
+		}
+		columnType = columnTypeMaps[m.driver][columnType]
 
 		var sql string
 		if len(defaultValue) == 0 {

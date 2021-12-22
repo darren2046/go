@@ -92,26 +92,26 @@ var tenToAny map[int64]string = map[int64]string{
 
 // 10进制转任意进制
 func decimalToAny(num, n int64) string {
-	new_num_str := ""
+	newNumStr := ""
 	var remainder int64
-	var remainder_string string
+	var remainderString string
 	for num != 0 {
 		remainder = num % n
 		if 76 > remainder && remainder > 9 {
-			remainder_string = tenToAny[remainder]
+			remainderString = tenToAny[remainder]
 		} else {
-			remainder_string = Str(remainder)
+			remainderString = Str(remainder)
 		}
-		new_num_str = remainder_string + new_num_str
+		newNumStr = remainderString + newNumStr
 		num = num / n
 	}
-	return new_num_str
+	return newNumStr
 }
 
 // 任意进制转10进制
 func anyToDecimal(num string, n int64) int64 {
-	var new_num float64
-	new_num = 0.0
+	var newNum float64
+	newNum = 0.0
 	nNum := len(strings.Split(num, "")) - 1
 	for _, value := range strings.Split(num, "") {
 		tmp := float64(func(in string) int64 {
@@ -124,13 +124,13 @@ func anyToDecimal(num string, n int64) int64 {
 			return result
 		}(value))
 		if tmp != -1 {
-			new_num = new_num + tmp*math.Pow(float64(n), float64(nNum))
+			newNum = newNum + tmp*math.Pow(float64(n), float64(nNum))
 			nNum = nNum - 1
 		} else {
 			break
 		}
 	}
-	return Int64(new_num)
+	return Int64(newNum)
 }
 
 func mathaverage(array interface{}) (avgresult float64) {

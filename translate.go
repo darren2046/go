@@ -31,8 +31,8 @@ func baiduTranslateAnyToZH(text string) string {
 
 	for {
 		salt := Str(randint(32768, 65536))
-		pre_sign := appID + text + salt + secretKey
-		sign := md5sum(pre_sign)
+		preSign := appID + text + salt + secretKey
+		sign := md5sum(preSign)
 		params := HttpParam{
 			"q":     text,
 			"from":  "auto",

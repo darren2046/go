@@ -39,18 +39,18 @@ func (s *stringStruct) Has(substr string) bool {
 }
 
 func (s *stringStruct) sub(start, end int) string {
-	start_str_idx := 0
+	startStrIdx := 0
 	i := 0
 	for j := range s.S {
 		if i == start {
-			start_str_idx = j
+			startStrIdx = j
 		}
 		if i == end {
-			return s.S[start_str_idx:j]
+			return s.S[startStrIdx:j]
 		}
 		i++
 	}
-	return s.S[start_str_idx:]
+	return s.S[startStrIdx:]
 }
 
 // Return the length of the string

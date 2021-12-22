@@ -194,16 +194,16 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*vnc) Input(s string) \*vnc
         * func (m \*vnc) Key() \*vncKey
             * func (m \*vncKey) Enter() \*vncKey
-            * func (m \*vncKey) Ctrl_a() \*vncKey
-            * func (m \*vncKey) Ctrl_c() \*vncKey
-            * func (m \*vncKey) Ctrl_v() \*vncKey
-            * func (m \*vncKey) Ctrl_z() \*vncKey
-            * func (m \*vncKey) Ctrl_x() \*vncKey
-            * func (m \*vncKey) Ctrl_f() \*vncKey
-            * func (m \*vncKey) Ctrl_d() \*vncKey
-            * func (m \*vncKey) Ctrl_s() \*vncKey
-            * func (m \*vncKey) Ctrl_r() \*vncKey
-            * func (m \*vncKey) Ctrl_e() \*vncKey
+            * func (m \*vncKey) CtrlA() \*vncKey
+            * func (m \*vncKey) CtrlC() \*vncKey
+            * func (m \*vncKey) CtrlV() \*vncKey
+            * func (m \*vncKey) CtrlZ() \*vncKey
+            * func (m \*vncKey) CtrlX() \*vncKey
+            * func (m \*vncKey) CtrlF() \*vncKey
+            * func (m \*vncKey) CtrlD() \*vncKey
+            * func (m \*vncKey) CtrlS() \*vncKey
+            * func (m \*vncKey) CtrlR() \*vncKey
+            * func (m \*vncKey) CtrlE() \*vncKey
             * func (m \*vncKey) Delete() \*vncKey
             * func (m \*vncKey) Tab() \*vncKey
     * func WebSocket(string) \*websocket
@@ -798,7 +798,7 @@ func main() {
 func main() {
 	db := getMySQL("mysql-svc", 3306, "root", "", "test")
 
-	u := db.Table("user") // 之后使用u这个变量去操作的话，线程安全，会上锁
+	u := db.Table("user") // 之后使用u这个变量去操作的话，线程不安全, 多线程就需要每个线程都一次db.Table()
 
 	// select
 	reses := db.Table("user").Fields("id", "name", "age").Where("age", ">", 0).Orderby("id desc").limit(2).get()
@@ -982,7 +982,9 @@ func main() {
 	v := Tools.VNC("192.168.3.49:5900", VNCCfg{Password: "r"}) // vncCfg可选
 	v.Move(237, 570).click()
 	v.Input("Hello world!\nHHHHHH") // 不支持中文, 只支持键盘上有的按键. 
-	
+
+    v.Key().CtrlC()
+
 	// Ctrl-C
 	v.VC.KeyEvent(vncNonAsciiKeyMap.Control, true)
 	v.VC.KeyEvent(vncAsciiKeyMap["c"][0], true)

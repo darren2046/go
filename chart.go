@@ -16,6 +16,8 @@ type chartStruct struct {
 
 var chartstruct chartStruct
 
+var chartAxisMismatchError string = "The number of elements on the X axis and Y axis must be the same"
+
 func init() {
 	chartstruct = chartStruct{
 		LineChartWithTimestampAndNumber: drawLineChartWithTimeSeries,
@@ -27,7 +29,7 @@ func init() {
 
 func drawLineChartWithTimeSeries(timestampX []int64, dataY []float64, xtitle string, ytitle string, title string, fpath string) {
 	if len(timestampX) != len(dataY) {
-		panic(newerr("The number of elements on the X axis and Y axis must be the same"))
+		Panicerr(chartAxisMismatchError)
 	}
 
 	var dataX []time.Time
@@ -99,7 +101,7 @@ func drawLineChartWithTimeSeries(timestampX []int64, dataY []float64, xtitle str
 
 func drawLineChartWithNumberSeries(dataX []float64, dataY []float64, xtitle string, ytitle string, title string, fpath string) {
 	if len(dataX) != len(dataY) {
-		panic(newerr("The number of elements on the X axis and Y axis must be the same"))
+		Panicerr(chartAxisMismatchError)
 	}
 
 	// statikFS, err := fs.New()
@@ -164,7 +166,7 @@ func drawLineChartWithNumberSeries(dataX []float64, dataY []float64, xtitle stri
 
 func drawBarChartWithNumberSeries(dataX []string, dataY []float64, ytitle string, title string, fpath string) {
 	if len(dataX) != len(dataY) {
-		panic(newerr("The number of elements on the X axis and Y axis must be the same"))
+		Panicerr(chartAxisMismatchError)
 	}
 
 	// statikFS, err := fs.New()
@@ -216,7 +218,7 @@ func drawBarChartWithNumberSeries(dataX []string, dataY []float64, ytitle string
 
 func drawPieChartWithNumberSeries(dataX []string, dataY []float64, title string, fpath string) {
 	if len(dataX) != len(dataY) {
-		panic(newerr("The number of elements on the X axis and Y axis must be the same"))
+		Panicerr(chartAxisMismatchError)
 	}
 
 	// statikFS, err := fs.New()
