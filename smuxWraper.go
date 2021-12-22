@@ -73,7 +73,7 @@ func smuxServerWrapper(conn io.ReadWriteCloser, cfg ...SmuxConfig) *smuxServerSi
 }
 
 type smuxServerSideConnection struct {
-	stream     *smux.Stream
+	Stream     *smux.Stream
 	isclose    bool
 	aes        *aesStruct
 	disableXOR bool
@@ -88,10 +88,10 @@ func (m *smuxServerSideListener) Accept() chan *smuxServerSideConnection {
 				stream, err := m.listener.AcceptStream()
 				Panicerr(err)
 
-				m := &smuxServerSideConnection{stream: stream, aes: m.aes, disableXOR: m.disableXOR}
+				m := &smuxServerSideConnection{Stream: stream, aes: m.aes, disableXOR: m.disableXOR}
 
 				go func() {
-					<-m.stream.GetDieCh()
+					<-m.Stream.GetDieCh()
 					//lg.trace("Stream is closed")
 					m.isclose = true
 				}()
@@ -107,7 +107,7 @@ func (m *smuxServerSideListener) Accept() chan *smuxServerSideConnection {
 
 func (m *smuxServerSideConnection) Send(data map[string]string, timeout ...int) {
 	if len(timeout) != 0 {
-		m.stream.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
+		m.Stream.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
 
 	text := map2bin(data)
@@ -119,7 +119,7 @@ func (m *smuxServerSideConnection) Send(data map[string]string, timeout ...int) 
 	rand.Read(xorkey)
 
 	if !m.disableXOR {
-		_, err := m.stream.Write(xorkey)
+		_, err := m.Stream.Write(xorkey)
 		Panicerr(err)
 	}
 
@@ -128,27 +128,27 @@ func (m *smuxServerSideConnection) Send(data map[string]string, timeout ...int) 
 
 	if !m.disableXOR {
 
-		_, err := m.stream.Write([]byte(xor(Str(btlen), Str(xorkey))))
+		_, err := m.Stream.Write([]byte(xor(Str(btlen), Str(xorkey))))
 		Panicerr(err)
 	} else {
-		_, err := m.stream.Write(btlen)
+		_, err := m.Stream.Write(btlen)
 		Panicerr(err)
 	}
 
 	if !m.disableXOR {
-		_, err := m.stream.Write([]byte(xor(text, Str(xorkey))))
+		_, err := m.Stream.Write([]byte(xor(text, Str(xorkey))))
 		Panicerr(err)
 	} else {
-		_, err := m.stream.Write([]byte(text))
+		_, err := m.Stream.Write([]byte(text))
 		Panicerr(err)
 	}
 
-	m.stream.SetWriteDeadline(time.Time{})
+	m.Stream.SetWriteDeadline(time.Time{})
 }
 
 func (m *smuxServerSideConnection) Recv(timeout ...int) (data map[string]string) {
 	if len(timeout) != 0 {
-		m.stream.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
+		m.Stream.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
 
 	var xorkey string
@@ -157,7 +157,7 @@ func (m *smuxServerSideConnection) Recv(timeout ...int) (data map[string]string)
 		buf := make([]byte, headerxorkeylen)
 
 		for {
-			n, err := m.stream.Read(buf)
+			n, err := m.Stream.Read(buf)
 			if err != nil {
 				if err.Error() == "timeout" {
 					return nil
@@ -179,7 +179,7 @@ func (m *smuxServerSideConnection) Recv(timeout ...int) (data map[string]string)
 	totalblen := ""
 	buf := make([]byte, headertotallen)
 	for {
-		n, err := m.stream.Read(buf)
+		n, err := m.Stream.Read(buf)
 		if err != nil {
 			if err.Error() == "timeout" {
 				return nil
@@ -204,7 +204,7 @@ func (m *smuxServerSideConnection) Recv(timeout ...int) (data map[string]string)
 	totaldata := ""
 	buf = make([]byte, totallen)
 	for {
-		n, err := m.stream.Read(buf)
+		n, err := m.Stream.Read(buf)
 		Panicerr(err)
 
 		totaldata = totaldata + string(buf[:n])
@@ -224,14 +224,14 @@ func (m *smuxServerSideConnection) Recv(timeout ...int) (data map[string]string)
 	}
 	data = bin2map(totaldata)
 
-	m.stream.SetReadDeadline(time.Time{})
+	m.Stream.SetReadDeadline(time.Time{})
 
 	return
 }
 
 func (m *smuxServerSideConnection) Close() {
 	if !m.isclose {
-		m.stream.Close()
+		m.Stream.Close()
 	}
 }
 
@@ -278,7 +278,7 @@ func smuxClientWrapper(conn io.ReadWriteCloser, cfg ...SmuxConfig) *smuxClientSi
 }
 
 type smuxClientSideConnection struct {
-	stream     *smux.Stream
+	Stream     *smux.Stream
 	isclose    bool
 	aes        *aesStruct
 	disableXOR bool
@@ -288,10 +288,10 @@ func (m *smuxClientSideSession) Connect() *smuxClientSideConnection {
 	stream, err := m.session.OpenStream()
 	Panicerr(err)
 
-	mm := &smuxClientSideConnection{stream: stream, aes: m.aes, disableXOR: m.disableXOR}
+	mm := &smuxClientSideConnection{Stream: stream, aes: m.aes, disableXOR: m.disableXOR}
 
 	go func() {
-		<-mm.stream.GetDieCh()
+		<-mm.Stream.GetDieCh()
 		mm.isclose = true
 	}()
 
@@ -309,7 +309,7 @@ func (m *smuxClientSideSession) Close() {
 
 func (m *smuxClientSideConnection) Send(data map[string]string, timeout ...int) {
 	if len(timeout) != 0 {
-		m.stream.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
+		m.Stream.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
 
 	text := map2bin(data)
@@ -321,7 +321,7 @@ func (m *smuxClientSideConnection) Send(data map[string]string, timeout ...int) 
 	rand.Read(xorkey)
 
 	if !m.disableXOR {
-		_, err := m.stream.Write(xorkey)
+		_, err := m.Stream.Write(xorkey)
 		Panicerr(err)
 	}
 
@@ -330,27 +330,27 @@ func (m *smuxClientSideConnection) Send(data map[string]string, timeout ...int) 
 
 	if !m.disableXOR {
 
-		_, err := m.stream.Write([]byte(xor(Str(btlen), Str(xorkey))))
+		_, err := m.Stream.Write([]byte(xor(Str(btlen), Str(xorkey))))
 		Panicerr(err)
 	} else {
-		_, err := m.stream.Write(btlen)
+		_, err := m.Stream.Write(btlen)
 		Panicerr(err)
 	}
 
 	if !m.disableXOR {
-		_, err := m.stream.Write([]byte(xor(text, Str(xorkey))))
+		_, err := m.Stream.Write([]byte(xor(text, Str(xorkey))))
 		Panicerr(err)
 	} else {
-		_, err := m.stream.Write([]byte(text))
+		_, err := m.Stream.Write([]byte(text))
 		Panicerr(err)
 	}
 
-	m.stream.SetWriteDeadline(time.Time{})
+	m.Stream.SetWriteDeadline(time.Time{})
 }
 
 func (m *smuxClientSideConnection) Recv(timeout ...int) (data map[string]string) {
 	if len(timeout) != 0 {
-		m.stream.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
+		m.Stream.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
 
 	var xorkey string
@@ -359,7 +359,7 @@ func (m *smuxClientSideConnection) Recv(timeout ...int) (data map[string]string)
 		buf := make([]byte, headerxorkeylen)
 
 		for {
-			n, err := m.stream.Read(buf)
+			n, err := m.Stream.Read(buf)
 			if err != nil {
 				if err.Error() == "timeout" {
 					return nil
@@ -381,7 +381,7 @@ func (m *smuxClientSideConnection) Recv(timeout ...int) (data map[string]string)
 	totalblen := ""
 	buf := make([]byte, headertotallen)
 	for {
-		n, err := m.stream.Read(buf)
+		n, err := m.Stream.Read(buf)
 		if err != nil {
 			if err.Error() == "timeout" {
 				return nil
@@ -406,7 +406,7 @@ func (m *smuxClientSideConnection) Recv(timeout ...int) (data map[string]string)
 	totaldata := ""
 	buf = make([]byte, totallen)
 	for {
-		n, err := m.stream.Read(buf)
+		n, err := m.Stream.Read(buf)
 		Panicerr(err)
 
 		totaldata = totaldata + string(buf[:n])
@@ -426,13 +426,13 @@ func (m *smuxClientSideConnection) Recv(timeout ...int) (data map[string]string)
 	}
 	data = bin2map(totaldata)
 
-	m.stream.SetReadDeadline(time.Time{})
+	m.Stream.SetReadDeadline(time.Time{})
 
 	return
 }
 
 func (m *smuxClientSideConnection) Close() {
 	if !m.isclose {
-		m.stream.Close()
+		m.Stream.Close()
 	}
 }
