@@ -222,6 +222,17 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*xpath) Text() string
         * func (m \*xpath) GetAttr(attr string) string
         * func (m \*xpath) Html() string
+    * Sysinfo
+        * Host
+            * func Info() types.HostInfo
+	        * func Memory() *types.HostMemoryInfo
+	        * func CPUTimes() types.CPUTimes
+        * func Process(pid int) *sysinfoProcessStruct
+            * func (p *sysinfoProcessStruct) Info() types.ProcessInfo {
+            * func (p *sysinfoProcessStruct) Memory() types.MemoryInfo {
+            * func (p *sysinfoProcessStruct) User() types.UserInfo {
+            * func (p *sysinfoProcessStruct) Parent() *sysinfoProcessStruct {
+            * func (p *sysinfoProcessStruct) CPUTimes() types.CPUTimes {
 * Random
     * func Int(min, max int64) int64
     * func Choice(array interface{}) interface{}

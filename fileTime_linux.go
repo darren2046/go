@@ -1,6 +1,10 @@
 package golanglibs
 
-import "os"
+import (
+	"os"
+	"syscall"
+	"time"
+)
 
 func (f *fileStruct) Time() *fileTimeStruct {
 	fi, err := os.Stat(f.filePath)
@@ -12,7 +16,7 @@ func (f *fileStruct) Time() *fileTimeStruct {
 
 	return &fileTimeStruct{
 		Mtime: mtime,
-		ctime: ctime,
-		atime: atime,
+		Ctime: ctime,
+		Atime: atime,
 	}
 }

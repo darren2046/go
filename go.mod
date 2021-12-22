@@ -21,6 +21,7 @@ require (
 	github.com/creack/pty v1.1.17
 	github.com/denisbrodbeck/striphtmltags v6.6.6+incompatible
 	github.com/dustin/go-humanize v1.0.0
+	github.com/elastic/go-sysinfo v1.7.1
 	github.com/elliotchance/orderedmap v1.4.0
 	github.com/fatih/color v1.13.0
 	github.com/fsnotify/fsnotify v1.5.1
@@ -65,7 +66,6 @@ require (
 	github.com/xtaci/kcp-go v5.4.20+incompatible
 	github.com/xtaci/smux v1.5.16
 	github.com/xuri/excelize/v2 v2.4.1
-	github.com/zcalusic/sysinfo v0.0.0-20210905121133-6fa2f969a900
 	gitlab.com/toby3d/telegraph v1.2.1
 	go.uber.org/ratelimit v0.2.0
 	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b
@@ -92,7 +92,6 @@ require (
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
-	github.com/elastic/go-sysinfo v1.7.1 // indirect
 	github.com/elastic/go-windows v1.0.1 // indirect
 	github.com/gohouse/golib v0.0.0-20210711163732-a5c22059eb75 // indirect
 	github.com/gohouse/t v0.0.0-20201007094014-630049a6bfe9 // indirect

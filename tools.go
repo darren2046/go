@@ -35,6 +35,7 @@ type toolsStruct struct {
 	WebSocket     func(url string) *websocketStruct
 	Xlsx          func(path string) *xlsxStruct
 	XPath         func(htmlString string) *xpathStruct
+	Sysinfo       *sysinfoStruct
 }
 
 var Tools toolsStruct
@@ -73,6 +74,7 @@ func init() {
 		WebSocket:     getWebSocket,
 		Xlsx:          getXlsx,
 		XPath:         getXPath,
+		Sysinfo:       &sysinfostruct,
 	}
 }
 

@@ -85,3 +85,64 @@ func TestHostMemory(t *testing.T) {
 func TestHostCPUTimes(t *testing.T) {
 	Print(sysinfohoststruct.CPUTimes())
 }
+
+//   types.ProcessInfo{
+// 	Name: "Xorg",
+// 	PID:  3428,
+// 	PPID: 3426,
+// 	CWD:  "/home/jack",
+// 	Exe:  "/usr/lib/xorg/Xorg",
+// 	Args: []string{
+// 	  "/usr/lib/xorg/Xorg",
+// 	  "vt2",
+// 	  "-displayfd",
+// 	  "3",
+// 	  "-auth",
+// 	  "/run/user/1000/gdm/Xauthority",
+// 	  "-background",
+// 	  "none",
+// 	  "-noreset",
+// 	  "-keeptty",
+// 	  "-verbose",
+// 	  "3",
+// 	},
+// 	StartTime: 2021-12-16 20:46:30 Local,
+//   }
+func TestProcessInfo(t *testing.T) {
+	Print(getSysinfoProcess(3428).Info())
+}
+
+// types.MemoryInfo{
+// 	Resident: 0x0000000008bdb000,
+// 	Virtual:  0x0000000042156000,
+// 	Metrics:  map[string]uint64{},
+//   }
+func TestProcessMemory(t *testing.T) {
+	Print(getSysinfoProcess(3428).Memory())
+}
+
+// types.UserInfo{
+// 	UID:  "1000",
+// 	EUID: "1000",
+// 	SUID: "1000",
+// 	GID:  "1000",
+// 	EGID: "1000",
+// 	SGID: "1000",
+//   }
+func TestProcessUser(t *testing.T) {
+	Print(getSysinfoProcess(3428).User())
+}
+
+// types.CPUTimes{
+// 	User:    2091860000000,
+// 	System:  1254070000000,
+// 	Idle:    0,
+// 	IOWait:  0,
+// 	IRQ:     0,
+// 	Nice:    0,
+// 	SoftIRQ: 0,
+// 	Steal:   0,
+//   }
+func TestProcessCPUTimes(t *testing.T) {
+	Print(getSysinfoProcess(3428).CPUTimes())
+}
