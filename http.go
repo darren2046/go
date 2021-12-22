@@ -58,7 +58,19 @@ type HttpConfig struct {
 	insecureSkipVerify  bool
 }
 
-func httpHead(uri string, args ...interface{}) httpResp {
+type httpRequestStruct struct {
+	uri               string
+	header            http.Header // request header
+	param             req.Param
+	readBodySize      int
+	timeoutRetryTimes int
+	timeouttimes      int
+	headers           map[string]string // response header
+	hresp             *http.Response
+	respBody          []byte
+}
+
+func getHttpRequest(uri string, args ...interface{}) *httpRequestStruct {
 	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
 		uri = "http://" + uri
 	}
@@ -72,9 +84,9 @@ func httpHead(uri string, args ...interface{}) httpResp {
 	header := make(http.Header)
 	header.Set("User-Agent", uarand.GetRandom())
 
-	param := make(req.Param)
 	var readBodySize int
 	var timeoutRetryTimes int = 0
+	param := make(req.Param)
 	for _, v := range args {
 		switch vv := v.(type) {
 		case HttpHeader:
@@ -108,1099 +120,239 @@ func httpHead(uri string, args ...interface{}) httpResp {
 			}
 		}
 	}
+	return &httpRequestStruct{
+		uri:               uri,
+		header:            header,
+		param:             param,
+		readBodySize:      readBodySize,
+		timeoutRetryTimes: timeoutRetryTimes,
+		timeouttimes:      0,
+	}
+}
 
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
-	for {
-		resp, err = req.Head(uri, header, param)
+func (m *httpRequestStruct) responseHandler(resp *req.Resp, err error) bool {
+	m.headers = make(map[string]string)
+	if err != nil {
+		// lg.trace(err)
+		if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
+			m.timeouttimes += 1
+			if m.timeoutRetryTimes != -1 && m.timeouttimes >= m.timeoutRetryTimes {
+				Panicerr(err)
+			} else {
+				return false
+			}
+		} else {
+			Panicerr(err)
+		}
+	}
+
+	m.hresp = resp.Response()
+	for k, v := range m.hresp.Header {
+		m.headers[k] = String(" ").Join(v).Get()
+	}
+
+	defer m.hresp.Body.Close()
+
+	if m.readBodySize == 0 {
+		m.respBody, err = ioutil.ReadAll(m.hresp.Body)
 		if err != nil {
-			// lg.trace(err)
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
+				m.timeouttimes += 1
+				if m.timeoutRetryTimes != -1 && m.timeouttimes >= m.timeoutRetryTimes {
 					Panicerr(err)
 				} else {
-					continue
+					return false
 				}
 			} else {
 				Panicerr(err)
 			}
 		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
+	} else {
+		buffer := make([]byte, m.readBodySize)
+		num, err := io.ReadAtLeast(m.hresp.Body, buffer, m.readBodySize)
+		if err != nil {
+			// lg.trace(err)
+			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
+				m.timeouttimes += 1
+				if m.timeoutRetryTimes != -1 && m.timeouttimes >= m.timeoutRetryTimes {
+					Panicerr(err)
 				} else {
+					return false
+				}
+			} else {
+				if !String("unexpected EOF").In(err.Error()) {
 					Panicerr(err)
 				}
 			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
+		}
 
-			respBody = buffer[:num]
+		m.respBody = buffer[:num]
+	}
+	return true
+}
+
+func httpHead(uri string, args ...interface{}) httpResp {
+	httpRequest := getHttpRequest(uri, args...)
+
+	for {
+		resp, err := req.Head(httpRequest.uri, httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
 
 func httpPostFile(uri string, filePath string, args ...interface{}) httpResp {
-	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
-		uri = "http://" + uri
-	}
-
-	tr := &http.Transport{DisableKeepAlives: true}
-	client := &http.Client{Transport: tr}
-	req.SetClient(client)
-
-	req.SetTimeout(getTimeDuration(10))
-
-	header := make(http.Header)
-	header.Set("User-Agent", uarand.GetRandom())
-
-	param := make(req.Param)
-	var readBodySize int
-	var timeoutRetryTimes int = 0
-	for _, v := range args {
-		switch vv := v.(type) {
-		case HttpHeader:
-			for k, vvv := range vv {
-				header.Set(k, vvv)
-			}
-		case HttpParam:
-			for k, vvv := range vv {
-				param[k] = vvv
-			}
-		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
-			} else {
-				req.SetTimeout(getTimeDuration(10))
-			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
-				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				}
-			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
-				Panicerr(err)
-				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
-			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
-				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
-		}
-	}
-
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
+	httpRequest := getHttpRequest(uri, args...)
 	for {
-		resp, err = req.Post(uri, req.File(filePath), header, param)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					continue
-				}
-			} else {
-				Panicerr(err)
-			}
-		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					Panicerr(err)
-				}
-			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
-
-			respBody = buffer[:num]
+		resp, err := req.Post(uri, req.File(filePath), httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
 
 func httpPostRaw(uri string, body string, args ...interface{}) httpResp {
-	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
-		uri = "http://" + uri
-	}
-
-	tr := &http.Transport{DisableKeepAlives: true}
-	client := &http.Client{Transport: tr}
-	req.SetClient(client)
-
-	req.SetTimeout(getTimeDuration(10))
-
-	header := make(http.Header)
-	header.Set("User-Agent", uarand.GetRandom())
-
-	param := make(req.Param)
-	var readBodySize int
-	var timeoutRetryTimes int = 0
-	for _, v := range args {
-		switch vv := v.(type) {
-		case HttpHeader:
-			for k, vvv := range vv {
-				header.Set(k, vvv)
-			}
-		case HttpParam:
-			for k, vvv := range vv {
-				param[k] = vvv
-			}
-		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
-			} else {
-				req.SetTimeout(getTimeDuration(10))
-			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
-				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				}
-			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
-				Panicerr(err)
-				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
-			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
-				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
-		}
-	}
-
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
+	httpRequest := getHttpRequest(uri, args...)
 	for {
-		resp, err = req.Post(uri, body, header, param)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					continue
-				}
-			} else {
-				Panicerr(err)
-			}
-		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					Panicerr(err)
-				}
-			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
-
-			respBody = buffer[:num]
+		resp, err := req.Post(uri, body, httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
 
 func httpPostJSON(uri string, json interface{}, args ...interface{}) httpResp {
-	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
-		uri = "http://" + uri
-	}
-
-	tr := &http.Transport{DisableKeepAlives: true}
-	client := &http.Client{Transport: tr}
-	req.SetClient(client)
-
-	req.SetTimeout(getTimeDuration(10))
-
-	header := make(http.Header)
-	header.Set("User-Agent", uarand.GetRandom())
-
-	param := make(req.Param)
-	var readBodySize int
-	var timeoutRetryTimes int = 0
-	for _, v := range args {
-		switch vv := v.(type) {
-		case HttpHeader:
-			for k, vvv := range vv {
-				header.Set(k, vvv)
-			}
-		case HttpParam:
-			for k, vvv := range vv {
-				param[k] = vvv
-			}
-		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
-			} else {
-				req.SetTimeout(getTimeDuration(10))
-			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
-				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				}
-			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
-				Panicerr(err)
-				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
-			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
-				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
-		}
-	}
-
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
+	httpRequest := getHttpRequest(uri, args...)
 	for {
-		resp, err = req.Post(uri, req.BodyJSON(&json), header, param)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					continue
-				}
-			} else {
-				Panicerr(err)
-			}
-		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					Panicerr(err)
-				}
-			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
-
-			respBody = buffer[:num]
+		resp, err := req.Post(uri, req.BodyJSON(&json), httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
 
 // httpPost(url, HttpHeader{}, HttpParam{}) {
 func httpPost(uri string, args ...interface{}) httpResp {
-	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
-		uri = "http://" + uri
-	}
-
-	tr := &http.Transport{DisableKeepAlives: true}
-	client := &http.Client{Transport: tr}
-	req.SetClient(client)
-
-	req.SetTimeout(getTimeDuration(10))
-
-	header := make(http.Header)
-	header.Set("User-Agent", uarand.GetRandom())
-
-	param := make(req.Param)
-	var readBodySize int
-	var timeoutRetryTimes int = 0
-	for _, v := range args {
-		switch vv := v.(type) {
-		case HttpHeader:
-			for k, vvv := range vv {
-				header.Set(k, vvv)
-			}
-		case HttpParam:
-			for k, vvv := range vv {
-				param[k] = vvv
-			}
-		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
-			} else {
-				req.SetTimeout(getTimeDuration(10))
-			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
-				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				}
-			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
-				Panicerr(err)
-				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
-			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
-				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
-		}
-	}
-
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
+	httpRequest := getHttpRequest(uri, args...)
 	for {
-		resp, err = req.Post(uri, header, param)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					continue
-				}
-			} else {
-				Panicerr(err)
-			}
-		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					Panicerr(err)
-				}
-			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
-
-			respBody = buffer[:num]
+		resp, err := req.Post(uri, httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
 
 // httpGet(url, HttpHeader{}, HttpParam{}) {
 func httpGet(uri string, args ...interface{}) httpResp {
-	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
-		uri = "http://" + uri
-	}
-
-	tr := &http.Transport{DisableKeepAlives: true}
-
-	client := &http.Client{Transport: tr}
-	req.SetClient(client)
-
-	req.SetTimeout(getTimeDuration(10))
-
-	header := make(http.Header)
-	header.Set("User-Agent", uarand.GetRandom())
-
-	param := make(req.Param)
-	var readBodySize int
-	var timeoutRetryTimes int = 0
-	for _, v := range args {
-		switch vv := v.(type) {
-		case HttpHeader:
-			for k, vvv := range vv {
-				header.Set(k, vvv)
-			}
-		case HttpParam:
-			for k, vvv := range vv {
-				param[k] = vvv
-			}
-		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
-			} else {
-				req.SetTimeout(getTimeDuration(10))
-			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
-				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				}
-			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
-				Panicerr(err)
-				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
-			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
-				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
-		}
-	}
-
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
+	httpRequest := getHttpRequest(uri, args...)
 	for {
-		resp, err = req.Get(uri, header, param)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					continue
-				}
-			} else {
-				Panicerr(err)
-			}
-		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					Panicerr(err)
-				}
-			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
-
-			respBody = buffer[:num]
+		resp, err := req.Get(uri, httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
 
 func httpPutJSON(uri string, json interface{}, args ...interface{}) httpResp {
-	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
-		uri = "http://" + uri
-	}
-
-	tr := &http.Transport{DisableKeepAlives: true}
-	client := &http.Client{Transport: tr}
-	req.SetClient(client)
-
-	req.SetTimeout(getTimeDuration(10))
-
-	header := make(http.Header)
-	header.Set("User-Agent", uarand.GetRandom())
-
-	param := make(req.Param)
-	var readBodySize int
-	var timeoutRetryTimes int = 0
-	for _, v := range args {
-		switch vv := v.(type) {
-		case HttpHeader:
-			for k, vvv := range vv {
-				header.Set(k, vvv)
-			}
-		case HttpParam:
-			for k, vvv := range vv {
-				param[k] = vvv
-			}
-		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
-			} else {
-				req.SetTimeout(getTimeDuration(10))
-			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
-				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				}
-			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
-				Panicerr(err)
-				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
-			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
-				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
-		}
-	}
-
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
+	httpRequest := getHttpRequest(uri, args...)
 	for {
-		resp, err = req.Put(uri, req.BodyJSON(&json), header, param)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					continue
-				}
-			} else {
-				Panicerr(err)
-			}
-		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					Panicerr(err)
-				}
-			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
-
-			respBody = buffer[:num]
+		resp, err := req.Put(uri, req.BodyJSON(&json), httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
 
 // httpPost(url, HttpHeader{}, HttpParam{}) {
 func httpPut(uri string, args ...interface{}) httpResp {
-	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
-		uri = "http://" + uri
-	}
-
-	tr := &http.Transport{DisableKeepAlives: true}
-	client := &http.Client{Transport: tr}
-	req.SetClient(client)
-
-	req.SetTimeout(getTimeDuration(10))
-
-	header := make(http.Header)
-	header.Set("User-Agent", uarand.GetRandom())
-
-	param := make(req.Param)
-	var readBodySize int
-	var timeoutRetryTimes int = 0
-	for _, v := range args {
-		switch vv := v.(type) {
-		case HttpHeader:
-			for k, vvv := range vv {
-				header.Set(k, vvv)
-			}
-		case HttpParam:
-			for k, vvv := range vv {
-				param[k] = vvv
-			}
-		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
-			} else {
-				req.SetTimeout(getTimeDuration(10))
-			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
-				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				}
-			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
-				Panicerr(err)
-				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
-			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
-				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
-		}
-	}
-
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
+	httpRequest := getHttpRequest(uri, args...)
 	for {
-		resp, err = req.Put(uri, header, param)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					continue
-				}
-			} else {
-				Panicerr(err)
-			}
-		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					Panicerr(err)
-				}
-			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
-
-			respBody = buffer[:num]
+		resp, err := req.Put(uri, httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
 
 func httpPutRaw(uri string, body string, args ...interface{}) httpResp {
-	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
-		uri = "http://" + uri
-	}
-
-	tr := &http.Transport{DisableKeepAlives: true}
-	client := &http.Client{Transport: tr}
-	req.SetClient(client)
-
-	req.SetTimeout(getTimeDuration(10))
-
-	header := make(http.Header)
-	header.Set("User-Agent", uarand.GetRandom())
-
-	param := make(req.Param)
-	var readBodySize int
-	var timeoutRetryTimes int = 0
-	for _, v := range args {
-		switch vv := v.(type) {
-		case HttpHeader:
-			for k, vvv := range vv {
-				header.Set(k, vvv)
-			}
-		case HttpParam:
-			for k, vvv := range vv {
-				param[k] = vvv
-			}
-		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
-			} else {
-				req.SetTimeout(getTimeDuration(10))
-			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
-				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
-					return http.ErrUseLastResponse
-				}
-			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
-				Panicerr(err)
-				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
-			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
-				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
-			}
-		}
-	}
-
-	var timeouttimes int = 0
-	var resp *req.Resp
-	var err error
-	var respBody []byte
-	var hresp *http.Response
-	headers := make(map[string]string)
-	// lg.trace("timeoutRetryTimes:", timeoutRetryTimes)
+	httpRequest := getHttpRequest(uri, args...)
 	for {
-		resp, err = req.Put(uri, body, header, param)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				timeouttimes += 1
-				if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					continue
-				}
-			} else {
-				Panicerr(err)
-			}
-		}
-
-		hresp = resp.Response()
-		for k, v := range hresp.Header {
-			headers[k] = String(" ").Join(v).Get()
-		}
-
-		defer hresp.Body.Close()
-
-		if readBodySize == 0 {
-			respBody, err = ioutil.ReadAll(hresp.Body)
-			if err != nil {
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					Panicerr(err)
-				}
-			}
-		} else {
-			buffer := make([]byte, readBodySize)
-			num, err := io.ReadAtLeast(hresp.Body, buffer, readBodySize)
-			if err != nil {
-				// lg.trace(err)
-				if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-					timeouttimes += 1
-					if timeoutRetryTimes != -1 && timeouttimes >= timeoutRetryTimes {
-						Panicerr(err)
-					} else {
-						continue
-					}
-				} else {
-					if !String("unexpected EOF").In(err.Error()) {
-						Panicerr(err)
-					}
-				}
-			}
-
-			respBody = buffer[:num]
+		resp, err := req.Put(uri, body, httpRequest.header, httpRequest.param)
+		if !httpRequest.responseHandler(resp, err) {
+			continue
 		}
 		break
 	}
 
 	return httpResp{
-		Content:    string(respBody),
-		Headers:    headers,
-		StatusCode: hresp.StatusCode,
-		URL:        hresp.Request.URL.String(),
+		Content:    string(httpRequest.respBody),
+		Headers:    httpRequest.headers,
+		StatusCode: httpRequest.hresp.StatusCode,
+		URL:        httpRequest.hresp.Request.URL.String(),
 	}
 }
