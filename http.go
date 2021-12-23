@@ -12,15 +12,15 @@ import (
 )
 
 type httpStruct struct {
-	Head     func(uri string, args ...interface{}) httpResp
-	PostFile func(uri string, filePath string, args ...interface{}) httpResp
-	PostRaw  func(uri string, body string, args ...interface{}) httpResp
-	PostJSON func(uri string, json interface{}, args ...interface{}) httpResp
-	Post     func(uri string, args ...interface{}) httpResp
-	Get      func(uri string, args ...interface{}) httpResp
-	PutJSON  func(uri string, json interface{}, args ...interface{}) httpResp
-	Put      func(uri string, args ...interface{}) httpResp
-	PutRaw   func(uri string, body string, args ...interface{}) httpResp
+	Head     func(uri string, args ...interface{}) *httpResp
+	PostFile func(uri string, filePath string, args ...interface{}) *httpResp
+	PostRaw  func(uri string, body string, args ...interface{}) *httpResp
+	PostJSON func(uri string, json interface{}, args ...interface{}) *httpResp
+	Post     func(uri string, args ...interface{}) *httpResp
+	Get      func(uri string, args ...interface{}) *httpResp
+	PutJSON  func(uri string, json interface{}, args ...interface{}) *httpResp
+	Put      func(uri string, args ...interface{}) *httpResp
+	PutRaw   func(uri string, body string, args ...interface{}) *httpResp
 }
 
 var Http httpStruct
@@ -64,13 +64,9 @@ type httpRequestStruct struct {
 	param             req.Param
 	readBodySize      int
 	timeoutRetryTimes int
-	timeouttimes      int
-	headers           map[string]string // response header
-	hresp             *http.Response
-	respBody          []byte
 }
 
-func getHttpRequest(uri string, args ...interface{}) *httpRequestStruct {
+func initHttpRequest(uri string, args ...interface{}) *httpRequestStruct {
 	if !String(uri).StartsWith("http://") && !String(uri).StartsWith("https://") {
 		uri = "http://" + uri
 	}
@@ -126,233 +122,119 @@ func getHttpRequest(uri string, args ...interface{}) *httpRequestStruct {
 		param:             param,
 		readBodySize:      readBodySize,
 		timeoutRetryTimes: timeoutRetryTimes,
-		timeouttimes:      0,
 	}
 }
 
-func (m *httpRequestStruct) responseHandler(resp *req.Resp, err error) bool {
-	m.headers = make(map[string]string)
-	if err != nil {
-		// lg.trace(err)
-		if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-			m.timeouttimes += 1
-			if m.timeoutRetryTimes != -1 && m.timeouttimes >= m.timeoutRetryTimes {
-				Panicerr(err)
-			} else {
-				return false
+func (m *httpRequestStruct) doRequest(reqfunc func(uri string, header http.Header, param req.Param) (*req.Resp, error)) *httpResp {
+	var timeouttimes int = 0
+	var respBody []byte
+	headers := make(map[string]string)
+	var hresp *http.Response
+	for {
+		err := func() error {
+			resp, err := reqfunc(m.uri, m.header, m.param)
+			if err != nil {
+				return err
 			}
-		} else {
-			Panicerr(err)
-		}
-	}
 
-	m.hresp = resp.Response()
-	for k, v := range m.hresp.Header {
-		m.headers[k] = String(" ").Join(v).Get()
-	}
+			hresp = resp.Response()
+			for k, v := range hresp.Header {
+				headers[k] = String(" ").Join(v).Get()
+			}
 
-	defer m.hresp.Body.Close()
+			defer hresp.Body.Close()
 
-	if m.readBodySize == 0 {
-		m.respBody, err = ioutil.ReadAll(m.hresp.Body)
+			if m.readBodySize == 0 {
+				respBody, err = ioutil.ReadAll(hresp.Body)
+				if err != nil {
+					return err
+				}
+			} else {
+				buffer := make([]byte, m.readBodySize)
+				num, err := io.ReadAtLeast(hresp.Body, buffer, m.readBodySize)
+				if err != nil {
+					return err
+				}
+
+				respBody = buffer[:num]
+			}
+			return nil
+		}()
+
 		if err != nil {
 			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				m.timeouttimes += 1
-				if m.timeoutRetryTimes != -1 && m.timeouttimes >= m.timeoutRetryTimes {
+				timeouttimes += 1
+				if m.timeoutRetryTimes != -1 && timeouttimes >= m.timeoutRetryTimes {
 					Panicerr(err)
 				} else {
-					return false
+					continue
 				}
 			} else {
 				Panicerr(err)
 			}
 		}
-	} else {
-		buffer := make([]byte, m.readBodySize)
-		num, err := io.ReadAtLeast(m.hresp.Body, buffer, m.readBodySize)
-		if err != nil {
-			// lg.trace(err)
-			if String("context deadline exceeded").In(err.Error()) || String("Timeout exceeded").In(err.Error()) {
-				m.timeouttimes += 1
-				if m.timeoutRetryTimes != -1 && m.timeouttimes >= m.timeoutRetryTimes {
-					Panicerr(err)
-				} else {
-					return false
-				}
-			} else {
-				if !String("unexpected EOF").In(err.Error()) {
-					Panicerr(err)
-				}
-			}
-		}
 
-		m.respBody = buffer[:num]
-	}
-	return true
-}
-
-func httpHead(uri string, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-
-	for {
-		resp, err := req.Head(httpRequest.uri, httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
 		break
 	}
 
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
+	return &httpResp{
+		Content:    string(respBody),
+		Headers:    headers,
+		StatusCode: hresp.StatusCode,
+		URL:        hresp.Request.URL.String(),
 	}
 }
 
-func httpPostFile(uri string, filePath string, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-	for {
-		resp, err := req.Post(uri, req.File(filePath), httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
-		break
-	}
-
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
-	}
+func httpHead(uri string, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Head(uri, header, param)
+	})
 }
 
-func httpPostRaw(uri string, body string, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-	for {
-		resp, err := req.Post(uri, body, httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
-		break
-	}
-
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
-	}
+func httpPostFile(uri string, filePath string, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Post(uri, req.File(filePath), header, param)
+	})
 }
 
-func httpPostJSON(uri string, json interface{}, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-	for {
-		resp, err := req.Post(uri, req.BodyJSON(&json), httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
-		break
-	}
-
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
-	}
+func httpPostRaw(uri string, body string, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Post(uri, body, header, param)
+	})
 }
 
-// httpPost(url, HttpHeader{}, HttpParam{}) {
-func httpPost(uri string, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-	for {
-		resp, err := req.Post(uri, httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
-		break
-	}
-
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
-	}
+func httpPostJSON(uri string, json interface{}, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Post(uri, req.BodyJSON(&json), header, param)
+	})
 }
 
-// httpGet(url, HttpHeader{}, HttpParam{}) {
-func httpGet(uri string, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-	for {
-		resp, err := req.Get(uri, httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
-		break
-	}
-
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
-	}
+func httpPost(uri string, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Post(uri, header, param)
+	})
 }
 
-func httpPutJSON(uri string, json interface{}, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-	for {
-		resp, err := req.Put(uri, req.BodyJSON(&json), httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
-		break
-	}
-
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
-	}
+func httpGet(uri string, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Get(uri, header, param)
+	})
 }
 
-// httpPost(url, HttpHeader{}, HttpParam{}) {
-func httpPut(uri string, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-	for {
-		resp, err := req.Put(uri, httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
-		break
-	}
-
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
-	}
+func httpPutJSON(uri string, json interface{}, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Put(uri, req.BodyJSON(&json), header, param)
+	})
 }
 
-func httpPutRaw(uri string, body string, args ...interface{}) httpResp {
-	httpRequest := getHttpRequest(uri, args...)
-	for {
-		resp, err := req.Put(uri, body, httpRequest.header, httpRequest.param)
-		if !httpRequest.responseHandler(resp, err) {
-			continue
-		}
-		break
-	}
+func httpPut(uri string, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Put(uri, header, param)
+	})
+}
 
-	return httpResp{
-		Content:    string(httpRequest.respBody),
-		Headers:    httpRequest.headers,
-		StatusCode: httpRequest.hresp.StatusCode,
-		URL:        httpRequest.hresp.Request.URL.String(),
-	}
+func httpPutRaw(uri string, body string, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Put(uri, body, header, param)
+	})
 }
