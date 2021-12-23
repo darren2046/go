@@ -243,18 +243,8 @@ This is a toolkit that provide a lot of function or object that make programing 
 * Socket
     * [KCP](#socketkcp)
         * func Listen(string, int, string, string) \*kcpServerSideListener
-            * func (m *kcpServerSideListener) Close() 
-            * func (m *kcpServerSideListener) Accept() chan *kcpServerSideConn 
-                * func (m *kcpServerSideConn) Close() 
-                * func (m *kcpServerSideConn) Send(data map[string]string) 
-                * func (m *kcpServerSideConn) Recv(timeoutSecond ...int) (res map[string]string)
-        * func Connect(string, int, string, string) \*kcpClientSideConn
-            * func (m *kcpClientSideConn) Send(data map[string]string) 
-            * func (m *kcpClientSideConn) Recv(timeoutSecond ...int) (res map[string]string) 
-            * func (m *kcpClientSideConn) Close() 
-        * func RawListen(string, int, string, string) \*kcpRawServerSideListener
-            * func (m *kcpRawServerSideListener) Accept() chan *kcp.UDPSession
-        * func RawConnect(string, int, string, string) \*kcp.UDPSession
+            * func (m \*kcpServerSideListener) Accept() chan *kcp.UDPSession
+        * func Connect(string, int, string, string) \*kcp.UDPSession
     * Smux
         * func ServerWrapper(io.ReadWriteCloser, ...SmuxConfig) \*smuxServerSideListener
             * func (m *smuxServerSideListener) Accept() chan *smuxServerSideConnection 

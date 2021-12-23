@@ -32,6 +32,31 @@ var databaseNetworkErrorStrings = []string{
 	"bad connection",
 }
 
+func doDatabaseThingsAndHandleNetworkError(retry int, f func() error) {
+	errortimes := 0
+	var err error
+	for {
+		err = f()
+		if err != nil {
+			if func(errfilter []string, errmsg string) bool {
+				for _, err := range errfilter {
+					if String(err).In(errmsg) {
+						return true
+					}
+				}
+				return false
+			}(databaseNetworkErrorStrings, err.Error()) && errortimes < retry {
+				errortimes += 1
+				sleep(3)
+			} else {
+				Panicerr(err)
+			}
+		} else {
+			break
+		}
+	}
+}
+
 func getMySQL(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *databaseStruct {
 	var timeoutt int
 	var chartsett string
@@ -68,29 +93,12 @@ func getMySQL(host string, port int, user string, password string, db string, cf
 		Dsn:    m.dsn,
 	}
 
-	errortimes := 0
-	var err error
 	var engin *gorose.Engin
-	for {
+	var err error
+	doDatabaseThingsAndHandleNetworkError(m.networkErrorRetryTimes, func() error {
 		engin, err = gorose.Open(config)
-		if err != nil {
-			if func(errfilter []string, errmsg string) bool {
-				for _, err := range errfilter {
-					if String(err).In(errmsg) {
-						return true
-					}
-				}
-				return false
-			}(databaseNetworkErrorStrings, err.Error()) && errortimes < m.networkErrorRetryTimes {
-				errortimes += 1
-				sleep(3)
-			} else {
-				Panicerr(err)
-			}
-		} else {
-			break
-		}
-	}
+		return err
+	})
 
 	m.engin = engin
 
@@ -234,28 +242,11 @@ func (m *databaseOrmStruct) Limit(number int) *databaseOrmStruct {
 }
 
 func (m *databaseOrmStruct) Get() (res []gorose.Data) {
-	errortimes := 0
 	var err error
-	for {
+	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		res, err = m.orm.Get()
-		if err != nil {
-			if func(errfilter []string, errmsg string) bool {
-				for _, err := range errfilter {
-					if String(err).In(errmsg) {
-						return true
-					}
-				}
-				return false
-			}(databaseNetworkErrorStrings, err.Error()) && errortimes < m.db.networkErrorRetryTimes {
-				errortimes += 1
-				sleep(3)
-			} else {
-				Panicerr(err)
-			}
-		} else {
-			break
-		}
-	}
+		return err
+	})
 
 	m.orm = m.db.Table(m.table).orm
 
@@ -278,28 +269,11 @@ func (m *databaseOrmStruct) Paginate(pagesize int, page int) []gorose.Data {
 }
 
 func (m *databaseOrmStruct) First() (res gorose.Data) {
-	errortimes := 0
 	var err error
-	for {
+	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		res, err = m.orm.First()
-		if err != nil {
-			if func(errfilter []string, errmsg string) bool {
-				for _, err := range errfilter {
-					if String(err).In(errmsg) {
-						return true
-					}
-				}
-				return false
-			}(databaseNetworkErrorStrings, err.Error()) && errortimes < m.db.networkErrorRetryTimes {
-				errortimes += 1
-				sleep(3)
-			} else {
-				Panicerr(err)
-			}
-		} else {
-			break
-		}
-	}
+		return err
+	})
 
 	m.orm = m.db.Table(m.table).orm
 
@@ -317,28 +291,11 @@ func (m *databaseOrmStruct) Find(id int) gorose.Data {
 }
 
 func (m *databaseOrmStruct) Count() (res int64) {
-	errortimes := 0
 	var err error
-	for {
+	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		res, err = m.orm.Count()
-		if err != nil {
-			if func(errfilter []string, errmsg string) bool {
-				for _, err := range errfilter {
-					if String(err).In(errmsg) {
-						return true
-					}
-				}
-				return false
-			}(databaseNetworkErrorStrings, err.Error()) && errortimes < m.db.networkErrorRetryTimes {
-				errortimes += 1
-				sleep(3)
-			} else {
-				Panicerr(err)
-			}
-		} else {
-			break
-		}
-	}
+		return err
+	})
 
 	m.orm = m.db.Table(m.table).orm
 
@@ -378,28 +335,11 @@ func (m *databaseOrmStruct) Offset(offset int) *databaseOrmStruct {
 }
 
 func (m *databaseOrmStruct) InsertGetID() (num int64) {
-	errortimes := 0
 	var err error
-	for {
+	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		num, err = m.orm.InsertGetId()
-		if err != nil {
-			if func(errfilter []string, errmsg string) bool {
-				for _, err := range errfilter {
-					if String(err).In(errmsg) {
-						return true
-					}
-				}
-				return false
-			}(databaseNetworkErrorStrings, err.Error()) && errortimes < m.db.networkErrorRetryTimes {
-				errortimes += 1
-				sleep(3)
-			} else {
-				Panicerr(err)
-			}
-		} else {
-			break
-		}
-	}
+		return err
+	})
 
 	m.orm = m.db.Table(m.table).orm
 
@@ -407,84 +347,36 @@ func (m *databaseOrmStruct) InsertGetID() (num int64) {
 }
 
 func (m *databaseOrmStruct) Insert() (num int64) {
-	errortimes := 0
 	var err error
-	for {
+	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		num, err = m.orm.Insert()
-		if err != nil {
-			if func(errfilter []string, errmsg string) bool {
-				for _, err := range errfilter {
-					if String(err).In(errmsg) {
-						return true
-					}
-				}
-				return false
-			}(databaseNetworkErrorStrings, err.Error()) && errortimes < m.db.networkErrorRetryTimes {
-				errortimes += 1
-				sleep(3)
-			} else {
-				Panicerr(err)
-			}
-		} else {
-			break
-		}
-	}
+		return err
+	})
+
 	m.orm = m.db.Table(m.table).orm
 
 	return
 }
 
 func (m *databaseOrmStruct) Update(data ...interface{}) (num int64) {
-	errortimes := 0
 	var err error
-	for {
+	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		num, err = m.orm.Update(data...)
-		if err != nil {
-			if func(errfilter []string, errmsg string) bool {
-				for _, err := range errfilter {
-					if String(err).In(errmsg) {
-						return true
-					}
-				}
-				return false
-			}(databaseNetworkErrorStrings, err.Error()) && errortimes < m.db.networkErrorRetryTimes {
-				errortimes += 1
-				sleep(3)
-			} else {
-				Panicerr(err)
-			}
-		} else {
-			break
-		}
-	}
+		return err
+	})
+
 	m.orm = m.db.Table(m.table).orm
 
 	return
 }
 
 func (m *databaseOrmStruct) Delete() (num int64) {
-	errortimes := 0
 	var err error
-	for {
+	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		num, err = m.orm.Delete()
-		if err != nil {
-			if func(errfilter []string, errmsg string) bool {
-				for _, err := range errfilter {
-					if String(err).In(errmsg) {
-						return true
-					}
-				}
-				return false
-			}(databaseNetworkErrorStrings, err.Error()) && errortimes < m.db.networkErrorRetryTimes {
-				errortimes += 1
-				sleep(3)
-			} else {
-				Panicerr(err)
-			}
-		} else {
-			break
-		}
-	}
+		return err
+	})
+
 	m.orm = m.db.Table(m.table).orm
 
 	return
