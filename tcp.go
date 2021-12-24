@@ -88,7 +88,7 @@ func (m *TcpServerSideConn) Recv(buffersize int) string {
 // TCP - Client
 
 type tcpClientSideConn struct {
-	conn    *net.TCPConn
+	Conn    *net.TCPConn
 	isclose bool
 }
 
@@ -99,23 +99,23 @@ func tcpConnect(host string, port int, timeout ...int) *tcpClientSideConn {
 
 	conn, err := net.DialTCP("tcp", nil, tcpAddr)
 	Panicerr(err)
-	return &tcpClientSideConn{conn: conn, isclose: false}
+	return &tcpClientSideConn{Conn: conn, isclose: false}
 }
 
 func (m *tcpClientSideConn) Send(str string, timeout ...int) {
 	if len(timeout) != 0 {
-		m.conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
+		m.Conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
-	_, err := m.conn.Write([]byte(str))
+	_, err := m.Conn.Write([]byte(str))
 	Panicerr(err)
 }
 
 func (m *tcpClientSideConn) Recv(buffersize int, timeout ...int) string {
 	if len(timeout) != 0 {
-		m.conn.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
+		m.Conn.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
 	}
 	reply := make([]byte, buffersize)
-	n, err := m.conn.Read(reply)
+	n, err := m.Conn.Read(reply)
 	Panicerr(err)
 	return string(reply[:n])
 }
@@ -123,7 +123,7 @@ func (m *tcpClientSideConn) Recv(buffersize int, timeout ...int) string {
 func (m *tcpClientSideConn) Close() {
 	if !m.isclose {
 		m.isclose = true
-		err := m.conn.Close()
+		err := m.Conn.Close()
 		Panicerr(err)
 	}
 }
