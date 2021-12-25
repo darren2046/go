@@ -3,19 +3,20 @@ package golanglibs
 import "reflect"
 
 type mapStruct struct {
-	mmap interface{}
+	mmap reflect.Value
 }
 
 func Map(mmap interface{}) *mapStruct {
-	return &mapStruct{mmap: mmap}
+	mmmap := reflect.ValueOf(mmap)
+	if mmmap.Kind() != reflect.Map {
+		Panicerr("Invalid data type of param \"Map\": " + Typeof(mmap))
+	}
+	return &mapStruct{mmap: mmmap}
 }
 
 func (m *mapStruct) Has(Key interface{}) bool {
-	arr := reflect.ValueOf(Map)
-	if arr.Kind() != reflect.Map {
-		Panicerr("Invalid data type of param \"Map\": Not a Map")
-	}
-	for _, v := range arr.MapKeys() {
+	Print(Typeof(Key))
+	for _, v := range m.mmap.MapKeys() {
 		if v.Interface() == Key {
 			return true
 		}
@@ -24,11 +25,7 @@ func (m *mapStruct) Has(Key interface{}) bool {
 }
 
 func (m *mapStruct) Keys() (keys []string) {
-	arr := reflect.ValueOf(m.mmap)
-	if arr.Kind() != reflect.Map {
-		Panicerr("Invalid data type of param \"Map\": Not a Map")
-	}
-	for _, v := range arr.MapKeys() {
+	for _, v := range m.mmap.MapKeys() {
 		keys = append(keys, Str(v.Interface()))
 	}
 	return
