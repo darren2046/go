@@ -4,11 +4,12 @@ import (
 	"crypto/tls"
 	"crypto/x509"
 	"net"
+	"time"
 )
 
 type sslStruct struct {
 	Listen        func(host string, port int, key string, crt string) *tcpServerSideListener
-	ServerWrapper func(conn net.Conn, key string, crt string) *TcpServerSideConn
+	ServerWrapper func(conn net.Conn, key string, crt string) *tcpServerSideConn
 	Connect       func(host string, port int, cfg ...SSLCfg) *sslClientSideConn
 	ClientWrapper func(conn net.Conn, cfg ...SSLCfg) *sslClientSideConn
 }
@@ -39,7 +40,7 @@ func sslListen(host string, port int, key string, crt string) *tcpServerSideList
 	return &tcpServerSideListener{listener: listener}
 }
 
-func sslServerWrapper(conn net.Conn, key string, crt string) *TcpServerSideConn {
+func sslServerWrapper(conn net.Conn, key string, crt string) *tcpServerSideConn {
 	cert, err := tls.X509KeyPair([]byte(crt), []byte(key))
 	Panicerr(err)
 
@@ -47,13 +48,14 @@ func sslServerWrapper(conn net.Conn, key string, crt string) *TcpServerSideConn 
 
 	tconn := tls.Server(conn, tlsCfg)
 
-	return &TcpServerSideConn{Conn: tconn}
+	return &tcpServerSideConn{Conn: tconn}
 }
 
 // SSL - Client
 
 type sslClientSideConn struct {
-	conn *tls.Conn
+	Conn    *tls.Conn
+	isclose bool
 }
 
 type SSLCfg struct {
@@ -93,7 +95,7 @@ func sslConnect(host string, port int, cfg ...SSLCfg) *sslClientSideConn {
 
 	conn, err := tls.Dial("tcp", servAddr, &tcfg)
 	Panicerr(err)
-	return &sslClientSideConn{conn: conn}
+	return &sslClientSideConn{Conn: conn}
 }
 
 func sslClientWrapper(conn net.Conn, cfg ...SSLCfg) *sslClientSideConn {
@@ -123,22 +125,31 @@ func sslClientWrapper(conn net.Conn, cfg ...SSLCfg) *sslClientSideConn {
 	}
 
 	tconn := tls.Client(conn, &tcfg)
-	return &sslClientSideConn{conn: tconn}
+	return &sslClientSideConn{Conn: tconn}
 }
 
-func (m *sslClientSideConn) Send(str string) {
-	_, err := m.conn.Write([]byte(str))
+func (m *sslClientSideConn) Send(str string, timeout ...int) {
+	if len(timeout) != 0 {
+		m.Conn.SetWriteDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
+	}
+	_, err := m.Conn.Write([]byte(str))
 	Panicerr(err)
 }
 
-func (m *sslClientSideConn) Recv(buffersize int) string {
+func (m *sslClientSideConn) Recv(buffersize int, timeout ...int) string {
+	if len(timeout) != 0 {
+		m.Conn.SetReadDeadline(time.Now().Add(time.Duration(timeout[0]) * time.Second))
+	}
 	reply := make([]byte, buffersize)
-	n, err := m.conn.Read(reply)
+	n, err := m.Conn.Read(reply)
 	Panicerr(err)
 	return string(reply[:n])
 }
 
 func (m *sslClientSideConn) Close() {
-	err := m.conn.Close()
-	Panicerr(err)
+	if !m.isclose {
+		m.isclose = true
+		err := m.Conn.Close()
+		Panicerr(err)
+	}
 }

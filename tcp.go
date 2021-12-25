@@ -21,7 +21,7 @@ func init() {
 
 // TCP - Server
 
-type TcpServerSideConn struct {
+type tcpServerSideConn struct {
 	Conn    net.Conn
 	isclose bool
 }
@@ -38,8 +38,8 @@ func tcpListen(host string, port int) *tcpServerSideListener {
 	return &tcpServerSideListener{listener: l}
 }
 
-func (m *tcpServerSideListener) Accept() chan *TcpServerSideConn {
-	ch := make(chan *TcpServerSideConn)
+func (m *tcpServerSideListener) Accept() chan *tcpServerSideConn {
+	ch := make(chan *tcpServerSideConn)
 
 	go func() {
 		for {
@@ -51,7 +51,7 @@ func (m *tcpServerSideListener) Accept() chan *TcpServerSideConn {
 				}
 				Panicerr(err)
 			}
-			ct := &TcpServerSideConn{Conn: c, isclose: false}
+			ct := &tcpServerSideConn{Conn: c, isclose: false}
 			ch <- ct
 		}
 	}()
@@ -66,19 +66,19 @@ func (m *tcpServerSideListener) Close() {
 	}
 }
 
-func (m *TcpServerSideConn) Close() {
+func (m *tcpServerSideConn) Close() {
 	if !m.isclose {
 		m.isclose = true
 		m.Conn.Close()
 	}
 }
 
-func (m *TcpServerSideConn) Send(str string) {
+func (m *tcpServerSideConn) Send(str string) {
 	_, err := m.Conn.Write([]byte(str))
 	Panicerr(err)
 }
 
-func (m *TcpServerSideConn) Recv(buffersize int) string {
+func (m *tcpServerSideConn) Recv(buffersize int) string {
 	reply := make([]byte, buffersize)
 	n, err := m.Conn.Read(reply)
 	Panicerr(err)

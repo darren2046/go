@@ -284,6 +284,17 @@ This is a toolkit that provide a lot of function or object that make programing 
             * func (m *tcpClientSideConn) Send(str string, timeout ...int) 
             * func (m *tcpClientSideConn) Recv(buffersize int, timeout ...int) string 
             * func (m *tcpClientSideConn) Close() 
+    * Unix
+        * func [Listen](#sockettcplisten)(path string) \*tcpServerSideListener
+            * func (m *tcpServerSideListener) Accept() chan *TcpServerSideConn 
+            * func (m *tcpServerSideListener) Close() 
+                * func (m *TcpServerSideConn) Close() 
+                * func (m *TcpServerSideConn) Send(str string) 
+                * func (m *TcpServerSideConn) Recv(buffersize int) string 
+        * func [Connect](#sockettcpconnect)(path string) \*tcpClientSideConn
+            * func (m *tcpClientSideConn) Send(str string, timeout ...int) 
+            * func (m *tcpClientSideConn) Recv(buffersize int, timeout ...int) string 
+            * func (m *tcpClientSideConn) Close() 
     * [UDP](#socketudp)
         * func Listen(string, int) udpServerSideConn
             * func (m *udpClientSideConn) Send(str string) 

@@ -6,6 +6,7 @@ type socketStruct struct {
 	SSL  *sslStruct
 	TCP  *tcpStruct
 	UDP  *udpStruct
+	UNIX *unixSocketStruct
 }
 
 var Socket socketStruct
@@ -17,5 +18,6 @@ func init() {
 		SSL:  &sslstruct,
 		TCP:  &tcpstruct,
 		UDP:  &udpstruct,
+		UNIX: &unixsocketstruct,
 	}
 }
