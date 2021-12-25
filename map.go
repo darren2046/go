@@ -15,7 +15,7 @@ func Map(mmap interface{}) *mapStruct {
 }
 
 func (m *mapStruct) Has(Key interface{}) bool {
-	Print(Typeof(Key))
+	// Print(Typeof(Key))
 	for _, v := range m.mmap.MapKeys() {
 		if v.Interface() == Key {
 			return true
