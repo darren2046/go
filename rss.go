@@ -16,10 +16,10 @@ func getRSS(url string, config ...rssConfig) *gofeed.Feed {
 	var cfg HttpConfig
 	var retryOnError bool
 	if len(config) != 0 {
-		cfg.httpProxy = config[0].proxy
+		cfg.HttpProxy = config[0].proxy
 		retryOnError = config[0].retryOnError
 		if config[0].timeout != 0 {
-			cfg.timeout = config[0].timeout
+			cfg.Timeout = config[0].timeout
 		}
 	}
 
