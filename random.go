@@ -41,7 +41,7 @@ func randomStr(length int, charset ...string) string {
 }
 
 func randomChoice(array interface{}) interface{} {
-	rand.Seed(time.Now().Unix())
+	rand.Seed(Int64(Time.Now() * 1000000))
 	arr := reflect.ValueOf(array)
 
 	if arr.Kind() != reflect.Array && arr.Kind() != reflect.Slice {
