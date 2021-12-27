@@ -94,24 +94,24 @@ func initHttpRequest(uri string, args ...interface{}) *httpRequestStruct {
 				param[k] = vvv
 			}
 		case HttpConfig:
-			if vv.timeout != 0 {
-				req.SetTimeout(getTimeDuration(vv.timeout))
+			if vv.Timeout != 0 {
+				req.SetTimeout(getTimeDuration(vv.Timeout))
 			} else {
 				req.SetTimeout(getTimeDuration(10))
 			}
-			readBodySize = vv.readBodySize
-			if vv.doNotFollowRedirect {
+			readBodySize = vv.ReadBodySize
+			if vv.DoNotFollowRedirect {
 				client.CheckRedirect = func(req *http.Request, via []*http.Request) error {
 					return http.ErrUseLastResponse
 				}
 			}
-			if vv.httpProxy != "" {
-				u, err := url.Parse(vv.httpProxy)
+			if vv.HttpProxy != "" {
+				u, err := url.Parse(vv.HttpProxy)
 				Panicerr(err)
 				client.Transport = &http.Transport{DisableKeepAlives: true, Proxy: http.ProxyURL(u)}
 			}
-			timeoutRetryTimes = vv.timeoutRetryTimes
-			if vv.insecureSkipVerify {
+			timeoutRetryTimes = vv.TimeoutRetryTimes
+			if vv.InsecureSkipVerify {
 				tr.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 			}
 		}
