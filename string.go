@@ -172,6 +172,18 @@ func (s *stringStruct) Split(sep ...string) []*stringStruct {
 	return a
 }
 
+func (s *stringStruct) Utf8Split() []*stringStruct {
+	var a []*stringStruct
+
+	for _, v := range s.S {
+		if String(string(v)).Strip().Get() != "" {
+			a = append(a, String(string(v)).Strip())
+		}
+	}
+
+	return a
+}
+
 func (s *stringStruct) Count(substr string) int {
 	return strings.Count(s.S, substr)
 }

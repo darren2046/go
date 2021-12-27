@@ -45,3 +45,7 @@ func TestJoin(t *testing.T) {
 func TestSplit(t *testing.T) {
 	Print(String("a,b,c").Split(","))
 }
+
+func TestUtf8Split(t *testing.T) {
+	Print(String("add陈四民w(*(f").Utf8Split())
+}
