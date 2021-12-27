@@ -50,12 +50,12 @@ type httpResp struct {
 }
 
 type HttpConfig struct {
-	timeout             int
-	readBodySize        int
-	doNotFollowRedirect bool
-	httpProxy           string
-	timeoutRetryTimes   int
-	insecureSkipVerify  bool
+	Timeout             int
+	ReadBodySize        int
+	DoNotFollowRedirect bool
+	HttpProxy           string
+	TimeoutRetryTimes   int
+	InsecureSkipVerify  bool
 }
 
 type httpRequestStruct struct {
