@@ -11,18 +11,6 @@ import (
 	"github.com/google/gopacket/pcap"
 )
 
-type networkPacketStruct struct {
-	Data      string
-	SrcPort   int
-	DstPort   int
-	Protocol  string // tcp, udp
-	IPVersion int    // 4, 6
-	SrcIP     string
-	DstIP     string
-	SrcMac    string
-	DstMac    string
-}
-
 func init() {
 	Funcs.Sniffer = sniffer
 	Funcs.ReadPcapFile = readPcapFile
