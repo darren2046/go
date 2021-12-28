@@ -49,3 +49,8 @@ func TestSplit(t *testing.T) {
 func TestUtf8Split(t *testing.T) {
 	Print(String("add陈四民w(*(f").Utf8Split())
 }
+
+func TestIsAscii(t *testing.T) {
+	Print(String("add陈四民w(*(f").IsAscii())
+	Print(String("addw(*(f").IsAscii())
+}
