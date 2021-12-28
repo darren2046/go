@@ -12,7 +12,6 @@ import (
 	"github.com/dustin/go-humanize"
 	"github.com/h2non/filetype"
 	"github.com/hpcloud/tail"
-	"github.com/icrowley/fake"
 	"github.com/miekg/dns"
 	ua "github.com/mileusna/useragent"
 	"github.com/mmcdole/gofeed"
@@ -21,6 +20,7 @@ import (
 type funcsStruct struct {
 	Nslookup               func(name string, querytype string, dnsService ...string) [][]string
 	FakeName               func() string
+	FakeNameChinese        func() string
 	FileType               func(fpath string) string
 	Inotify                func(path string) chan *fsnotifyFileEventStruct
 	IPLocation             func(ip string, dbpath ...string) *ipLocationInfo
@@ -51,6 +51,7 @@ func init() {
 	Funcs = funcsStruct{
 		Nslookup:               nslookup,
 		FakeName:               fakeName,
+		FakeNameChinese:        fakeNameChinese,
 		FileType:               fileType,
 		Inotify:                inotify,
 		IPLocation:             getIPLocation,
@@ -192,10 +193,6 @@ func fileType(fpath string) string {
 		return ""
 	}
 	return kind.Extension
-}
-
-func fakeName() string {
-	return fake.FullName()
 }
 
 func nslookup(name string, querytype string, dnsService ...string) [][]string {
