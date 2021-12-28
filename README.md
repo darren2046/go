@@ -409,6 +409,8 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func Ip2int(ipnr string) int64
     * func Zh2PinYin(zh string) (ress []string)
     * func Fmtsize(num uint64) string
+    * func Sniffer(interfaceName string, filterString string, promisc ...bool) chan *networkPacketStruct 
+	* func ReadPcapFile(pcapFile string) chan *networkPacketStruct
 * Hash
     * func Md5sum(str string) string
     * func Md5File(path string) string
@@ -1478,7 +1480,13 @@ func main() {
 }
 ```
 
+# Note
 
+`Func.Sniffer`和`Func.ReadPcapFile`需要编译的时候加`tag`: `pcap`, 以及只处理TCP和UDP数据包.
+
+```bash
+$ go build -tags pcap .
+```
 
 
 
