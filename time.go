@@ -10,7 +10,7 @@ import (
 type timeStruct struct {
 	Now            func() float64
 	TimeDuration   func(seconds interface{}) time.Duration
-	FormatDuration func(second int64) (result string)
+	FormatDuration func(second float64) (result string)
 	Sleep          func(t interface{})
 	Strptime       func(format, strtime string) int64
 	Strftime       func(format string, timestamp interface{}) string
@@ -69,19 +69,20 @@ func plural(count int, singular string) (result string) {
 	return
 }
 
-func fmtTimeDuration(second int64) (result string) {
+func fmtTimeDuration(second float64) (result string) {
+	secondf := Int64(second)
 	years := math.Floor(float64(second) / 60 / 60 / 24 / 7 / 30 / 12)
-	seconds := second % (60 * 60 * 24 * 7 * 30 * 12)
+	seconds := secondf % (60 * 60 * 24 * 7 * 30 * 12)
 	months := math.Floor(float64(seconds) / 60 / 60 / 24 / 7 / 30)
-	seconds = second % (60 * 60 * 24 * 7 * 30)
+	seconds = secondf % (60 * 60 * 24 * 7 * 30)
 	weeks := math.Floor(float64(seconds) / 60 / 60 / 24 / 7)
-	seconds = second % (60 * 60 * 24 * 7)
+	seconds = secondf % (60 * 60 * 24 * 7)
 	days := math.Floor(float64(seconds) / 60 / 60 / 24)
-	seconds = second % (60 * 60 * 24)
+	seconds = secondf % (60 * 60 * 24)
 	hours := math.Floor(float64(seconds) / 60 / 60)
-	seconds = second % (60 * 60)
+	seconds = secondf % (60 * 60)
 	minutes := math.Floor(float64(seconds) / 60)
-	seconds = second % 60
+	seconds = secondf % 60
 
 	if years > 0 {
 		result = plural(int(years), "year") + plural(int(months), "month") + plural(int(weeks), "week") + plural(int(days), "day") + plural(int(hours), "hour") + plural(int(minutes), "minute") + plural(int(seconds), "second")

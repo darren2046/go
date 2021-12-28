@@ -43,6 +43,8 @@ type funcsStruct struct {
 	Ip2int                 func(ipnr string) int64
 	Zh2PinYin              func(zh string) (ress []string)
 	Fmtsize                func(num uint64) string
+	Sniffer                func(interfaceName string, filterString string, promisc ...bool) chan *networkPacketStruct
+	ReadPcapFile           func(pcapFile string) chan *networkPacketStruct
 }
 
 var Funcs funcsStruct

@@ -17,6 +17,8 @@ type ipLocationInfo struct {
 	Isp     string
 }
 
+// wget https://cdn.jsdelivr.net/npm/qqwry.ipdb/qqwry.ipdb -O files/qqwry.ipdb
+
 func getIPLocation(ip string, dbpath ...string) *ipLocationInfo {
 	if len(dbpath) == 0 {
 		if !ip17modHadInit {

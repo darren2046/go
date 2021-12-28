@@ -1,143 +1,150 @@
+//go:build pcap
+
 package golanglibs
 
-// import (
-// 	"fmt"
-// 	"log"
+import (
+	"fmt"
+	"log"
 
-// 	"github.com/google/gopacket"
-// 	"github.com/google/gopacket/layers"
-// 	"github.com/google/gopacket/pcap"
-// )
+	"github.com/google/gopacket"
+	"github.com/google/gopacket/layers"
+	"github.com/google/gopacket/pcap"
+)
 
-// type networkPacketStruct struct {
-// 	data  string
-// 	sport int
-// 	dport int
-// 	proto string // tcp, udp
-// 	ipv   int    // 4, 6
-// 	sip   string
-// 	dip   string
-// 	smac  string
-// 	dmac  string
-// }
+type networkPacketStruct struct {
+	data  string
+	sport int
+	dport int
+	proto string // tcp, udp
+	ipv   int    // 4, 6
+	sip   string
+	dip   string
+	smac  string
+	dmac  string
+}
 
-// func doPacketSource(packetSource *gopacket.PacketSource, pkgchan chan *networkPacketStruct, pcapFileHandler ...*pcap.Handle) {
-// 	for packet := range packetSource.Packets() {
-// 		//print("Packet found: ", packet)
-// 		transportLayer := packet.TransportLayer()
-// 		if transportLayer != nil {
-// 			//print("transportLayer found.")
-// 			pkg := networkPacketStruct{}
+func init() {
+	Funcs.Sniffer = sniffer
+	Funcs.ReadPcapFile = readPcapFile
+}
 
-// 			linuxSLLLayer := packet.Layer(layers.LayerTypeLinuxSLL)
-// 			if linuxSLLLayer != nil {
-// 				linuxSLLPacket, _ := linuxSLLLayer.(*layers.LinuxSLL)
-// 				pkg.smac = fmt.Sprintf("%s", linuxSLLPacket.Addr)
-// 			}
+func doPacketSource(packetSource *gopacket.PacketSource, pkgchan chan *networkPacketStruct, pcapFileHandler ...*pcap.Handle) {
+	for packet := range packetSource.Packets() {
+		//print("Packet found: ", packet)
+		transportLayer := packet.TransportLayer()
+		if transportLayer != nil {
+			//print("transportLayer found.")
+			pkg := networkPacketStruct{}
 
-// 			//print(packet)
-// 			ethLayer := packet.Layer(layers.LayerTypeEthernet)
-// 			if ethLayer != nil {
-// 				//print("eth layer found")
-// 				ethernetPacket, _ := ethLayer.(*layers.Ethernet)
-// 				pkg.smac = fmt.Sprintf("%s", ethernetPacket.SrcMAC)
-// 				pkg.dmac = fmt.Sprintf("%s", ethernetPacket.DstMAC)
-// 				//fmt.Println("Ethernet type: ", ethernetPacket.EthernetType)
-// 			}
+			linuxSLLLayer := packet.Layer(layers.LayerTypeLinuxSLL)
+			if linuxSLLLayer != nil {
+				linuxSLLPacket, _ := linuxSLLLayer.(*layers.LinuxSLL)
+				pkg.smac = fmt.Sprintf("%s", linuxSLLPacket.Addr)
+			}
 
-// 			ipLayer := packet.Layer(layers.LayerTypeIPv4)
-// 			if ipLayer != nil {
-// 				//print("ip layer found")
-// 				ip, ok := ipLayer.(*layers.IPv4)
-// 				if ok {
-// 					pkg.ipv = 4
-// 					pkg.sip = fmt.Sprintf("%s", ip.SrcIP)
-// 					pkg.dip = fmt.Sprintf("%s", ip.DstIP)
-// 				} else {
-// 					pkg.ipv = 6
-// 					ip6, _ := ipLayer.(*layers.IPv6)
-// 					pkg.sip = fmt.Sprintf("%s", ip6.SrcIP)
-// 					pkg.dip = fmt.Sprintf("%s", ip6.DstIP)
-// 				}
-// 			}
+			//print(packet)
+			ethLayer := packet.Layer(layers.LayerTypeEthernet)
+			if ethLayer != nil {
+				//print("eth layer found")
+				ethernetPacket, _ := ethLayer.(*layers.Ethernet)
+				pkg.smac = fmt.Sprintf("%s", ethernetPacket.SrcMAC)
+				pkg.dmac = fmt.Sprintf("%s", ethernetPacket.DstMAC)
+				//fmt.Println("Ethernet type: ", ethernetPacket.EthernetType)
+			}
 
-// 			tcpLayer := packet.Layer(layers.LayerTypeTCP)
-// 			if tcpLayer != nil {
-// 				//print("tcp layer found")
-// 				pkg.proto = "tcp"
-// 				tcp, _ := tcpLayer.(*layers.TCP)
-// 				pkg.sport = toInt(fmt.Sprintf("%d", tcp.SrcPort))
-// 				pkg.dport = toInt(fmt.Sprintf("%d", tcp.DstPort))
-// 			}
+			ipLayer := packet.Layer(layers.LayerTypeIPv4)
+			if ipLayer != nil {
+				//print("ip layer found")
+				ip, ok := ipLayer.(*layers.IPv4)
+				if ok {
+					pkg.ipv = 4
+					pkg.sip = fmt.Sprintf("%s", ip.SrcIP)
+					pkg.dip = fmt.Sprintf("%s", ip.DstIP)
+				} else {
+					pkg.ipv = 6
+					ip6, _ := ipLayer.(*layers.IPv6)
+					pkg.sip = fmt.Sprintf("%s", ip6.SrcIP)
+					pkg.dip = fmt.Sprintf("%s", ip6.DstIP)
+				}
+			}
 
-// 			udpLayer := packet.Layer(layers.LayerTypeUDP)
-// 			if udpLayer != nil {
-// 				//print("udp layer found")
-// 				pkg.proto = "udp"
-// 				udp, _ := udpLayer.(*layers.UDP)
-// 				pkg.sport = toInt(fmt.Sprintf("%d", udp.SrcPort))
-// 				pkg.dport = toInt(fmt.Sprintf("%d", udp.DstPort))
-// 			}
+			tcpLayer := packet.Layer(layers.LayerTypeTCP)
+			if tcpLayer != nil {
+				//print("tcp layer found")
+				pkg.proto = "tcp"
+				tcp, _ := tcpLayer.(*layers.TCP)
+				pkg.sport = Int(fmt.Sprintf("%d", tcp.SrcPort))
+				pkg.dport = Int(fmt.Sprintf("%d", tcp.DstPort))
+			}
 
-// 			applicationLayer := packet.TransportLayer()
-// 			if applicationLayer != nil {
-// 				pkg.data = toString(applicationLayer.LayerPayload())
-// 				//print("Data:", pkg.data)
-// 			}
+			udpLayer := packet.Layer(layers.LayerTypeUDP)
+			if udpLayer != nil {
+				//print("udp layer found")
+				pkg.proto = "udp"
+				udp, _ := udpLayer.(*layers.UDP)
+				pkg.sport = Int(fmt.Sprintf("%d", udp.SrcPort))
+				pkg.dport = Int(fmt.Sprintf("%d", udp.DstPort))
+			}
 
-// 			// if strStartsWith(pkg.data, "GET /action") {
-// 			// 	print(packet)
-// 			// }
+			applicationLayer := packet.TransportLayer()
+			if applicationLayer != nil {
+				pkg.data = Str(applicationLayer.LayerPayload())
+				//print("Data:", pkg.data)
+			}
 
-// 			if pkg.data != "" {
-// 				pkgchan <- &pkg
-// 			}
-// 		}
-// 	}
-// 	if len(pcapFileHandler) != 0 {
-// 		pcapFileHandler[0].Close()
-// 	}
-// 	close(pkgchan)
-// }
+			// if strStartsWith(pkg.data, "GET /action") {
+			// 	print(packet)
+			// }
 
-// func sniffer(interfaceName string, filterString string, promisc ...bool) chan *networkPacketStruct {
-// 	// 4096是读取每一个包的buffer, mtu一般为1500, 所以4096是超出了很多, 除非mtu超出了4096, 才读不全
-// 	// promisc为设置网卡为混杂模式
-// 	// timeout为0.3秒, 是kernel每0.3秒就会吐一次数据给pcap, 如果这个为30秒, 则收到数据包之后会继续等待其他数据包, 30秒再一起吐出来
-// 	var handle *pcap.Handle
-// 	var err error
-// 	if len(promisc) == 0 {
-// 		handle, err = pcap.OpenLive(interfaceName, 4096, false, getTimeDuration(0.3))
-// 	} else {
-// 		handle, err = pcap.OpenLive(interfaceName, 4096, promisc[0], getTimeDuration(0.3))
-// 	}
+			if pkg.data != "" {
+				pkgchan <- &pkg
+			}
+		}
+	}
+	if len(pcapFileHandler) != 0 {
+		pcapFileHandler[0].Close()
+	}
+	close(pkgchan)
+}
 
-// 	Panicerr(err)
-// 	//defer handle.Close()
+func sniffer(interfaceName string, filterString string, promisc ...bool) chan *networkPacketStruct {
+	// 4096是读取每一个包的buffer, mtu一般为1500, 所以4096是超出了很多, 除非mtu超出了4096, 才读不全
+	// promisc为设置网卡为混杂模式
+	// timeout为0.3秒, 是kernel每0.3秒就会吐一次数据给pcap, 如果这个为30秒, 则收到数据包之后会继续等待其他数据包, 30秒再一起吐出来
+	var handle *pcap.Handle
+	var err error
+	if len(promisc) == 0 {
+		handle, err = pcap.OpenLive(interfaceName, 4096, false, getTimeDuration(0.3))
+	} else {
+		handle, err = pcap.OpenLive(interfaceName, 4096, promisc[0], getTimeDuration(0.3))
+	}
 
-// 	err = handle.SetBPFFilter(filterString)
-// 	Panicerr(err)
+	Panicerr(err)
+	//defer handle.Close()
 
-// 	pkgchan := make(chan *networkPacketStruct)
+	err = handle.SetBPFFilter(filterString)
+	Panicerr(err)
 
-// 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+	pkgchan := make(chan *networkPacketStruct)
 
-// 	go doPacketSource(packetSource, pkgchan)
+	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
 
-// 	return pkgchan
-// }
+	go doPacketSource(packetSource, pkgchan)
 
-// func readPcapFile(pcapFile string) chan *networkPacketStruct {
-// 	handle, err := pcap.OpenOffline(pcapFile)
-// 	if err != nil {
-// 		log.Fatal(err)
-// 	}
+	return pkgchan
+}
 
-// 	pkgchan := make(chan *networkPacketStruct)
+func readPcapFile(pcapFile string) chan *networkPacketStruct {
+	handle, err := pcap.OpenOffline(pcapFile)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-// 	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
+	pkgchan := make(chan *networkPacketStruct)
 
-// 	go doPacketSource(packetSource, pkgchan, handle)
+	packetSource := gopacket.NewPacketSource(handle, handle.LinkType())
 
-// 	return pkgchan
-// }
+	go doPacketSource(packetSource, pkgchan, handle)
+
+	return pkgchan
+}
