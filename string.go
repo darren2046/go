@@ -11,6 +11,7 @@ import (
 
 	"github.com/abadojack/whatlanggo"
 	"github.com/denisbrodbeck/striphtmltags"
+	"golang.org/x/exp/utf8string"
 )
 
 type stringStruct struct {
@@ -338,4 +339,8 @@ func (s *stringStruct) RemoveNonUTF8Character() *stringStruct {
 
 func (s *stringStruct) DetectLanguage() string {
 	return whatlanggo.Detect(s.S).Lang.String()
+}
+
+func (s *stringStruct) IsAscii() bool {
+	return utf8string.NewString(s.S).IsASCII()
 }

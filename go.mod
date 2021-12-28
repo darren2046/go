@@ -69,6 +69,7 @@ require (
 	gitlab.com/toby3d/telegraph v1.2.1
 	go.uber.org/ratelimit v0.2.0
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3
+	golang.org/x/exp v0.0.0-20200224162631-6cc2880d07d6
 	golang.org/x/image v0.0.0-20211028202545-6944b10bf410
 	golang.org/x/net v0.0.0-20211216030914-fe4d6282115f
 	golang.org/x/text v0.3.7
