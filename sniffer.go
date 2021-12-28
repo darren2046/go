@@ -12,15 +12,15 @@ import (
 )
 
 type networkPacketStruct struct {
-	data  string
-	sport int
-	dport int
-	proto string // tcp, udp
-	ipv   int    // 4, 6
-	sip   string
-	dip   string
-	smac  string
-	dmac  string
+	Data      string
+	SrcPort   int
+	DstPort   int
+	Protocol  string // tcp, udp
+	IPVersion int    // 4, 6
+	SrcIP     string
+	DstIP     string
+	SrcMac    string
+	DstMac    string
 }
 
 func init() {
@@ -31,15 +31,15 @@ func init() {
 func doPacketSource(packetSource *gopacket.PacketSource, pkgchan chan *networkPacketStruct, pcapFileHandler ...*pcap.Handle) {
 	for packet := range packetSource.Packets() {
 		//print("Packet found: ", packet)
-		transportLayer := packet.TransportLayer()
-		if transportLayer != nil {
-			//print("transportLayer found.")
+		tranSrcPortLayer := packet.TransportLayer()
+		if tranSrcPortLayer != nil {
+			//print("tranSrcPortLayer found.")
 			pkg := networkPacketStruct{}
 
 			linuxSLLLayer := packet.Layer(layers.LayerTypeLinuxSLL)
 			if linuxSLLLayer != nil {
 				linuxSLLPacket, _ := linuxSLLLayer.(*layers.LinuxSLL)
-				pkg.smac = fmt.Sprintf("%s", linuxSLLPacket.Addr)
+				pkg.SrcMac = fmt.Sprintf("%s", linuxSLLPacket.Addr)
 			}
 
 			//print(packet)
@@ -47,8 +47,8 @@ func doPacketSource(packetSource *gopacket.PacketSource, pkgchan chan *networkPa
 			if ethLayer != nil {
 				//print("eth layer found")
 				ethernetPacket, _ := ethLayer.(*layers.Ethernet)
-				pkg.smac = fmt.Sprintf("%s", ethernetPacket.SrcMAC)
-				pkg.dmac = fmt.Sprintf("%s", ethernetPacket.DstMAC)
+				pkg.SrcMac = fmt.Sprintf("%s", ethernetPacket.SrcMAC)
+				pkg.DstMac = fmt.Sprintf("%s", ethernetPacket.DstMAC)
 				//fmt.Println("Ethernet type: ", ethernetPacket.EthernetType)
 			}
 
@@ -57,38 +57,38 @@ func doPacketSource(packetSource *gopacket.PacketSource, pkgchan chan *networkPa
 				//print("ip layer found")
 				ip, ok := ipLayer.(*layers.IPv4)
 				if ok {
-					pkg.ipv = 4
-					pkg.sip = fmt.Sprintf("%s", ip.SrcIP)
-					pkg.dip = fmt.Sprintf("%s", ip.DstIP)
+					pkg.IPVersion = 4
+					pkg.SrcIP = fmt.Sprintf("%s", ip.SrcIP)
+					pkg.DstIP = fmt.Sprintf("%s", ip.DstIP)
 				} else {
-					pkg.ipv = 6
+					pkg.IPVersion = 6
 					ip6, _ := ipLayer.(*layers.IPv6)
-					pkg.sip = fmt.Sprintf("%s", ip6.SrcIP)
-					pkg.dip = fmt.Sprintf("%s", ip6.DstIP)
+					pkg.SrcIP = fmt.Sprintf("%s", ip6.SrcIP)
+					pkg.DstIP = fmt.Sprintf("%s", ip6.DstIP)
 				}
 			}
 
 			tcpLayer := packet.Layer(layers.LayerTypeTCP)
 			if tcpLayer != nil {
 				//print("tcp layer found")
-				pkg.proto = "tcp"
+				pkg.Protocol = "tcp"
 				tcp, _ := tcpLayer.(*layers.TCP)
-				pkg.sport = Int(fmt.Sprintf("%d", tcp.SrcPort))
-				pkg.dport = Int(fmt.Sprintf("%d", tcp.DstPort))
+				pkg.SrcPort = Int(fmt.Sprintf("%d", tcp.SrcPort))
+				pkg.DstPort = Int(fmt.Sprintf("%d", tcp.DstPort))
 			}
 
 			udpLayer := packet.Layer(layers.LayerTypeUDP)
 			if udpLayer != nil {
 				//print("udp layer found")
-				pkg.proto = "udp"
+				pkg.Protocol = "udp"
 				udp, _ := udpLayer.(*layers.UDP)
-				pkg.sport = Int(fmt.Sprintf("%d", udp.SrcPort))
-				pkg.dport = Int(fmt.Sprintf("%d", udp.DstPort))
+				pkg.SrcPort = Int(fmt.Sprintf("%d", udp.SrcPort))
+				pkg.DstPort = Int(fmt.Sprintf("%d", udp.DstPort))
 			}
 
 			applicationLayer := packet.TransportLayer()
 			if applicationLayer != nil {
-				pkg.data = Str(applicationLayer.LayerPayload())
+				pkg.Data = Str(applicationLayer.LayerPayload())
 				//print("Data:", pkg.data)
 			}
 
@@ -96,7 +96,7 @@ func doPacketSource(packetSource *gopacket.PacketSource, pkgchan chan *networkPa
 			// 	print(packet)
 			// }
 
-			if pkg.data != "" {
+			if pkg.Data != "" {
 				pkgchan <- &pkg
 			}
 		}
