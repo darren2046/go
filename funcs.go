@@ -19,7 +19,7 @@ import (
 
 type funcsStruct struct {
 	Nslookup               func(name string, querytype string, dnsService ...string) [][]string
-	FakeName               func() string
+	FakeNameEnglish        func() string
 	FakeNameChinese        func() string
 	FileType               func(fpath string) string
 	Inotify                func(path string) chan *fsnotifyFileEventStruct
@@ -50,7 +50,7 @@ var Funcs funcsStruct
 func init() {
 	Funcs = funcsStruct{
 		Nslookup:               nslookup,
-		FakeName:               fakeName,
+		FakeNameEnglish:        fakeNameEnglish,
 		FakeNameChinese:        fakeNameChinese,
 		FileType:               fileType,
 		Inotify:                inotify,
