@@ -187,7 +187,7 @@ func parseUserAgent(UserAgent string) ua.UserAgent {
 }
 
 func fileType(fpath string) string {
-	kind, err := filetype.Match([]byte(Open(fpath).Read()))
+	kind, err := filetype.Match([]byte(Open(fpath).Read().S))
 
 	Panicerr(err)
 

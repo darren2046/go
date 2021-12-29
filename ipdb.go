@@ -39,7 +39,7 @@ func getIPLocation(ip string, dbpath ...string) *ipLocationInfo {
 		if ip17DBFileModifyTime == 0 || File(dbpath[0]).Time().Mtime != ip17DBFileModifyTime {
 			ip17DBFileModifyTime = File(dbpath[0]).Time().Mtime
 
-			ip17mon.InitWithIpdb([]byte(Open(dbpath[0]).Read()))
+			ip17mon.InitWithIpdb([]byte(Open(dbpath[0]).Read().S))
 		}
 	}
 

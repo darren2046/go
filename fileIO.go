@@ -18,12 +18,12 @@ type fileIOStruct struct {
 	lock   *lockStruct
 }
 
-func (m *fileIOStruct) Readlines() chan string {
+func (m *fileIOStruct) Readlines() chan *stringStruct {
 	if m.reader == nil {
 		m.reader = bufio.NewReader(m.fd)
 	}
 
-	lines := make(chan string)
+	lines := make(chan *stringStruct)
 
 	go func() {
 		m.lock.Acquire()
@@ -41,15 +41,14 @@ func (m *fileIOStruct) Readlines() chan string {
 					panic(filepath.Base(fn) + ":" + strconv.Itoa(line-7) + " >> " + err.Error())
 				}
 			}
-			line = String(line).Strip("\r\n").Get()
-			lines <- line
+			lines <- String(line).Strip("\r\n")
 		}
 	}()
 
 	return lines
 }
 
-func (m *fileIOStruct) Readline() string {
+func (m *fileIOStruct) Readline() *stringStruct {
 	m.lock.Acquire()
 	defer m.lock.Release()
 
@@ -61,13 +60,13 @@ func (m *fileIOStruct) Readline() string {
 		_, err := io.ReadAtLeast(m.fd, b, 1)
 		if err != nil {
 			if len(line) != 0 {
-				return line
+				return String(line)
 			}
 			Panicerr(err)
 		}
 		bs := string(b)
 		if bs == "\n" {
-			return line
+			return String(line)
 		}
 		line = line + bs
 	}
@@ -92,7 +91,7 @@ func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 	return m
 }
 
-func (m *fileIOStruct) Read(num ...int) string {
+func (m *fileIOStruct) Read(num ...int) *stringStruct {
 	m.lock.Acquire()
 	defer m.lock.Release()
 
@@ -113,7 +112,7 @@ func (m *fileIOStruct) Read(num ...int) string {
 		bytes = buffer[:i]
 	}
 
-	return string(bytes)
+	return String(string(bytes))
 }
 
 func (m *fileIOStruct) Seek(num int64) {
