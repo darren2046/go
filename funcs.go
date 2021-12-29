@@ -146,8 +146,8 @@ func ipInNet(ip string, Net string, mask ...string) bool {
 }
 
 type WgetCfg struct {
-	savepath string // 保存的本地路径, 可以是目录或者完整文件路径
-	retry    int    // 出错尝试次数, -1为一直尝试直到成功
+	Savepath string // 保存的本地路径, 可以是目录或者完整文件路径
+	Retry    int    // 出错尝试次数, -1为一直尝试直到成功
 }
 
 func wget(url string, cfg ...WgetCfg) (filename string) {
