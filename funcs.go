@@ -154,10 +154,10 @@ func wget(url string, cfg ...WgetCfg) (filename string) {
 	savepath := "."
 	retry := 0
 	if len(cfg) != 0 {
-		if cfg[0].savepath != "" {
-			savepath = cfg[0].savepath
+		if cfg[0].Savepath != "" {
+			savepath = cfg[0].Savepath
 		}
-		retry = cfg[0].retry
+		retry = cfg[0].Retry
 	}
 	if retry < 0 {
 		for {
