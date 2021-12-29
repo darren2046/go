@@ -372,7 +372,7 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func (f \*file) Stat() os.FileInfo
     * func (f \*file) Size() int64
     * func (f \*file) Touch()
-    * func (f \*file) Chmod(mode os.FileMode) bool
+    * func (f \*file) Chmod(mode int) bool
     * func (f \*file) Chown(uid, gid int) bool
     * func (f \*file) Mtime() int64
     * func (f \*file) Unlink()
@@ -453,7 +453,7 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func Getcwd() string
     * func Exit(status int)
     * func Touch(filePath string)
-    * func Chmod(filePath string, mode os.FileMode) bool
+    * func Chmod(filePath string, mode int) bool
     * func Chown(filePath string, uid, gid int) bool
     * func Copy(filePath, dest string)
     * func Rename(filePath, newPosition string)

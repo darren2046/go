@@ -40,8 +40,11 @@ func (f *fileStruct) Touch() {
 	fd.Close()
 }
 
-func (f *fileStruct) Chmod(mode os.FileMode) bool {
-	return os.Chmod(f.filePath, mode) == nil
+func (f *fileStruct) Chmod(mode uint32) bool {
+	if len(Str(mode)) == 3 {
+		mode = Uint32("0" + Str(mode))
+	}
+	return os.Chmod(f.filePath, os.FileMode(mode)) == nil
 }
 
 func (f *fileStruct) Chown(uid, gid int) bool {
