@@ -15,6 +15,7 @@ type cmdStruct struct {
 	GetStatusOutputWithShell func(command string, timeoutSecond ...interface{}) (int, string)
 	Tail                     func(command string) chan string
 	Exists                   func(cmd string) bool
+	Which                    func(cmd string) (path string)
 }
 
 var Cmd cmdStruct
@@ -27,7 +28,16 @@ func init() {
 		GetStatusOutputWithShell: getStatusOutputWithShell,
 		Tail:                     tailCmdOutput,
 		Exists:                   cmdExists,
+		Which:                    cmdWhich,
 	}
+}
+
+func cmdWhich(cmd string) (path string) {
+	path, err := exec.LookPath(cmd)
+	if err != nil {
+		Panicerr("Command not found: " + cmd)
+	}
+	return
 }
 
 func cmdExists(cmd string) bool {

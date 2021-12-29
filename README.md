@@ -363,6 +363,7 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func GetStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int, string)
     * func Tail(command string) chan string
     * func Exists(cmd string) bool
+    * func Which(cmd string) (path string)
 * Crypto
     * func Xor(data, key string) string
     * func Aes(key string) \*aes
