@@ -19,12 +19,12 @@ type statikFileStruct struct {
 	reader *bufio.Reader
 }
 
-func (m *statikFileStruct) Readlines() chan string {
+func (m *statikFileStruct) Readlines() chan *stringStruct {
 	if m.reader == nil {
 		m.reader = bufio.NewReader(m.fd)
 	}
 
-	lines := make(chan string)
+	lines := make(chan *stringStruct)
 
 	go func() {
 		for {
@@ -40,15 +40,14 @@ func (m *statikFileStruct) Readlines() chan string {
 					panic(filepath.Base(fn) + ":" + strconv.Itoa(line-7) + " >> " + err.Error())
 				}
 			}
-			line = line[:len(line)-1]
-			lines <- line
+			lines <- String(line[:len(line)-1])
 		}
 	}()
 
 	return lines
 }
 
-func (m *statikFileStruct) Readline() string {
+func (m *statikFileStruct) Readline() *stringStruct {
 	b := make([]byte, 1)
 
 	line := ""
@@ -57,13 +56,13 @@ func (m *statikFileStruct) Readline() string {
 		_, err := io.ReadAtLeast(m.fd, b, 1)
 		if err != nil {
 			if len(line) != 0 {
-				return line
+				return String(line)
 			}
 			Panicerr(err)
 		}
 		bs := string(b)
 		if bs == "\n" {
-			return line
+			return String(line)
 		}
 		line = line + bs
 	}
@@ -73,7 +72,7 @@ func (m *statikFileStruct) Close() {
 	m.fd.Close()
 }
 
-func (m *statikFileStruct) Read(num ...int) string {
+func (m *statikFileStruct) Read(num ...int) *stringStruct {
 	var bytes []byte
 	var err error
 	if len(num) == 0 {
@@ -87,7 +86,7 @@ func (m *statikFileStruct) Read(num ...int) string {
 		bytes = buffer
 	}
 
-	return string(bytes)
+	return String(string(bytes))
 }
 
 func (m *statikFileStruct) Seek(num int64) {
