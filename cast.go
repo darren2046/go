@@ -29,3 +29,7 @@ func Uint(v interface{}) uint {
 func Uint16(v interface{}) uint16 {
 	return cast.ToUint16(v)
 }
+
+func Uint32(v interface{}) uint32 {
+	return cast.ToUint32(v)
+}

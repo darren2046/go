@@ -21,7 +21,7 @@ type osStruct struct {
 	Getcwd          func() string
 	Exit            func(status int)
 	Touch           func(filePath string)
-	Chmod           func(filePath string, mode os.FileMode) bool
+	Chmod           func(filePath string, mode uint32) bool
 	Chown           func(filePath string, uid, gid int) bool
 	Copy            func(filePath, dest string)
 	Rename          func(filePath, newPosition string)
@@ -401,8 +401,11 @@ func touch(filePath string) {
 	fd.Close()
 }
 
-func chmod(filePath string, mode os.FileMode) bool {
-	return os.Chmod(filePath, mode) == nil
+func chmod(filePath string, mode uint32) bool {
+	if len(Str(mode)) == 3 {
+		mode = Uint32("0" + Str(mode))
+	}
+	return os.Chmod(filePath, os.FileMode(mode)) == nil
 }
 
 func chown(filePath string, uid, gid int) bool {
