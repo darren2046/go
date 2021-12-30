@@ -76,6 +76,7 @@ func (m *fileIOStruct) Close() {
 	m.fd.Close()
 }
 
+// str can be string, *stringStruct, []byte
 func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 	m.lock.Acquire()
 	defer m.lock.Release()
@@ -83,6 +84,9 @@ func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 	if Typeof(str) == "string" {
 		s := str.(string)
 		buf = []byte(s)
+	} else if String(Typeof(str)).EndsWith("stringStruct") {
+		s := str.(*stringStruct)
+		buf = []byte(s.S)
 	} else {
 		s := str.([]byte)
 		buf = s
