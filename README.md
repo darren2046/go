@@ -334,6 +334,9 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func (s \*string) RemoveHtmlTag() \*string
     * func (s \*string) RemoveNonUTF8Character() \*string
     * func (s \*string) DetectLanguage() string
+    * func (s \*stringStruct) IsAscii() bool 
+    * func (s \*stringStruct) RegexFindAll(pattern string, multiline ...bool) (res [][]\*stringStruct) 
+    * func (s \*stringStruct) RegexReplace(pattern string, newstring string) \*stringStruct 
 * Time:
     * func Now() float64
     * func TimeDuration(interface {}) time.Duration
