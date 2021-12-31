@@ -9,24 +9,27 @@ type aesStruct struct {
 	key []byte
 }
 
-func getAES(key string) *aesStruct {
-	return &aesStruct{key: []byte(key)}
+// Key为string
+func getAES(key interface{}) *aesStruct {
+	return &aesStruct{key: []byte(Str(key))}
 }
 
-func (a aesStruct) Encrypt(plaintext string) string {
+// plaintext is string
+func (a aesStruct) Encrypt(plaintext interface{}) *stringStruct {
 	block, err := aes.NewCipher(a.key)
 	Panicerr(err)
-	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
+	ciphertext := make([]byte, aes.BlockSize+len(Str(plaintext)))
 	iv := ciphertext[:aes.BlockSize]
 	Panicerr(err)
 	cipher.NewCFBEncrypter(block, iv).XORKeyStream(ciphertext[aes.BlockSize:],
-		[]byte(plaintext))
-	return string(ciphertext)
+		[]byte(Str(plaintext)))
+	return String(string(ciphertext))
 	//return hex.EncodeToString(ciphertext)
 }
 
-func (a aesStruct) Decrypt(d string) string {
-	ciphertext := []byte(d)
+// encryptedText is string
+func (a aesStruct) Decrypt(encryptedText interface{}) *stringStruct {
+	ciphertext := []byte(Str(encryptedText))
 	//ciphertext, err := hex.DecodeString(d)
 	block, err := aes.NewCipher(a.key)
 	Panicerr(err)
@@ -36,5 +39,5 @@ func (a aesStruct) Decrypt(d string) string {
 	iv := ciphertext[:aes.BlockSize]
 	ciphertext = ciphertext[aes.BlockSize:]
 	cipher.NewCFBDecrypter(block, iv).XORKeyStream(ciphertext, ciphertext)
-	return string(ciphertext)
+	return String(string(ciphertext))
 }

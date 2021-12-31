@@ -3,6 +3,9 @@ package golanglibs
 import "testing"
 
 func TestFileWrite(t *testing.T) {
-	k := Open("file.go").Read()
-	Print(Typeof(k))
+	fd := Open("test.lllll", "w")
+	fd.Write(String("stringStruct\n"))
+	fd.Write([]byte("byte\n"))
+	fd.Write("string")
+	fd.Close()
 }

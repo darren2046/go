@@ -81,15 +81,13 @@ func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 	m.lock.Acquire()
 	defer m.lock.Release()
 	var buf []byte
-	if Typeof(str) == "string" {
-		s := str.(string)
-		buf = []byte(s)
-	} else if String(Typeof(str)).EndsWith("stringStruct") {
-		s := str.(*stringStruct)
-		buf = []byte(s.S)
-	} else {
-		s := str.([]byte)
-		buf = s
+	switch vv := str.(type) {
+	case string:
+		buf = []byte(vv)
+	case *stringStruct:
+		buf = []byte(vv.S)
+	case []byte:
+		buf = vv
 	}
 	m.fd.Write(buf)
 	return m

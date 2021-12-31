@@ -2,8 +2,14 @@ package golanglibs
 
 import "github.com/spf13/cast"
 
-func Str(v interface{}) string {
-	return cast.ToString(v)
+func Str(v interface{}) (res string) {
+	switch vv := v.(type) {
+	case string:
+		res = cast.ToString(vv)
+	case *stringStruct:
+		res = cast.ToString(vv.S)
+	}
+	return
 }
 
 func Float64(v interface{}) float64 {

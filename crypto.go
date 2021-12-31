@@ -1,8 +1,8 @@
 package golanglibs
 
 type cryptoStruct struct {
-	Xor func(data, key string) string
-	Aes func(key string) *aesStruct
+	Xor func(data, key interface{}) interface{} // data和key都是string
+	Aes func(key interface{}) *aesStruct        // Key为string
 }
 
 var Crypto cryptoStruct
@@ -14,13 +14,15 @@ func init() {
 	}
 }
 
-func xor(data, key string) string {
+func xor(data, key interface{}) interface{} {
 	var output []byte
-	keyarr := []byte(key)
-	dataarr := []byte(data)
+	keystr := Str(key)
+	datastr := Str(data)
+	keyarr := []byte(keystr)
+	dataarr := []byte(datastr)
 	kL := len(keyarr)
 	for i := range dataarr {
-		output = append(output, data[i]^key[i%kL])
+		output = append(output, datastr[i]^keystr[i%kL])
 	}
 	return string(output)
 }
