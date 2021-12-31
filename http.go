@@ -44,7 +44,7 @@ type HttpParam map[string]interface{}
 
 type httpResp struct {
 	Headers    map[string]string
-	Content    string
+	Content    *stringStruct
 	StatusCode int
 	URL        string
 }
@@ -178,7 +178,7 @@ func (m *httpRequestStruct) doRequest(reqfunc func(uri string, header http.Heade
 	}
 
 	return &httpResp{
-		Content:    string(respBody),
+		Content:    String(string(respBody)),
 		Headers:    headers,
 		StatusCode: hresp.StatusCode,
 		URL:        hresp.Request.URL.String(),

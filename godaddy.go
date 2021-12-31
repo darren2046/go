@@ -55,7 +55,7 @@ func (m *godaddyStruct) List() (res []godaddyDomainInfoStruct) {
 	if resp.StatusCode != 200 {
 		Panicerr(resp.Content)
 	}
-	err := json.Unmarshal([]byte(resp.Content), &res)
+	err := json.Unmarshal([]byte(resp.Content.S), &res)
 	Panicerr(err)
 	return
 }
@@ -72,7 +72,7 @@ func (m *godaddyDomainStruct) List() (res []godaddyRecord) {
 	if resp.StatusCode != 200 {
 		Panicerr(resp.Content)
 	}
-	err := json.Unmarshal([]byte(resp.Content), &res)
+	err := json.Unmarshal([]byte(resp.Content.S), &res)
 	Panicerr(err)
 	return
 }

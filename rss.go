@@ -32,7 +32,7 @@ func getRSS(url string, config ...rssConfig) *gofeed.Feed {
 
 				// lg.trace("获取到的内容是:", content)
 
-				feed, err = fp.ParseString(content)
+				feed, err = fp.ParseString(content.S)
 				Panicerr(err)
 			}).Error; err == nil {
 				break
@@ -47,7 +47,7 @@ func getRSS(url string, config ...rssConfig) *gofeed.Feed {
 
 		// lg.trace("获取到的内容是:", content)
 
-		feed, err = fp.ParseString(content)
+		feed, err = fp.ParseString(content.S)
 		Panicerr(err)
 	}
 
