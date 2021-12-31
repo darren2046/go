@@ -116,13 +116,14 @@ func Typeof(v interface{}) string {
 	return reflect.TypeOf(v).String()
 }
 
-func Input(prompt string, defaultValue ...string) (input string) {
+func Input(prompt string, defaultValue ...string) *stringStruct {
 	fmt.Print(prompt)
+	var input string
 	fmt.Scanln(&input)
 	if input == "" {
 		if len(defaultValue) != 0 {
 			input = defaultValue[0]
 		}
 	}
-	return
+	return String(input)
 }
