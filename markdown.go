@@ -40,10 +40,10 @@ func md2html(md string) string {
 		if line.StartsWith("<pre><code") {
 			insideCode = true
 			if !String("<pre><code>").In(line.S) {
-				res := Re.FindAll("<pre><code class=\"language-(.+?)\">", line.S)
+				res := line.RegexFindAll("<pre><code class=\"language-(.+?)\">")
 				if len(res) != 0 {
 					line = line.Replace(res[0][0], "")
-					lang = res[0][1]
+					lang = res[0][1].S
 				}
 			} else {
 				line = line.Replace("<pre><code>", "")

@@ -47,8 +47,8 @@ func (m *pexpectStruct) LogToStdout(enable ...bool) {
 	m.logToStdout = e
 }
 
-func (m *pexpectStruct) GetLog() string {
-	return m.bufall
+func (m *pexpectStruct) GetLog() *stringStruct {
+	return String(m.bufall)
 }
 
 func (m *pexpectStruct) ClearLog() {

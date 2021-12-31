@@ -27,8 +27,8 @@ type osStruct struct {
 	Rename          func(filePath, newPosition string)
 	Move            func(filePath, newPosition string)
 	Path            *pathStruct
-	System          func(command string, timeoutSecond ...interface{}) int
-	SystemWithShell func(command string, timeoutSecond ...interface{}) int
+	System          func(command interface{}, timeoutSecond ...interface{}) int
+	SystemWithShell func(command interface{}, timeoutSecond ...interface{}) int
 	Hostname        func() string
 	Envexists       func(varname string) bool
 	Getenv          func(varname string) string
@@ -213,9 +213,9 @@ func gethostname() string {
 	return name
 }
 
-func systemWithShell(command string, timeoutSecond ...interface{}) int {
+func systemWithShell(command interface{}, timeoutSecond ...interface{}) int {
 	q := rune(0)
-	parts := strings.FieldsFunc(command, func(r rune) bool {
+	parts := strings.FieldsFunc(Str(command), func(r rune) bool {
 		switch {
 		case r == q:
 			q = rune(0)
@@ -260,7 +260,7 @@ func systemWithShell(command string, timeoutSecond ...interface{}) int {
 		ctx, cancel := context.WithTimeout(context.Background(), timeoutDuration)
 		defer cancel()
 
-		cmd := exec.CommandContext(ctx, shell, "-c", command)
+		cmd := exec.CommandContext(ctx, shell, "-c", Str(command))
 
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
@@ -274,7 +274,7 @@ func systemWithShell(command string, timeoutSecond ...interface{}) int {
 			statuscode = 0
 		}
 	} else {
-		cmd := exec.Command(shell, "-c", command)
+		cmd := exec.Command(shell, "-c", Str(command))
 
 		cmd.Stdin = os.Stdin
 		cmd.Stdout = os.Stdout
@@ -291,9 +291,9 @@ func systemWithShell(command string, timeoutSecond ...interface{}) int {
 	return statuscode
 }
 
-func system(command string, timeoutSecond ...interface{}) int {
+func system(command interface{}, timeoutSecond ...interface{}) int {
 	q := rune(0)
-	parts := strings.FieldsFunc(command, func(r rune) bool {
+	parts := strings.FieldsFunc(Str(command), func(r rune) bool {
 		switch {
 		case r == q:
 			q = rune(0)

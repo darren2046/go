@@ -28,7 +28,7 @@ func fmtDebugStack(msg string, stack string) string {
 
 	var link []string
 	for _, f := range l {
-		ff := strings.Split(f[0], ":")[0]
+		ff := strings.Split(f[0].S, ":")[0]
 		inside := func(a string, list []string) bool {
 			for _, b := range list {
 				if b == a {
@@ -38,7 +38,7 @@ func fmtDebugStack(msg string, stack string) string {
 			return false
 		}(ff, blackFileList)
 		if !inside {
-			link = append(link, f[0])
+			link = append(link, f[0].S)
 		}
 	}
 	//lg.debug(link)

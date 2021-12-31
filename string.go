@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"math/rand"
 	"reflect"
+	"regexp"
 	"strings"
 	"time"
 	"unicode"
@@ -107,8 +108,8 @@ func (s *stringStruct) Index(substr string) int {
 	return strings.Index(s.S, substr)
 }
 
-func (s *stringStruct) Replace(old, new string) *stringStruct {
-	s.S = strings.ReplaceAll(s.S, old, new)
+func (s *stringStruct) Replace(oldText, newText interface{}) *stringStruct {
+	s.S = strings.ReplaceAll(s.S, Str(oldText), Str(newText))
 	return s
 }
 
@@ -343,4 +344,28 @@ func (s *stringStruct) DetectLanguage() string {
 
 func (s *stringStruct) IsAscii() bool {
 	return utf8string.NewString(s.S).IsASCII()
+}
+
+func (s *stringStruct) RegexFindAll(pattern string, multiline ...bool) (res [][]*stringStruct) {
+	if len(multiline) > 0 && multiline[0] {
+		pattern = "(?s)" + pattern
+	}
+	r, err := regexp.Compile(pattern)
+	Panicerr(err)
+
+	for _, i := range r.FindAllStringSubmatch(s.S, -1) {
+		var arr []*stringStruct
+		for _, j := range i {
+			arr = append(arr, String(j))
+		}
+		res = append(res, arr)
+	}
+	return
+}
+
+func (s *stringStruct) RegexReplace(pattern string, newstring string) *stringStruct {
+	r, err := regexp.Compile(pattern)
+	Panicerr(err)
+	s.S = r.ReplaceAllString(s.S, newstring)
+	return s
 }
