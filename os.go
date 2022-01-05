@@ -31,7 +31,7 @@ type osStruct struct {
 	SystemWithShell func(command interface{}, timeoutSecond ...interface{}) int
 	Hostname        func() string
 	Envexists       func(varname string) bool
-	Getenv          func(varname string) string
+	Getenv          func(varname string, defaultValue ...string) string
 	Walk            func(path string) chan string
 	Listdir         func(path string) (res []string)
 	SelfDir         func() string
@@ -194,10 +194,14 @@ func walk(path string) chan string {
 	return pc
 }
 
-func getenv(varname string) string {
+func getenv(varname string, defaultValue ...string) string {
 	e, exist := os.LookupEnv(varname)
 	if !exist {
-		Panicerr("Env not exists")
+		if len(defaultValue) == 0 {
+			Panicerr("Env not exists")
+		} else {
+			return defaultValue[0]
+		}
 	}
 	return e
 }
