@@ -4,10 +4,10 @@ import "github.com/spf13/cast"
 
 func Str(v interface{}) (res string) {
 	switch vv := v.(type) {
-	case string:
-		res = cast.ToString(vv)
 	case *stringStruct:
 		res = cast.ToString(vv.S)
+	default:
+		res = cast.ToString(v)
 	}
 	return
 }
