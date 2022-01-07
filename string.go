@@ -367,3 +367,11 @@ func (s *stringStruct) RegexReplace(pattern string, newstring string) *stringStr
 	s.S = r.ReplaceAllString(s.S, newstring)
 	return s
 }
+
+func (s *stringStruct) JsonXPath() *xpathJsonStruct {
+	return getXPathJson(s.S)
+}
+
+func (s *stringStruct) XPath() *xpathStruct {
+	return getXPath(s.S)
+}
