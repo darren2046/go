@@ -12,7 +12,7 @@ type toolsStruct struct {
 	GodaddyDNS    func(key string, secret string) *godaddyStruct
 	Ini           func(fpath ...string) *iniStruct
 	JavascriptVM  func() *javascriptVMStruct
-	Matrix        func(homeserverURL string) *matrixStruct
+	Matrix        func(homeserverURL string) *MatrixStruct
 	Nats          func(server string) *natsStruct
 	Totp          func(key string) *totpStruct
 	Pexpect       func(command string) *pexpectStruct
