@@ -11,7 +11,7 @@ import (
 )
 
 type argparseIniStruct struct {
-	cfg         *ini.File
+	Cfg         *ini.File
 	cfgPath     string
 	args        *orderedmap.OrderedMap
 	description string
@@ -52,16 +52,16 @@ func Argparser(description string) *argparseIniStruct {
 		cfg = ini.Empty()
 	}
 
-	return &argparseIniStruct{cfg: cfg, cfgPath: cfgPath, args: orderedmap.NewOrderedMap(), description: description}
+	return &argparseIniStruct{Cfg: cfg, cfgPath: cfgPath, args: orderedmap.NewOrderedMap(), description: description}
 }
 
 func (m *argparseIniStruct) Get(section, key, defaultValue, comment string) (res string) {
-	res = m.cfg.Section(section).Key(key).String()
+	res = m.Cfg.Section(section).Key(key).String()
 	if res == "" {
 		res = defaultValue
-		m.cfg.Section(section).Key(key).SetValue(defaultValue)
+		m.Cfg.Section(section).Key(key).SetValue(defaultValue)
 	}
-	m.cfg.Section(section).Key(key).Comment = comment
+	m.Cfg.Section(section).Key(key).Comment = comment
 	if section != "" {
 		m.args.Set(section+"."+key, comment)
 	} else {
@@ -113,10 +113,10 @@ func (m *argparseIniStruct) Save(fpath ...string) (exist bool) {
 	exist = true
 	if len(fpath) != 0 {
 		exist = pathExists(fpath[0])
-		m.cfg.SaveTo(fpath[0])
+		m.Cfg.SaveTo(fpath[0])
 	} else if m.cfgPath != "" {
 		exist = pathExists(m.cfgPath)
-		m.cfg.SaveTo(m.cfgPath)
+		m.Cfg.SaveTo(m.cfgPath)
 	}
 	return
 }
