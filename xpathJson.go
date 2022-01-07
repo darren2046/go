@@ -37,6 +37,6 @@ func (m *xpathJsonStruct) Find(expr string) (res []*xpathJsonStruct) {
 	return
 }
 
-func (m *xpathJsonStruct) Text() string {
-	return m.doc.InnerText()
+func (m *xpathJsonStruct) Text() *stringStruct {
+	return String(m.doc.InnerText())
 }

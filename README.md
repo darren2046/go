@@ -444,7 +444,7 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*xpathJson) Exists(expr string) bool
         * func (m \*xpathJson) First(expr string) (res *xpathJson)
         * func (m \*xpathJson) Find(expr string) (res []*xpathJson)
-        * func (m \*xpathJson) Text() string
+        * func (m \*xpathJson) Text() *stringStruct
 * Math
     * func Abs(number float64) float64
     * func Sum(array interface{}) (sumresult float64)
