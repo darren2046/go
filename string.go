@@ -19,10 +19,8 @@ type stringStruct struct {
 	S string
 }
 
-var SS func(s string) *stringStruct = String
-
-func String(s string) *stringStruct {
-	return &stringStruct{S: s}
+func String(s interface{}) *stringStruct {
+	return &stringStruct{S: Str(s)}
 }
 
 // Return the final string
