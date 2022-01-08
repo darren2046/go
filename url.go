@@ -3,14 +3,14 @@ package golanglibs
 import "net/url"
 
 type urlComponents struct {
-	schema   string
-	host     string
-	port     string
-	user     string
-	pass     string
-	path     string
-	query    string
-	fragment string
+	Schema   string
+	Host     string
+	Port     string
+	User     string
+	Pass     string
+	Path     string
+	Query    string
+	Fragment string
 }
 
 type urlStruct struct {
@@ -41,14 +41,14 @@ func (u *urlStruct) Parse() *urlComponents {
 	}
 
 	return &urlComponents{
-		schema:   uu.Scheme,
-		host:     uu.Hostname(),
-		port:     port,
-		user:     uu.User.Username(),
-		pass:     pass,
-		path:     uu.Path,
-		query:    uu.RawQuery,
-		fragment: uu.Fragment,
+		Schema:   uu.Scheme,
+		Host:     uu.Hostname(),
+		Port:     port,
+		User:     uu.User.Username(),
+		Pass:     pass,
+		Path:     uu.Path,
+		Query:    uu.RawQuery,
+		Fragment: uu.Fragment,
 	}
 }
 
