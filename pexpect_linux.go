@@ -87,8 +87,6 @@ func pexpect(command string) *pexpectStruct {
 
 	m.cmd = cmd
 
-	pty.Start
-
 	var err error
 	m.ptmx, err = pty.StartWithSize(cmd, &pty.Winsize{
 		Rows: 60,
