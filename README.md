@@ -233,6 +233,14 @@ This is a toolkit that provide a lot of function or object that make programing 
             * func (p \*sysinfoProcess) User() types.UserInfo {
             * func (p \*sysinfoProcess) Parent() \*sysinfoProcess {
             * func (p \*sysinfoProcess) CPUTimes() types.CPUTimes {
+    * Queue(datadir string) (q \*queue) 
+        * func (m \*queue) Close() 
+        * func (m *queue) Destroy() 
+        * func (m *queue) New(queueName ...string) *namedQueue 
+            * func (m *namedQueue) Size() int64 
+            * func (m *namedQueue) Get(nonblock ...bool) string 
+            * func (m *namedQueue) Put(value string) 
+
 * Random
     * func Int(min, max int64) int64
     * func Choice(array interface{}) interface{}
@@ -334,9 +342,9 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func (s \*string) RemoveHtmlTag() \*string
     * func (s \*string) RemoveNonUTF8Character() \*string
     * func (s \*string) DetectLanguage() string
-    * func (s \*stringStruct) IsAscii() bool 
-    * func (s \*stringStruct) RegexFindAll(pattern string, multiline ...bool) (res [][]\*stringStruct) 
-    * func (s \*stringStruct) RegexReplace(pattern string, newstring string) \*stringStruct 
+    * func (s \*string) IsAscii() bool 
+    * func (s \*string) RegexFindAll(pattern string, multiline ...bool) (res [][]\*string) 
+    * func (s \*string) RegexReplace(pattern string, newstring string) \*string 
 * Time:
     * func Now() float64
     * func TimeDuration(interface {}) time.Duration
@@ -413,8 +421,8 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func Ip2int(ipnr string) int64
     * func Zh2PinYin(zh string) (ress []string)
     * func Fmtsize(num uint64) string
-    * func Sniffer(interfaceName string, filterString string, promisc ...bool) chan *networkPacketStruct 
-	* func ReadPcapFile(pcapFile string) chan *networkPacketStruct
+    * func Sniffer(interfaceName string, filterString string, promisc ...bool) chan *networkPacket 
+	* func ReadPcapFile(pcapFile string) chan *networkPacket
 * Hash
     * func Md5sum(str string) string
     * func Md5File(path string) string
@@ -444,7 +452,7 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*xpathJson) Exists(expr string) bool
         * func (m \*xpathJson) First(expr string) (res *xpathJson)
         * func (m \*xpathJson) Find(expr string) (res []*xpathJson)
-        * func (m \*xpathJson) Text() *stringStruct
+        * func (m \*xpathJson) Text() *string
 * Math
     * func Abs(number float64) float64
     * func Sum(array interface{}) (sumresult float64)

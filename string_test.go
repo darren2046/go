@@ -18,6 +18,7 @@ func TestSub(t *testing.T) {
 
 func TestChunk(t *testing.T) {
 	s := String("1234567890").Chunk(3)
+	Print(s)
 	for idx, str := range []string{"123", "456", "789", "0"} {
 		if s[idx].S != str {
 			t.Error("Error while Chunk")
