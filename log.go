@@ -23,7 +23,7 @@ type logStruct struct {
 	logFileSuffix            string
 	fd                       *fileIOStruct
 	displayOnTerminal        bool
-	lock                     *lockStruct
+	lock                     *LockStruct
 	logfiles                 []string
 	maxlogfiles              int
 	logFileSizeInMB          int

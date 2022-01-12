@@ -15,7 +15,7 @@ type fileIOStruct struct {
 	fd     *os.File
 	mode   string
 	reader *bufio.Reader
-	lock   *lockStruct
+	lock   *LockStruct
 }
 
 func (m *fileIOStruct) Readlines() chan *stringStruct {

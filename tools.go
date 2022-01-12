@@ -3,7 +3,7 @@ package golanglibs
 import "sync"
 
 type toolsStruct struct {
-	Lock          func() *lockStruct
+	Lock          func() *LockStruct
 	AliDNS        func(accessKeyID string, accessKeySecret string) *alidnsStruct
 	Chart         *chartStruct
 	CloudflareDNS func(key string, email string) *cloudflareStruct
@@ -78,19 +78,19 @@ func init() {
 	}
 }
 
-type lockStruct struct {
+type LockStruct struct {
 	lock *sync.Mutex
 }
 
-func getLock() *lockStruct {
+func getLock() *LockStruct {
 	var a sync.Mutex
-	return &lockStruct{lock: &a}
+	return &LockStruct{lock: &a}
 }
 
-func (m *lockStruct) Acquire() {
+func (m *LockStruct) Acquire() {
 	m.lock.Lock()
 }
 
-func (m *lockStruct) Release() {
+func (m *LockStruct) Release() {
 	m.lock.Unlock()
 }
