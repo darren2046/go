@@ -1,7 +1,5 @@
 package golanglibs
 
-import "sync"
-
 type toolsStruct struct {
 	Lock          func() *LockStruct
 	AliDNS        func(accessKeyID string, accessKeySecret string) *alidnsStruct
@@ -36,6 +34,7 @@ type toolsStruct struct {
 	Xlsx          func(path string) *xlsxStruct
 	XPath         func(htmlString string) *xpathStruct
 	Sysinfo       *sysinfoStruct
+	Queue         func(datadir string) (q *queueStruct)
 }
 
 var Tools toolsStruct
@@ -75,22 +74,6 @@ func init() {
 		Xlsx:          getXlsx,
 		XPath:         getXPath,
 		Sysinfo:       &sysinfostruct,
+		Queue:         getQueue,
 	}
-}
-
-type LockStruct struct {
-	lock *sync.Mutex
-}
-
-func getLock() *LockStruct {
-	var a sync.Mutex
-	return &LockStruct{lock: &a}
-}
-
-func (m *LockStruct) Acquire() {
-	m.lock.Lock()
-}
-
-func (m *LockStruct) Release() {
-	m.lock.Unlock()
 }

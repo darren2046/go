@@ -58,6 +58,7 @@ require (
 	github.com/schollz/progressbar/v3 v3.8.5
 	github.com/spf13/cast v1.4.1
 	github.com/streadway/amqp v1.0.0
+	github.com/syndtr/goleveldb v1.0.0
 	github.com/tebeka/selenium v0.9.9
 	github.com/ulikunitz/xz v0.5.10
 	github.com/wangtuanjie/ip17mon v1.5.2
@@ -99,6 +100,7 @@ require (
 	github.com/gohouse/t v0.0.0-20201007094014-630049a6bfe9 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/snappy v0.0.3 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
