@@ -9,16 +9,26 @@ func TestQueue(t *testing.T) {
 
 	qn := qb.New()
 
-	Lg.Debug("Size:", qn.Size())
+	if qn.Size() != 0 {
+		t.Error("Size not correct")
+	}
 	qn.Put("value1")
-	Lg.Debug("Size:", qn.Size())
+	if qn.Size() != 1 {
+		t.Error("Size not correct")
+	}
 	qb.Close()
 
 	qq := getQueue("data")
 	qm := qq.New()
-	Lg.Debug("Size:", qm.Size())
-	Lg.Debug(qm.Get())
-	Lg.Debug("Size:", qm.Size())
+	if qm.Size() != 1 {
+		t.Error("Size not correct")
+	}
+	if qm.Get() != "value1" {
+		t.Error("value not correct")
+	}
+	if qm.Size() != 0 {
+		t.Error("Size not correct")
+	}
 
 	qq.Destroy()
 

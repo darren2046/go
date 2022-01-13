@@ -72,8 +72,8 @@ func (s *stringStruct) Reverse() *stringStruct {
 func (s *stringStruct) Chunk(length int) (res []*stringStruct) {
 	start := 0
 	for s.Len() > start {
-		substr := s.Sub(start, start+length)
-		res = append(res, substr)
+		substr := s.sub(start, start+length)
+		res = append(res, String(substr))
 		start = start + length
 	}
 	return
