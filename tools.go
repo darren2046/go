@@ -21,7 +21,7 @@ type toolsStruct struct {
 	RabbitMQ      func(rabbitMQURL string, queueName string) *rabbitConnectionStruct
 	RateLimit     func(rate int) *rateLimitStruct
 	Redis         func(host string, port int, password string, db int, cfg ...redisConfig) *RedisStruct
-	Selenium      func(url string) *seleniumStruct
+	Selenium      func(url string, browser ...string) *seleniumStruct
 	SSH           func(user string, pass string, host string, port int) *sshStruct
 	StatikOpen    func(path string) *statikFileStruct
 	Table         func(header ...string) *tableStruct
