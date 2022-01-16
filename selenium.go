@@ -12,9 +12,23 @@ type seleniumStruct struct {
 	driver  selenium.WebDriver
 }
 
-func getSelenium(url string) *seleniumStruct {
+// browser can be chrome or firefox
+// chrome ==> chromedriver
+// firefox ==> geckodriver
+func getSelenium(url string, browser ...string) *seleniumStruct {
+
+	var browserv string
+
+	drivermap := map[string]string{
+		"chrome":  "chromedriver",
+		"firefox": "geckodriver",
+	}
+
+	if len(browser) != 0 {
+		browserv = browser[0]
+	}
 	// firefoxDriverPath = "/usr/local/bin/geckodriver"
-	chromeDriverPath, err := exec.LookPath("chromedriver")
+	chromeDriverPath, err := exec.LookPath(drivermap[browserv])
 	Panicerr(err)
 	servicePort := Int(randint(30000, 65535))
 
@@ -22,8 +36,14 @@ func getSelenium(url string) *seleniumStruct {
 		// selenium.Output(os.Stderr), // Output debug information to STDERR.
 	}
 	// selenium.SetDebug(true)
-	service, err := selenium.NewChromeDriverService(chromeDriverPath, servicePort, opts...)
-	Panicerr(err)
+	var service *selenium.Service
+	if browserv == "firefox" {
+		service, err = selenium.NewGeckoDriverService(chromeDriverPath, servicePort, opts...)
+		Panicerr(err)
+	} else if browserv == "chrome" {
+		service, err = selenium.NewChromeDriverService(chromeDriverPath, servicePort, opts...)
+		Panicerr(err)
+	}
 
 	// Connect to the WebDriver instance running locally.
 	caps := selenium.Capabilities{"browserName": "chrome"}

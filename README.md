@@ -634,12 +634,12 @@ func main() {
 
 ```go
   // 设置homeserver的url, 以及需要发送到的会话的id, 这个房间的消息不能是加密的
-  cli = Tools.Matrix(args["server"]).SetRoomID(args["roomID"])
+  cli = Tools.Matrix("https://example.com").SetRoomID("!AquOdzAnBLIQvfPkan:example.com")
 
   // 可以使用帐号密码登录, 它会先获取token, 然后使用token去交互, 每次登录获取一次token
-  token := cli.Login(args["username"], args["password"]) // 登录成功会返回一个token
+  token := cli.Login("bot", "123456") // 登录成功会返回一个token
   // 也可以直接使用token, 默认synapse的token是没有过期时间的
-  cli.SetToken(args["userid"], args["token"])
+  cli.SetToken("@bot:example.com", "syt_Ym90_iHallJrSVvDLFCfnvnZZ_4a2WKt")
   
   cli.Send(msg)
 }
