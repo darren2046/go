@@ -143,10 +143,10 @@ func (c *seleniumElementStruct) Click() *seleniumElementStruct {
 	return c
 }
 
-func (c *seleniumElementStruct) Text() string {
+func (c *seleniumElementStruct) Text() *stringStruct {
 	s, err := c.element.Text()
 	Panicerr(err)
-	return s
+	return String(s)
 }
 
 func (c *seleniumElementStruct) Input(s string) *seleniumElementStruct {
