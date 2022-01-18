@@ -13,7 +13,7 @@ func getAES(key string) *aesStruct {
 	return &aesStruct{key: []byte(key)}
 }
 
-func (a aesStruct) Encrypt(plaintext string) string {
+func (a *aesStruct) Encrypt(plaintext string) string {
 	block, err := aes.NewCipher(a.key)
 	Panicerr(err)
 	ciphertext := make([]byte, aes.BlockSize+len(plaintext))
@@ -25,7 +25,7 @@ func (a aesStruct) Encrypt(plaintext string) string {
 	//return hex.EncodeToString(ciphertext)
 }
 
-func (a aesStruct) Decrypt(d string) string {
+func (a *aesStruct) Decrypt(d string) string {
 	ciphertext := []byte(d)
 	//ciphertext, err := hex.DecodeString(d)
 	block, err := aes.NewCipher(a.key)

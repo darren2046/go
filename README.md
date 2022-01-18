@@ -378,6 +378,11 @@ This is a toolkit that provide a lot of function or object that make programing 
 * Crypto
     * func Xor(data, key string) string
     * func Aes(key string) \*aes
+        * func (a \*aes) Encrypt(plaintext string) string 
+        * func (a \*aes) Decrypt(ciphertext string) string 
+    * func ChaCha20Poly1305(key string) *chacha20poly1305
+        * func (m \*chacha20poly1305Struct) Encrypt(plantext string) (ciphertext string)
+        * func (m \*chacha20poly1305Struct) Decrypt(ciphertext string) (plaintext string)
 * File(filePath string) \*file
     * func (f \*file) Time() \*fileTime
     * func (f \*file) Stat() os.FileInfo

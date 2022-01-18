@@ -1,16 +1,18 @@
 package golanglibs
 
 type cryptoStruct struct {
-	Xor func(data, key string) string
-	Aes func(key string) *aesStruct
+	Xor              func(data, key string) string
+	Aes              func(key string) *aesStruct
+	ChaCha20Poly1305 func(key string) *chacha20poly1305Struct
 }
 
 var Crypto cryptoStruct
 
 func init() {
 	Crypto = cryptoStruct{
-		Xor: xor,
-		Aes: getAES,
+		Xor:              xor,
+		Aes:              getAES,
+		ChaCha20Poly1305: getChacha20poly1305,
 	}
 }
 

@@ -17,7 +17,7 @@ type seleniumStruct struct {
 // firefox ==> geckodriver
 func getSelenium(url string, browser ...string) *seleniumStruct {
 
-	var browserv string
+	var browserv string = "chrome"
 
 	drivermap := map[string]string{
 		"chrome":  "chromedriver",
@@ -28,7 +28,7 @@ func getSelenium(url string, browser ...string) *seleniumStruct {
 		browserv = browser[0]
 	}
 	// firefoxDriverPath = "/usr/local/bin/geckodriver"
-	chromeDriverPath, err := exec.LookPath(drivermap[browserv])
+	driverPath, err := exec.LookPath(drivermap[browserv])
 	Panicerr(err)
 	servicePort := Int(randint(30000, 65535))
 
@@ -38,15 +38,17 @@ func getSelenium(url string, browser ...string) *seleniumStruct {
 	// selenium.SetDebug(true)
 	var service *selenium.Service
 	if browserv == "firefox" {
-		service, err = selenium.NewGeckoDriverService(chromeDriverPath, servicePort, opts...)
+		service, err = selenium.NewGeckoDriverService(driverPath, servicePort, opts...)
 		Panicerr(err)
 	} else if browserv == "chrome" {
-		service, err = selenium.NewChromeDriverService(chromeDriverPath, servicePort, opts...)
+		service, err = selenium.NewChromeDriverService(driverPath, servicePort, opts...)
 		Panicerr(err)
 	}
 
+	Lg.Trace(browserv)
+
 	// Connect to the WebDriver instance running locally.
-	caps := selenium.Capabilities{"browserName": "chrome"}
+	caps := selenium.Capabilities{"browserName": "firefox"}
 	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", servicePort))
 	Panicerr(err)
 
