@@ -16,8 +16,8 @@ type toolsStruct struct {
 	Pexpect       func(command string) *pexpectStruct
 	ProgressBar   func(title string, total int64, showBytes ...bool) *progressBarStruct
 	Prometheus    func(url string) *prometheusStruct
-	MySQL         func(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *databaseStruct
-	SQLite        func(dbpath string) *databaseStruct
+	MySQL         func(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *DatabaseStruct
+	SQLite        func(dbpath string) *DatabaseStruct
 	RabbitMQ      func(rabbitMQURL string, queueName string) *rabbitConnectionStruct
 	RateLimit     func(rate int) *rateLimitStruct
 	Redis         func(host string, port int, password string, db int, cfg ...redisConfig) *RedisStruct

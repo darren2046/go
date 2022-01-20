@@ -9,7 +9,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-type databaseStruct struct {
+type DatabaseStruct struct {
 	engin                  *gorose.Engin
 	driver                 string
 	dsn                    string
@@ -57,7 +57,7 @@ func doDatabaseThingsAndHandleNetworkError(retry int, f func() error) {
 	}
 }
 
-func getMySQL(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *databaseStruct {
+func getMySQL(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *DatabaseStruct {
 	var timeoutt int
 	var chartsett string
 	var networkErrorRetryTimess int
@@ -84,7 +84,7 @@ func getMySQL(host string, port int, user string, password string, db string, cf
 		networkErrorRetryTimess = 0
 	}
 
-	m := &databaseStruct{}
+	m := &DatabaseStruct{}
 	m.networkErrorRetryTimes = networkErrorRetryTimess
 	m.driver = "mysql"
 	m.dsn = user + ":" + password + "@tcp(" + host + ":" + Str(port) + ")/" + db + "?timeout=" + Str(timeoutt) + "s&readTimeout=" + Str(timeoutt) + "s&writeTimeout=" + Str(timeoutt) + "s&charset=" + chartsett
@@ -103,7 +103,7 @@ func getMySQL(host string, port int, user string, password string, db string, cf
 	m.engin = engin
 
 	// 它会重连，如果连接坏了
-	go func(m *databaseStruct) {
+	go func(m *DatabaseStruct) {
 		for {
 			sleep(3)
 			Try(func() {
@@ -118,8 +118,8 @@ func getMySQL(host string, port int, user string, password string, db string, cf
 	return m
 }
 
-func getSQLite(dbpath string) *databaseStruct {
-	m := &databaseStruct{}
+func getSQLite(dbpath string) *DatabaseStruct {
+	m := &DatabaseStruct{}
 	m.driver = "sqlite3"
 	m.dsn = dbpath
 	var config = &gorose.Config{
@@ -135,7 +135,7 @@ func getSQLite(dbpath string) *databaseStruct {
 	return m
 }
 
-func (m *databaseStruct) Query(sql string, args ...interface{}) []gorose.Data {
+func (m *DatabaseStruct) Query(sql string, args ...interface{}) []gorose.Data {
 	db := m.engin.NewOrm()
 	res, err := db.Query(sql, args...)
 	Panicerr(err)
@@ -150,12 +150,12 @@ func (m *databaseStruct) Query(sql string, args ...interface{}) []gorose.Data {
 	return res
 }
 
-func (m *databaseStruct) Close() {
+func (m *DatabaseStruct) Close() {
 	m.isclose = true
 	m.engin.GetQueryDB().Close()
 }
 
-func (m *databaseStruct) Execute(sql string) int64 {
+func (m *DatabaseStruct) Execute(sql string) int64 {
 	db := m.engin.NewOrm()
 	res, err := db.Execute(sql)
 	Panicerr(err)
@@ -164,12 +164,12 @@ func (m *databaseStruct) Execute(sql string) int64 {
 
 type databaseOrmStruct struct {
 	orm    gorose.IOrm
-	db     *databaseStruct
+	db     *DatabaseStruct
 	driver string
 	table  string
 }
 
-func (m *databaseStruct) Table(tbname string) *databaseOrmStruct {
+func (m *DatabaseStruct) Table(tbname string) *databaseOrmStruct {
 	orm := m.engin.NewOrm()
 	return &databaseOrmStruct{
 		orm:    orm.Table("`" + tbname + "`"),
@@ -179,7 +179,7 @@ func (m *databaseStruct) Table(tbname string) *databaseOrmStruct {
 	}
 }
 
-func (m *databaseStruct) RenameTable(oldTableName string, newTableNname string) {
+func (m *DatabaseStruct) RenameTable(oldTableName string, newTableNname string) {
 	if m.driver == "mysql" {
 		m.Execute("RENAME TABLE `" + oldTableName + "` TO `" + newTableNname + "`;")
 	} else if m.driver == "sqlite3" {
@@ -382,7 +382,7 @@ func (m *databaseOrmStruct) Delete() (num int64) {
 	return
 }
 
-func (m *databaseStruct) Tables() (res []string) {
+func (m *DatabaseStruct) Tables() (res []string) {
 	if m.driver == "mysql" {
 		for _, v := range m.Query("show tables;") {
 			for _, i := range v {
@@ -397,7 +397,7 @@ func (m *databaseStruct) Tables() (res []string) {
 	return
 }
 
-func (m *databaseStruct) CreateTable(tableName string, engineName ...string) *databaseOrmStruct {
+func (m *DatabaseStruct) CreateTable(tableName string, engineName ...string) *databaseOrmStruct {
 	if !Array(m.Tables()).Has(tableName) {
 		if len(engineName) != 0 && m.driver != "mysql" {
 			Panicerr("SQLite不支持设定存储引擎")
