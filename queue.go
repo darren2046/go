@@ -36,7 +36,7 @@ func (m *queueStruct) Destroy() {
 	Os.Unlink(m.datadir)
 }
 
-type namedQueueStruct struct {
+type NamedQueueStruct struct {
 	head  int64
 	tail  int64
 	db    *leveldb.DB
@@ -46,8 +46,8 @@ type namedQueueStruct struct {
 }
 
 // Will not clean the data already exists
-func (m *queueStruct) New(queueName ...string) *namedQueueStruct {
-	q := &namedQueueStruct{}
+func (m *queueStruct) New(queueName ...string) *NamedQueueStruct {
+	q := &NamedQueueStruct{}
 
 	n := ""
 	if len(queueName) != 0 {
@@ -78,11 +78,11 @@ func (m *queueStruct) New(queueName ...string) *namedQueueStruct {
 	return q
 }
 
-func (m *namedQueueStruct) Size() int64 {
+func (m *NamedQueueStruct) Size() int64 {
 	return m.tail - m.head
 }
 
-func (m *namedQueueStruct) Get(nonblock ...bool) string {
+func (m *NamedQueueStruct) Get(nonblock ...bool) string {
 	m.glock.Acquire()
 	defer m.glock.Release()
 
@@ -107,7 +107,7 @@ func (m *namedQueueStruct) Get(nonblock ...bool) string {
 	return Str(value)
 }
 
-func (m *namedQueueStruct) Put(value string) {
+func (m *NamedQueueStruct) Put(value string) {
 	if value == "" {
 		Panicerr("value can not be empty")
 	}
