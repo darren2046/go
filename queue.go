@@ -86,13 +86,16 @@ func (m *NamedQueueStruct) Get(nonblock ...bool) string {
 	m.glock.Acquire()
 	defer m.glock.Release()
 
-	if len(nonblock) != 0 && nonblock[0] {
-		return ""
+	if m.head == m.tail {
+		if len(nonblock) != 0 && nonblock[0] {
+			return ""
+		} else {
+			for m.head == m.tail {
+				Time.Sleep(0.1)
+			}
+		}
 	}
 
-	for m.head == m.tail {
-		Time.Sleep(0.1)
-	}
 	value, err := m.db.Get([]byte(Str(m.head)), nil)
 	Panicerr(err)
 
