@@ -223,8 +223,16 @@ func (s *stringStruct) Splitlines(strip ...bool) []*stringStruct {
 	return a
 }
 
-func (s *stringStruct) In(str string) bool {
-	return String(str).Index(s.S) != -1
+func (s *stringStruct) In(str interface{}) bool {
+	switch vv := str.(type) {
+	case *stringStruct:
+		return vv.Index(s.S) != -1
+	case string:
+		return String(vv).Index(s.S) != -1
+	default:
+		Panicerr("Unsupport type in In()")
+	}
+	return false
 }
 
 func (s *stringStruct) LStrip(characterMask ...string) *stringStruct {

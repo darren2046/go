@@ -54,3 +54,10 @@ func TestIsAscii(t *testing.T) {
 	Print(String("add陈四民w(*(f").IsAscii())
 	Print(String("addw(*(f").IsAscii())
 }
+
+func TestIn(t *testing.T) {
+	Print(String("a").In("abc"))         // true
+	Print(String("a").In("def"))         // false
+	Print(String("a").In(String("abc"))) // true
+	Print(String("a").In(String("def"))) // false
+}
