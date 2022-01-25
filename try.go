@@ -11,8 +11,8 @@ type exception struct {
 }
 
 type TryConfig struct {
-	retry int // retry times while error occure
-	sleep int // sleep seconds between retry
+	Retry int // retry times while error occure
+	Sleep int // sleep seconds between retry
 }
 
 func Throw() {
@@ -49,10 +49,10 @@ func Try(f func(), trycfg ...TryConfig) (e exception) {
 		if e.Error == nil {
 			return
 		}
-		if e.Error != nil && trycfg[0].retry > 0 && i >= trycfg[0].retry {
+		if e.Error != nil && trycfg[0].Retry > 0 && i >= trycfg[0].Retry {
 			break
 		}
-		Time.Sleep(trycfg[0].sleep)
+		Time.Sleep(trycfg[0].Sleep)
 	}
 	return
 }
