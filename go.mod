@@ -67,6 +67,7 @@ require (
 	github.com/xtaci/kcp-go v5.4.20+incompatible
 	github.com/xtaci/smux v1.5.16
 	github.com/xuri/excelize/v2 v2.4.1
+	github.com/yanyiwu/gojieba v1.1.2
 	gitlab.com/toby3d/telegraph v1.2.1
 	go.uber.org/ratelimit v0.2.0
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3

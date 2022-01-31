@@ -35,6 +35,7 @@ type toolsStruct struct {
 	XPath         func(htmlString string) *xpathStruct
 	Sysinfo       *sysinfoStruct
 	Queue         func(datadir string) (q *queueStruct)
+	Jieba         func() *JiebaStruct
 }
 
 var Tools toolsStruct
@@ -75,5 +76,6 @@ func init() {
 		XPath:         getXPath,
 		Sysinfo:       &sysinfostruct,
 		Queue:         getQueue,
+		Jieba:         getJieba,
 	}
 }
