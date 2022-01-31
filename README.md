@@ -235,11 +235,14 @@ This is a toolkit that provide a lot of function or object that make programing 
             * func (p \*sysinfoProcess) CPUTimes() types.CPUTimes {
     * Queue(datadir string) (q \*queue) 
         * func (m \*queue) Close() 
-        * func (m *queue) Destroy() 
-        * func (m *queue) New(queueName ...string) *namedQueue 
-            * func (m *namedQueue) Size() int64 
-            * func (m *namedQueue) Get(nonblock ...bool) string 
-            * func (m *namedQueue) Put(value string) 
+        * func (m \*queue) Destroy() 
+        * func (m \*queue) New(queueName ...string) \*namedQueue 
+            * func (m \*namedQueue) Size() int64 
+            * func (m \*namedQueue) Get(nonblock ...bool) string 
+            * func (m \*namedQueue) Put(value string) 
+    * Jieba() \*JiebaStruct 中文分词
+        * func (m \*JiebaStruct) Close()
+        * func (m \*JiebaStruct) Cut(s string) []string 
 
 * Random
     * func Int(min, max int64) int64
