@@ -57,8 +57,8 @@ func inotify(path string) chan *fsnotifyFileEventStruct {
 							}
 							if !Map(watchList).Has(ev.Name) {
 								ch <- &fsnotifyFileEventStruct{
-									action: action,
-									path:   abspath(ev.Name),
+									Action: action,
+									Path:   abspath(ev.Name),
 								}
 							}
 							if len(watchList) == 0 {
@@ -76,8 +76,8 @@ func inotify(path string) chan *fsnotifyFileEventStruct {
 					}
 
 					ch <- &fsnotifyFileEventStruct{
-						action: action,
-						path:   abspath(ev.Name),
+						Action: action,
+						Path:   abspath(ev.Name),
 					}
 				}
 			case err := <-watcher.Errors:
