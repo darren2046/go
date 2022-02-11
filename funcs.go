@@ -22,7 +22,7 @@ type funcsStruct struct {
 	FakeNameEnglish        func() string
 	FakeNameChinese        func() string
 	FileType               func(fpath string) string
-	Inotify                func(path string) chan *fsnotifyFileEventStruct
+	Inotify                func(path string) chan *FsnotifyFileEventStruct
 	IPLocation             func(ip string, dbpath ...string) *ipLocationInfo
 	HightLightHTMLForCode  func(code string, codeType ...string) (html string)
 	Markdown2html          func(md string) string

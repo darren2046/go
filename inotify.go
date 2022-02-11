@@ -7,13 +7,13 @@ import (
 	"github.com/wunderlist/ttlcache"
 )
 
-type fsnotifyFileEventStruct struct {
+type FsnotifyFileEventStruct struct {
 	Action string
 	Path   string
 }
 
-func inotify(path string) chan *fsnotifyFileEventStruct {
-	ch := make(chan *fsnotifyFileEventStruct)
+func inotify(path string) chan *FsnotifyFileEventStruct {
+	ch := make(chan *FsnotifyFileEventStruct)
 	watchList := make(map[string]struct{})
 
 	watcher, err := fsnotify.NewWatcher()
@@ -56,7 +56,7 @@ func inotify(path string) chan *fsnotifyFileEventStruct {
 								sleep(0.1)
 							}
 							if !Map(watchList).Has(ev.Name) {
-								ch <- &fsnotifyFileEventStruct{
+								ch <- &FsnotifyFileEventStruct{
 									Action: action,
 									Path:   abspath(ev.Name),
 								}
@@ -75,7 +75,7 @@ func inotify(path string) chan *fsnotifyFileEventStruct {
 						delete(watchList, ev.Name)
 					}
 
-					ch <- &fsnotifyFileEventStruct{
+					ch <- &FsnotifyFileEventStruct{
 						Action: action,
 						Path:   abspath(ev.Name),
 					}
