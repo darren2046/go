@@ -8,8 +8,8 @@ import (
 )
 
 type fsnotifyFileEventStruct struct {
-	action string
-	path   string
+	Action string
+	Path   string
 }
 
 func inotify(path string) chan *fsnotifyFileEventStruct {
