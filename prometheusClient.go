@@ -4,11 +4,11 @@ import (
 	"encoding/json"
 )
 
-type prometheusStruct struct {
+type prometheusClientStruct struct {
 	url string
 }
 
-type prometheusOriginalResultStruct struct {
+type prometheusClientOriginalResultStruct struct {
 	Status string
 	Data   struct {
 		ResultType string
@@ -19,16 +19,16 @@ type prometheusOriginalResultStruct struct {
 	}
 }
 
-type prometheusResultStruct struct {
+type prometheusClientResultStruct struct {
 	Label map[string]string
 	Value float64
 }
 
-func getPrometheus(url string) *prometheusStruct {
-	return &prometheusStruct{url: url + "/api/v1/query"}
+func getPrometheusClient(url string) *prometheusClientStruct {
+	return &prometheusClientStruct{url: url + "/api/v1/query"}
 }
 
-func (m *prometheusStruct) Query(query string, time ...float64) (res []prometheusResultStruct) {
+func (m *prometheusClientStruct) Query(query string, time ...float64) (res []prometheusClientResultStruct) {
 	var ttime int64
 	if len(time) == 0 {
 		ttime = Int64(Time.Now())
@@ -38,19 +38,19 @@ func (m *prometheusStruct) Query(query string, time ...float64) (res []prometheu
 	resp := httpPost(m.url, HttpParam{"query": query, "time": ttime})
 	// fmt.Println(resp.content)
 	if resp.StatusCode != 200 {
-		Panicerr("查询Prometheus出错, 查询语句: " + query + ", 状态码: " + Str(resp.StatusCode) + ", 错误消息:" + resp.Content.S)
+		Panicerr("查询prometheus出错, 查询语句: " + query + ", 状态码: " + Str(resp.StatusCode) + ", 错误消息:" + resp.Content.S)
 	}
 	// fmt.Println(resp.content)
 
-	var por prometheusOriginalResultStruct
+	var por prometheusClientOriginalResultStruct
 	err := json.Unmarshal([]byte(resp.Content.S), &por)
 	Panicerr(err)
 	// lg.debug(por)
 	if por.Status != "success" {
-		Panicerr("查询Prometheus出错, 查询语句: " + query + ", Prometheus查询结果状态: " + Str(por.Status))
+		Panicerr("查询prometheus出错, 查询语句: " + query + ", prometheus查询结果状态: " + Str(por.Status))
 	}
 
-	var pr prometheusResultStruct
+	var pr prometheusClientResultStruct
 	for _, i := range por.Data.Result {
 		pr.Label = make(map[string]string)
 		for k, v := range i.Metric {

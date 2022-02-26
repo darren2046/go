@@ -26,6 +26,7 @@ require (
 	github.com/fatih/color v1.13.0
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/ghodss/yaml v1.0.0
+	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.4
 	github.com/go-sql-driver/mysql v1.6.0
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible
@@ -51,6 +52,7 @@ require (
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/pkg/sftp v1.13.4
 	github.com/pquerna/otp v1.3.0
+	github.com/prometheus/client_golang v0.9.3
 	github.com/rakyll/statik v0.1.7
 	github.com/robertkrimen/otto v0.0.0-20211024170158-b87d35c0b86f
 	github.com/russross/blackfriday v1.6.0
@@ -90,6 +92,7 @@ require (
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
 	github.com/antchfx/xpath v1.2.0 // indirect
+	github.com/beorn7/perks v1.0.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
 	github.com/blend/go-sdk v1.20211204.3 // indirect
 	github.com/boombuler/barcode v1.0.1 // indirect
@@ -97,10 +100,15 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dlclark/regexp2 v1.4.0 // indirect
 	github.com/elastic/go-windows v1.0.1 // indirect
+	github.com/gin-contrib/sse v0.1.0 // indirect
+	github.com/go-playground/locales v0.13.0 // indirect
+	github.com/go-playground/universal-translator v0.17.0 // indirect
+	github.com/go-playground/validator/v10 v10.4.1 // indirect
 	github.com/gohouse/golib v0.0.0-20210711163732-a5c22059eb75 // indirect
 	github.com/gohouse/t v0.0.0-20201007094014-630049a6bfe9 // indirect
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
+	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
@@ -110,9 +118,11 @@ require (
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/klauspost/reedsolomon v1.9.15 // indirect
 	github.com/kr/fs v0.1.0 // indirect
+	github.com/leodido/go-urn v1.2.0 // indirect
 	github.com/mattn/go-colorable v0.1.12 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/mattn/go-runewidth v0.0.13 // indirect
+	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mitchellh/colorstring v0.0.0-20190213212951-d06e56a500db // indirect
 	github.com/mmcdole/goxpp v0.0.0-20200921145534-2f3784f67354 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -122,6 +132,8 @@ require (
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
+	github.com/prometheus/client_model v0.0.0-20190812154241-14fe0d1b01d4 // indirect
+	github.com/prometheus/common v0.4.0 // indirect
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/richardlehane/mscfb v1.0.3 // indirect
 	github.com/richardlehane/msoleps v1.0.1 // indirect
@@ -131,6 +143,7 @@ require (
 	github.com/templexxx/cpufeat v0.0.0-20180724012125-cef66df7f161 // indirect
 	github.com/templexxx/xor v0.0.0-20191217153810-f85b25db303b // indirect
 	github.com/tjfoc/gmsm v1.4.1 // indirect
+	github.com/ugorji/go/codec v1.1.7 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasthttp v1.31.0 // indirect
 	github.com/xtaci/lossyconn v0.0.0-20200209145036-adba10fffc37 // indirect
@@ -141,6 +154,7 @@ require (
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
 	golang.org/x/tools v0.1.8 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
+	google.golang.org/protobuf v1.26.0 // indirect
 	gopkg.in/fsnotify.v1 v1.4.7 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect

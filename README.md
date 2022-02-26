@@ -83,8 +83,11 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*progressBar) Set(num int64)
         * func (m \*progressBar) SetTotal(total int64)
         * func (m \*progressBar) Clear()
-    * func [Prometheus](#toolsprometheus)(string) \*prometheus
-        * func (m \*prometheus) Query(query string, time ...float64) (res []prometheusResult) 
+    * func [PrometheusClient](#toolsprometheusclient)(string) \*prometheusClient
+        * func (m \*prometheusClient) Query(query string, time ...float64) (res []prometheusResult) 
+    * func [PrometheusMetricServer](#toolsprometheusmetricserver)(listenAddr string, path ...string) \*prometheusMetricServerStruct
+        * func (m \*prometheusMetricServerStruct) NewCounter(name string, help string) prometheus.Counter
+        * func (m \*prometheusMetricServerStruct) NewGauge(name string, help string) prometheus.Gauge
     * func [MySQL](#toolsmysql)(string, int, string, string, string, ...DatabaseConfig) \*database
     * func SQLite(string) \*database
         * func (m \*database) Query(sql string, args ...interface{}) []gorose.Data
@@ -739,13 +742,13 @@ func main() {
 }
 ```
 
-## Tools.Prometheus
+## Tools.PrometheusClient
 
 如果聚合成一个值, 没有label的, 应该是不支持(暂时没这个需求, 没做适配)
 
 ```go
 func main() {
-	p := Tools.Prometheus("http://localhost:9090")
+	p := Tools.PrometheusClient("http://localhost:9090")
 	pr := p.Query("sum_over_time(channel_register_count_in_5_minutes{channel=\"1\"}[1h]) / sum_over_time(channel_inpour_count_in_5_minutes[1h]) < 100")
 	Lg.Debug(pr)
 }
@@ -767,6 +770,28 @@ func main() {
     },
     Value: 44.651376,
   },
+}
+```
+
+## Tools.PrometheusMetricServer
+
+```go
+func TestPrometheusMetricServer(t *testing.T) {
+	p := getPrometheusMetricServer("0.0.0.0:9301")
+	c := p.NewCounter("test_counter", "this is a test Counter metrics")
+	g := p.NewGauge("test_gauge", "this is a test Gauge metrics")
+
+	go func() {
+		for {
+			c.Add(1)
+			Time.Sleep(1)
+		}
+	}()
+
+	for {
+		g.Set(Float64(Random.Int(0, 10000)))
+		Time.Sleep(1)
+	}
 }
 ```
 
