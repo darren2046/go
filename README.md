@@ -177,6 +177,8 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*telegramBot) SetChatID(chatid int64) \*telegramBot
         * func (m \*telegramBot) SendFile(path string) tgbotapi.Message
         * func (m \*telegramBot) SendImage(path string) tgbotapi.Message
+        * func (m \*telegramBot) SendVideo(path string) tgbotapi.Message
+        * func (m \*telegramBot) SendAudio(path string) tgbotapi.Message
         * func (m \*telegramBot) Send(text string, cfg ...tgMsgConfig) tgbotapi.Message
     * func Telegraph(string) \*telegraph
         * func (m \*telegraph) Post(title string, content string) \*telegraphPageInfo
