@@ -37,6 +37,7 @@ func (m *telegramBotStruct) SendFile(path string) tgbotapi.Message {
 		if err == nil {
 			break
 		}
+
 		sleep(sleepCount)
 		sleepCount = sleepCount * 2
 	}
@@ -49,6 +50,36 @@ func (m *telegramBotStruct) SendImage(path string) tgbotapi.Message {
 	sleepCount := 10
 	for {
 		msg, err = m.tg.Send(tgbotapi.NewPhotoUpload(m.chatid, path))
+		if err == nil {
+			break
+		}
+		sleep(sleepCount)
+		sleepCount = sleepCount * 2
+	}
+	return msg
+}
+
+func (m *telegramBotStruct) SendVideo(path string) tgbotapi.Message {
+	var err error
+	var msg tgbotapi.Message
+	sleepCount := 10
+	for {
+		msg, err = m.tg.Send(tgbotapi.NewVideoUpload(m.chatid, path))
+		if err == nil {
+			break
+		}
+		sleep(sleepCount)
+		sleepCount = sleepCount * 2
+	}
+	return msg
+}
+
+func (m *telegramBotStruct) SendAudio(path string) tgbotapi.Message {
+	var err error
+	var msg tgbotapi.Message
+	sleepCount := 10
+	for {
+		msg, err = m.tg.Send(tgbotapi.NewAudioUpload(m.chatid, path))
 		if err == nil {
 			break
 		}
