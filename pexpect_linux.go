@@ -94,6 +94,8 @@ func pexpect(command string) *PexpectStruct {
 	})
 	Panicerr(err)
 
+	m.Pid = m.Cmd.Process.Pid
+
 	go func() {
 		buf := make([]byte, 4096)
 		for {

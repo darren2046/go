@@ -11,4 +11,5 @@ type PexpectStruct struct {
 	Ptmx        *os.File
 	logToStdout bool // 是否在屏幕打印出整个交互（适合做debug)
 	isAlive     bool // 子进程是否在运行
+	Pid         int  // pid
 }
