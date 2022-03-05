@@ -13,7 +13,7 @@ type toolsStruct struct {
 	Matrix                 func(homeserverURL string) *MatrixStruct
 	Nats                   func(server string) *natsStruct
 	Totp                   func(key string) *totpStruct
-	Pexpect                func(command string) *pexpectStruct
+	Pexpect                func(command string) *PexpectStruct
 	ProgressBar            func(title string, total int64, showBytes ...bool) *progressBarStruct
 	PrometheusClient       func(url string) *prometheusClientStruct
 	PrometheusMetricServer func(listenAddr string, path ...string) *prometheusMetricServerStruct

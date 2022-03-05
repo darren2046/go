@@ -9,27 +9,27 @@ import (
 	"github.com/creack/pty"
 )
 
-func (m *pexpectStruct) Sendline(msg string) {
+func (m *PexpectStruct) Sendline(msg string) {
 	_, err := m.ptmx.Write([]byte(msg + "\n"))
 	Panicerr(err)
 }
 
-func (m *pexpectStruct) Close() {
+func (m *PexpectStruct) Close() {
 	m.isAlive = false
 	m.ptmx.Close()
 	m.cmd.Process.Signal(os.Kill)
 	m.cmd.Wait()
 }
 
-func (m *pexpectStruct) ExitCode() int {
+func (m *PexpectStruct) ExitCode() int {
 	return m.cmd.ProcessState.ExitCode()
 }
 
-func (m *pexpectStruct) IsAlive() bool {
+func (m *PexpectStruct) IsAlive() bool {
 	return m.isAlive
 }
 
-func (m *pexpectStruct) LogToStdout(enable ...bool) {
+func (m *PexpectStruct) LogToStdout(enable ...bool) {
 	var e bool
 	if len(enable) != 0 {
 		e = enable[0]
@@ -39,19 +39,19 @@ func (m *pexpectStruct) LogToStdout(enable ...bool) {
 	m.logToStdout = e
 }
 
-func (m *pexpectStruct) GetLog() *stringStruct {
+func (m *PexpectStruct) GetLog() *stringStruct {
 	return String(m.bufall)
 }
 
-func (m *pexpectStruct) ClearLog() {
+func (m *PexpectStruct) ClearLog() {
 	m.bufall = ""
 }
 
-func (m *pexpectStruct) Wait() {
+func (m *PexpectStruct) Wait() {
 	m.cmd.Wait()
 }
 
-func pexpect(command string) *pexpectStruct {
+func pexpect(command string) *PexpectStruct {
 	q := rune(0)
 	parts := strings.FieldsFunc(command, func(r rune) bool {
 		switch {
@@ -75,7 +75,7 @@ func pexpect(command string) *pexpectStruct {
 		}
 	}
 
-	m := pexpectStruct{
+	m := PexpectStruct{
 		isAlive: true,
 	}
 

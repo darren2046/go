@@ -5,7 +5,7 @@ import (
 	"os/exec"
 )
 
-type pexpectStruct struct {
+type PexpectStruct struct {
 	cmd         *exec.Cmd
 	bufall      string // 所有屏幕的显示内容，包括了输入
 	ptmx        *os.File
