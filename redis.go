@@ -14,7 +14,7 @@ type RedisStruct struct {
 	networkErrorRetryTimes int
 }
 
-type redisConfig struct {
+type RedisConfig struct {
 	networkErrorRetryTimes int
 }
 
@@ -25,7 +25,7 @@ var redisNetworkErrorStrings = []string{
 	"connection refused",
 }
 
-func getRedis(host string, port int, password string, db int, cfg ...redisConfig) *RedisStruct {
+func getRedis(host string, port int, password string, db int, cfg ...RedisConfig) *RedisStruct {
 	rdb := redis.NewClient(&redis.Options{
 		Addr:     host + ":" + Str(port),
 		Password: password,
