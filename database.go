@@ -18,9 +18,9 @@ type DatabaseStruct struct {
 }
 
 type DatabaseConfig struct {
-	timeout                int
-	charset                string
-	networkErrorRetryTimes int // 网络错误重试次数
+	Timeout                int
+	Charset                string
+	NetworkErrorRetryTimes int // 网络错误重试次数
 }
 
 // 用来过滤报错的信息， 如果包含有如下的某一个， 就判断为是网络错误
