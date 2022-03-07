@@ -63,18 +63,18 @@ func getMySQL(host string, port int, user string, password string, db string, cf
 	var networkErrorRetryTimess int
 
 	if len(cfg) != 0 {
-		if cfg[0].timeout != 0 {
-			timeoutt = cfg[0].timeout
+		if cfg[0].Timeout != 0 {
+			timeoutt = cfg[0].Timeout
 		} else {
 			timeoutt = 10
 		}
-		if cfg[0].charset != "" {
-			chartsett = cfg[0].charset
+		if cfg[0].Charset != "" {
+			chartsett = cfg[0].Charset
 		} else {
 			chartsett = "utf8mb4"
 		}
-		if cfg[0].networkErrorRetryTimes != 0 {
-			networkErrorRetryTimess = cfg[0].networkErrorRetryTimes
+		if cfg[0].NetworkErrorRetryTimes != 0 {
+			networkErrorRetryTimess = cfg[0].NetworkErrorRetryTimes
 		} else {
 			networkErrorRetryTimess = 10
 		}
