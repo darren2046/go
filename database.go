@@ -406,7 +406,7 @@ func (m *DatabaseStruct) CreateTable(tableName string, engineName ...string) *da
 			if len(engineName) != 0 {
 				m.Execute("CREATE TABLE `" + tableName + "`(`id` BIGINT UNSIGNED AUTO_INCREMENT,PRIMARY KEY ( `id` ))ENGINE=" + engineName[0] + " DEFAULT CHARSET=utf8mb4;")
 			} else {
-				m.Execute("CREATE TABLE `" + tableName + "`(`id` BIGINT UNSIGNED AUTO_INCREMENT,PRIMARY KEY ( `id` ))ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;")
+				m.Execute("CREATE TABLE `" + tableName + "`(`id` BIGINT UNSIGNED AUTO_INCREMENT,PRIMARY KEY ( `id` )) DEFAULT CHARSET=utf8mb4;")
 			}
 		} else {
 			m.Execute("CREATE TABLE `" + tableName + "` (`id` INTEGER PRIMARY KEY AUTOINCREMENT)")
