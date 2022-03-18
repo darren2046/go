@@ -1,3 +1,5 @@
+//go:build jieba
+
 package golanglibs
 
 import "github.com/yanyiwu/gojieba"
