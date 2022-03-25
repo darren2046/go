@@ -349,7 +349,7 @@ func tgObjToMap(obj mtproto.TL) map[string]interface{} {
 }
 
 // 未区分转发，未判断多媒体，未标明是否被编辑和是否是回复某个消息
-type tgMessageStruct struct {
+type TelegramMessageStruct struct {
 	Chat        *tgChatData
 	Message     string
 	User        *tgUserData
@@ -358,7 +358,7 @@ type tgMessageStruct struct {
 	Entities    []interface{}
 }
 
-func (m *TelegramChatStruct) History(limit int32) (resmsgs []*tgMessageStruct) {
+func (m *TelegramChatStruct) History(limit int32) (resmsgs []*TelegramMessageStruct) {
 	params := mtproto.TL_messages_getHistory{
 		Peer:  m.GetPeer(),
 		Limit: limit,
@@ -437,7 +437,7 @@ func (m *TelegramChatStruct) History(limit int32) (resmsgs []*tgMessageStruct) {
 		if Str(msgMap["Message"]) == "" {
 			continue
 		}
-		resmsgs = append(resmsgs, &tgMessageStruct{
+		resmsgs = append(resmsgs, &TelegramMessageStruct{
 			Message:     Str(msgMap["Message"]),
 			Chat:        tgchatdatas[Int64(StringMap(msgMap["PeerID"])["ChatID"])],
 			User:        tguserdatas[Int64(StringMap(msgMap["FromID"])["UserID"])],
