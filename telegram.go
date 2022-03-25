@@ -165,7 +165,7 @@ func (t *tgChatType) UnmarshalJSON(buf []byte) {
 	}
 }
 
-type tgChat struct {
+type TelegramChatStruct struct {
 	ID            int64
 	Title         string
 	Username      string
@@ -175,7 +175,7 @@ type tgChat struct {
 	tg            *tgclient.TGClient
 }
 
-func tgExtractDialogsData(tg *tgclient.TGClient, dialogs []mtproto.TL, chats []mtproto.TL, users []mtproto.TL) ([]*tgChat, error) {
+func tgExtractDialogsData(tg *tgclient.TGClient, dialogs []mtproto.TL, chats []mtproto.TL, users []mtproto.TL) ([]*TelegramChatStruct, error) {
 	chatsByID := make(map[int64]mtproto.TL_chat)
 	channelsByID := make(map[int64]mtproto.TL_channel)
 	for _, chatTL := range chats {
@@ -197,10 +197,10 @@ func tgExtractDialogsData(tg *tgclient.TGClient, dialogs []mtproto.TL, chats []m
 		user := userTL.(mtproto.TL_user)
 		usersByID[user.ID] = user
 	}
-	extractedChats := make([]*tgChat, len(dialogs))
+	extractedChats := make([]*TelegramChatStruct, len(dialogs))
 	for i, chatTL := range dialogs {
 		dialog := chatTL.(mtproto.TL_dialog)
-		ext := &tgChat{LastMessageID: dialog.TopMessage, tg: tg}
+		ext := &TelegramChatStruct{LastMessageID: dialog.TopMessage, tg: tg}
 		switch peer := dialog.Peer.(type) {
 		case mtproto.TL_peerUser:
 			user := usersByID[peer.UserID]
@@ -244,8 +244,8 @@ func tgGetMessageStamp(msgTL mtproto.TL) (int32, error) {
 	}
 }
 
-func tgLoadChats(tg *tgclient.TGClient) []*tgChat {
-	chats := make([]*tgChat, 0)
+func tgLoadChats(tg *tgclient.TGClient) []*TelegramChatStruct {
+	chats := make([]*TelegramChatStruct, 0)
 	offsetDate := int32(0)
 	for {
 		res := tg.SendSyncRetry(mtproto.TL_messages_getDialogs{
@@ -284,7 +284,7 @@ func tgLoadChats(tg *tgclient.TGClient) []*tgChat {
 	}
 }
 
-func (m *TelegramStruct) Chats() []*tgChat {
+func (m *TelegramStruct) Chats() []*TelegramChatStruct {
 	return tgLoadChats(m.tg)
 }
 
@@ -358,7 +358,7 @@ type tgMessageStruct struct {
 	Entities    []interface{}
 }
 
-func (m *tgChat) History(limit int32) (resmsgs []*tgMessageStruct) {
+func (m *TelegramChatStruct) History(limit int32) (resmsgs []*tgMessageStruct) {
 	params := mtproto.TL_messages_getHistory{
 		Peer:  m.GetPeer(),
 		Limit: limit,
@@ -450,7 +450,7 @@ func (m *tgChat) History(limit int32) (resmsgs []*tgMessageStruct) {
 	return
 }
 
-func (m *tgChat) GetPeer() (inputPeer mtproto.TL) {
+func (m *TelegramChatStruct) GetPeer() (inputPeer mtproto.TL) {
 	switch peer := m.Obj.(type) {
 	case mtproto.TL_user:
 		inputPeer = mtproto.TL_inputPeerUser{UserID: peer.ID, AccessHash: peer.AccessHash}
@@ -466,7 +466,7 @@ func (m *tgChat) GetPeer() (inputPeer mtproto.TL) {
 
 // --------- send message ---------
 
-func (m *tgChat) Send(text string) {
+func (m *TelegramChatStruct) Send(text string) {
 	params := mtproto.TL_messages_sendMessage{
 		RandomID: Int64(Time.Now()),
 		Peer:     m.GetPeer(),

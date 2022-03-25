@@ -173,10 +173,10 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*table) SetMaxCellWidth(width ...int)
         * func (m \*table) AddRow(row ...interface{})
         * func (m \*table) Render() string
-    * func Telegram(AppID int32, AppHash string, config ...TelegramConfig) \*TelegramStruct
-        * func (m \*TelegramStruct) Chats() []\*tgChat 
-            * func (m \*tgChat) History(limit int32) (resmsgs []\*tgMessageStruct)
-            * func (m \*tgChat) Send(text string)
+    * func Telegram(AppID int32, AppHash string, config ...TelegramConfig) \*Telegram
+        * func (m \*Telegram) Chats() []\*TelegramChat 
+            * func (m \*TelegramChat) History(limit int32) (resmsgs []\*tgMessage)
+            * func (m \*TelegramChat) Send(text string)
     * func TelegramBot(string) \*telegramBot
         * func (m \*telegramBot) SetChatID(chatid int64) \*telegramBot
         * func (m \*telegramBot) SendFile(path string) tgbotapi.Message
@@ -249,9 +249,9 @@ This is a toolkit that provide a lot of function or object that make programing 
             * func (m \*namedQueue) Size() int64 
             * func (m \*namedQueue) Get(nonblock ...bool) string 
             * func (m \*namedQueue) Put(value string) 
-    * Jieba() \*JiebaStruct 中文分词
-        * func (m \*JiebaStruct) Close()
-        * func (m \*JiebaStruct) Cut(s string) []string 
+    * Jieba() \*Jieba 中文分词
+        * func (m \*Jieba) Close()
+        * func (m \*Jieba) Cut(s string) []string 
 
 * Random
     * func Int(min, max int64) int64
@@ -393,8 +393,8 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (a \*aes) Encrypt(plaintext string) string 
         * func (a \*aes) Decrypt(ciphertext string) string 
     * func ChaCha20Poly1305(key string) *chacha20poly1305
-        * func (m \*chacha20poly1305Struct) Encrypt(plantext string) (ciphertext string)
-        * func (m \*chacha20poly1305Struct) Decrypt(ciphertext string) (plaintext string)
+        * func (m \*chacha20poly1305) Encrypt(plantext string) (ciphertext string)
+        * func (m \*chacha20poly1305) Decrypt(ciphertext string) (plaintext string)
 * File(filePath string) \*file
     * func (f \*file) Time() \*fileTime
     * func (f \*file) Stat() os.FileInfo
