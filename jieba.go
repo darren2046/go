@@ -4,8 +4,12 @@ package golanglibs
 
 import "github.com/yanyiwu/gojieba"
 
-type JiebaStruct struct {
+type JiebaSubStruct struct {
 	jieba *gojieba.Jieba
+}
+
+func init() {
+	Tools.Jieba = getJieba
 }
 
 func getJieba() *JiebaStruct {

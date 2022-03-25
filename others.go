@@ -20,8 +20,8 @@ func Ord(char string) int {
 	return int(r)
 }
 
-func Repr(obj interface{}) string {
-	return reprlib.String(obj)
+func Repr(obj interface{}) *stringStruct {
+	return String(reprlib.String(obj))
 }
 
 func Print(data ...interface{}) int {

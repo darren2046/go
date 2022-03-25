@@ -19,8 +19,8 @@ func TestNats(t *testing.T) {
 	}
 }
 
-func TestJieba(t *testing.T) {
-	jieba := Tools.Jieba()
-	Print(jieba.Cut("我来到北京清华大学"))
-	Print(jieba.Cut("Running tool: /usr/local/bin/go test -timeout 30s -run ^TestJieba$ github.com/ChaunceyShannon/golanglibs"))
-}
+// func TestJieba(t *testing.T) {
+// 	jieba := Tools.Jieba()
+// 	Print(jieba.Cut("我来到北京清华大学"))
+// 	Print(jieba.Cut("Running tool: /usr/local/bin/go test -timeout 30s -run ^TestJieba$ github.com/ChaunceyShannon/golanglibs"))
+// }

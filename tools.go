@@ -36,7 +36,8 @@ type toolsStruct struct {
 	XPath                  func(htmlString string) *xpathStruct
 	Sysinfo                *sysinfoStruct
 	Queue                  func(datadir string) (q *queueStruct)
-	Jieba                  func() *JiebaStruct
+	Jieba                  func() JiebaInterface
+	Telegram               func(AppID int32, AppHash string, config ...TelegramConfig) *TelegramStruct
 }
 
 var Tools toolsStruct
@@ -78,6 +79,6 @@ func init() {
 		XPath:                  getXPath,
 		Sysinfo:                &sysinfostruct,
 		Queue:                  getQueue,
-		Jieba:                  getJieba,
+		Telegram:               getTelegram,
 	}
 }

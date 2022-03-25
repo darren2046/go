@@ -173,6 +173,10 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*table) SetMaxCellWidth(width ...int)
         * func (m \*table) AddRow(row ...interface{})
         * func (m \*table) Render() string
+    * func Telegram(AppID int32, AppHash string, config ...TelegramConfig) \*TelegramStruct
+        * func (m \*TelegramStruct) Chats() []\*tgChat 
+            * func (m \*tgChat) History(limit int32) (resmsgs []\*tgMessageStruct)
+            * func (m \*tgChat) Send(text string)
     * func TelegramBot(string) \*telegramBot
         * func (m \*telegramBot) SetChatID(chatid int64) \*telegramBot
         * func (m \*telegramBot) SendFile(path string) tgbotapi.Message

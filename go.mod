@@ -3,6 +3,7 @@ module github.com/ChaunceyShannon/golanglibs
 go 1.17
 
 require (
+	github.com/3bl3gamer/tgclient v0.138.0
 	github.com/Go-ini/ini v1.66.2
 	github.com/abadojack/whatlanggo v1.0.1
 	github.com/alecthomas/chroma v0.9.4
@@ -11,6 +12,7 @@ require (
 	github.com/alibabacloud-go/alidns-20150109 v1.0.3
 	github.com/alibabacloud-go/darabonba-openapi v0.1.14
 	github.com/alibabacloud-go/tea v1.1.17
+	github.com/ansel1/merry v1.6.1
 	github.com/antchfx/htmlquery v1.2.4
 	github.com/antchfx/jsonquery v1.1.5
 	github.com/bndr/gotabulate v1.1.2
@@ -91,6 +93,7 @@ require (
 	github.com/andres-erbsen/clock v0.0.0-20160526145045-9e14626cd129 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
 	github.com/andybalholm/cascadia v1.3.1 // indirect
+	github.com/ansel1/merry/v2 v2.0.0-beta.10 // indirect
 	github.com/antchfx/xpath v1.2.0 // indirect
 	github.com/beorn7/perks v1.0.0 // indirect
 	github.com/blang/semver v3.5.1+incompatible // indirect
@@ -113,7 +116,6 @@ require (
 	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/joeshaw/multierror v0.0.0-20140124173710-69b34d4ec901 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/k0kubun/colorstring v0.0.0-20150214042306-9440f1994b88 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
 	github.com/klauspost/cpuid/v2 v2.0.9 // indirect
 	github.com/klauspost/reedsolomon v1.9.15 // indirect
@@ -149,6 +151,7 @@ require (
 	github.com/xtaci/lossyconn v0.0.0-20200209145036-adba10fffc37 // indirect
 	github.com/xuri/efp v0.0.0-20210322160811-ab561f5b45e3 // indirect
 	golang.org/x/mod v0.5.1 // indirect
+	golang.org/x/sync v0.0.0-20210220032951-036812b2e83c // indirect
 	golang.org/x/sys v0.0.0-20211216021012-1d35b9e2eb4e // indirect
 	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
 	golang.org/x/time v0.0.0-20211116232009-f0f3c7e86c11 // indirect
