@@ -432,7 +432,7 @@ func (m *TelegramChatStruct) History(limit int32) (resmsgs []*tgMessageStruct) {
 		msgMap := tgObjToMap(msg)
 		msgMap["_TL_LAYER"] = mtproto.TL_Layer
 
-		Lg.Debug("====>Msg:", msg)
+		//Lg.Debug("====>Msg:", msg)
 
 		if Str(msgMap["Message"]) == "" {
 			continue
