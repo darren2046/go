@@ -11,7 +11,7 @@ type VNCCfg struct {
 	Delay    interface{} // seconds to wait after actions
 }
 
-type vncStruct struct {
+type VNCStruct struct {
 	nc    net.Conn
 	VC    *vnc.ClientConn
 	lastX int
@@ -177,7 +177,7 @@ var vncAsciiKeyMap = map[string][]uint32{
 	"?":  {vncNonAsciiKeyMap.Shift, 0x002f},
 }
 
-func getVNC(server string, cfg ...VNCCfg) *vncStruct {
+func getVNC(server string, cfg ...VNCCfg) *VNCStruct {
 	nc, err := net.Dial("tcp", server)
 	Panicerr(err)
 
@@ -202,19 +202,19 @@ func getVNC(server string, cfg ...VNCCfg) *vncStruct {
 		Panicerr(err)
 	}
 
-	return &vncStruct{
+	return &VNCStruct{
 		nc:    nc,
 		VC:    vc,
 		delay: delay,
 	}
 }
 
-func (m *vncStruct) Close() {
+func (m *VNCStruct) Close() {
 	m.VC.Close()
 	m.nc.Close()
 }
 
-func (m *vncStruct) Move(x, y int) *vncStruct {
+func (m *VNCStruct) Move(x, y int) *VNCStruct {
 	m.lastX = x
 	m.lastY = y
 	err := m.VC.PointerEvent(0, Uint16(x), Uint16(y))
@@ -223,7 +223,7 @@ func (m *vncStruct) Move(x, y int) *vncStruct {
 	return m
 }
 
-func (m *vncStruct) Click() *vncStruct {
+func (m *VNCStruct) Click() *VNCStruct {
 	err := m.VC.PointerEvent(1, Uint16(m.lastX), Uint16(m.lastY))
 	Panicerr(err)
 	err = m.VC.PointerEvent(0, Uint16(m.lastX), Uint16(m.lastY))
@@ -232,7 +232,7 @@ func (m *vncStruct) Click() *vncStruct {
 	return m
 }
 
-func (m *vncStruct) RightClick() *vncStruct {
+func (m *VNCStruct) RightClick() *VNCStruct {
 	err := m.VC.PointerEvent(4, Uint16(m.lastX), Uint16(m.lastY))
 	Panicerr(err)
 	err = m.VC.PointerEvent(0, Uint16(m.lastX), Uint16(m.lastY))
@@ -241,7 +241,7 @@ func (m *vncStruct) RightClick() *vncStruct {
 	return m
 }
 
-func (m *vncStruct) Input(s string) *vncStruct {
+func (m *VNCStruct) Input(s string) *VNCStruct {
 	for i := 0; i < len(s); i++ {
 		c := string([]byte{s[i]})
 		// 顺序按那数组里面的按键, 然后反顺序放开
@@ -266,7 +266,7 @@ type vncKeyStruct struct {
 	delay interface{}
 }
 
-func (m *vncStruct) Key() *vncKeyStruct {
+func (m *VNCStruct) Key() *vncKeyStruct {
 	return &vncKeyStruct{vc: m.VC, delay: m.delay}
 }
 

@@ -30,7 +30,7 @@ type toolsStruct struct {
 	Telegraph              func(AuthorName string) *telegraphStruct
 	URL                    func(url string) *urlStruct
 	TTLCache               func(ttlsecond interface{}) *ttlCacheStruct
-	VNC                    func(server string, cfg ...VNCCfg) *vncStruct
+	VNC                    func(server string, cfg ...VNCCfg) *VNCStruct
 	WebSocket              func(url string) *websocketStruct
 	Xlsx                   func(path string) *xlsxStruct
 	XPath                  func(htmlString string) *xpathStruct
