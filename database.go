@@ -303,7 +303,7 @@ func (m *databaseOrmStruct) Count() (res int64) {
 }
 
 func (m *databaseOrmStruct) Exists() (res bool) {
-	if m.Count() == 0 {
+	if len(m.Fields("id").First()) == 0 {
 		res = false
 	} else {
 		res = true
