@@ -1,7 +1,6 @@
 package golanglibs
 
 import (
-	"fmt"
 	stdlog "log"
 
 	"encoding/json"
@@ -475,7 +474,7 @@ func (m *TelegramChatStruct) Send(text string) {
 
 	res := m.tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
 
-	fmt.Println(Repr(res).S)
+	// fmt.Println(Repr(res).S)
 
 	if !Repr(res).Has(text) {
 		Panicerr("可能发送消息失败？")
