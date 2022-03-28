@@ -1,27 +1,33 @@
-//go:build jieba
-
 package golanglibs
 
-import "github.com/yanyiwu/gojieba"
+import (
+	"github.com/go-ego/gse"
+)
 
-type JiebaSubStruct struct {
-	jieba *gojieba.Jieba
-}
-
-func init() {
-	Tools.Jieba = getJieba
+type JiebaStruct struct {
+	seg gse.Segmenter
 }
 
 func getJieba() *JiebaStruct {
+	var seg gse.Segmenter
+	seg.LoadDictEmbed()
+	seg.LoadDictEmbed("zh_s")
+	seg.LoadDictEmbed("zh_t")
+	seg.LoadDictEmbed("jp")
+
 	return &JiebaStruct{
-		jieba: gojieba.NewJieba(),
+		seg: seg,
 	}
 }
 
-func (m *JiebaStruct) Close() {
-	m.jieba.Free()
+func (m *JiebaStruct) LoadDict(path ...string) {
+	m.seg.LoadDict(path...)
 }
 
 func (m *JiebaStruct) Cut(s string) []string {
-	return m.jieba.Cut(s, true)
+	return m.seg.Cut(s, true)
+}
+
+func (m *JiebaStruct) AddWord(text string) {
+	m.seg.AddToken(text, 100)
 }

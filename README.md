@@ -252,7 +252,7 @@ This is a toolkit that provide a lot of function or object that make programing 
     * Jieba() \*Jieba 中文分词
         * func (m \*Jieba) Close()
         * func (m \*Jieba) Cut(s string) []string 
-
+        * func (m \*Jieba) AddWord(text string)
 * Random
     * func Int(min, max int64) int64
     * func Choice(array interface{}) interface{}
