@@ -26,7 +26,7 @@ type toolsStruct struct {
 	SSH                    func(user string, pass string, host string, port int) *sshStruct
 	StatikOpen             func(path string) *statikFileStruct
 	Table                  func(header ...string) *tableStruct
-	TelegramBot            func(token string) *telegramBotStruct
+	TelegramBot            func(token string) *TelegramBotStruct
 	Telegraph              func(AuthorName string) *telegraphStruct
 	URL                    func(url string) *urlStruct
 	TTLCache               func(ttlsecond interface{}) *ttlCacheStruct

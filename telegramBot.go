@@ -4,18 +4,18 @@ import (
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
-type telegramBotStruct struct {
+type TelegramBotStruct struct {
 	tg     *tgbotapi.BotAPI
 	chatid int64
 }
 
-func getTelegramBot(token string) *telegramBotStruct {
+func getTelegramBot(token string) *TelegramBotStruct {
 	for {
 		//lg.trace("开始初始化")
 		bot, err := tgbotapi.NewBotAPI(token)
 		if err == nil {
 			//lg.trace("初始化成功")
-			return &telegramBotStruct{tg: bot}
+			return &TelegramBotStruct{tg: bot}
 		} else {
 			//lg.trace("初始化出错:", err)
 			sleep(3)
@@ -23,12 +23,12 @@ func getTelegramBot(token string) *telegramBotStruct {
 	}
 }
 
-func (m *telegramBotStruct) SetChatID(chatid int64) *telegramBotStruct {
+func (m *TelegramBotStruct) SetChatID(chatid int64) *TelegramBotStruct {
 	m.chatid = chatid
 	return m
 }
 
-func (m *telegramBotStruct) SendFile(path string) tgbotapi.Message {
+func (m *TelegramBotStruct) SendFile(path string) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 	sleepCount := 10
@@ -44,7 +44,7 @@ func (m *telegramBotStruct) SendFile(path string) tgbotapi.Message {
 	return msg
 }
 
-func (m *telegramBotStruct) SendImage(path string) tgbotapi.Message {
+func (m *TelegramBotStruct) SendImage(path string) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 	sleepCount := 10
@@ -59,7 +59,7 @@ func (m *telegramBotStruct) SendImage(path string) tgbotapi.Message {
 	return msg
 }
 
-func (m *telegramBotStruct) SendVideo(path string) tgbotapi.Message {
+func (m *TelegramBotStruct) SendVideo(path string) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 	sleepCount := 10
@@ -74,7 +74,7 @@ func (m *telegramBotStruct) SendVideo(path string) tgbotapi.Message {
 	return msg
 }
 
-func (m *telegramBotStruct) SendAudio(path string) tgbotapi.Message {
+func (m *TelegramBotStruct) SendAudio(path string) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 	sleepCount := 10
@@ -95,7 +95,7 @@ type tgMsgConfig struct {
 	DisableRetryOnError   bool
 }
 
-func (m *telegramBotStruct) Send(text string, cfg ...tgMsgConfig) tgbotapi.Message {
+func (m *TelegramBotStruct) Send(text string, cfg ...tgMsgConfig) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 
