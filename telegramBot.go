@@ -89,19 +89,19 @@ func (m *TelegramBotStruct) SendAudio(path string) tgbotapi.Message {
 	return msg
 }
 
-type tgMsgConfig struct {
-	parseMode             string
+type TelegramBotMessageConfig struct {
+	ParseMode             string // can be html
 	DisableWebPagePreview bool
 	DisableRetryOnError   bool
 }
 
-func (m *TelegramBotStruct) Send(text string, cfg ...tgMsgConfig) tgbotapi.Message {
+func (m *TelegramBotStruct) Send(text string, cfg ...TelegramBotMessageConfig) tgbotapi.Message {
 	var err error
 	var msg tgbotapi.Message
 
 	mm := tgbotapi.NewMessage(m.chatid, text)
 	if len(cfg) != 0 {
-		mm.ParseMode = cfg[0].parseMode
+		mm.ParseMode = cfg[0].ParseMode
 		mm.DisableWebPagePreview = cfg[0].DisableWebPagePreview
 	}
 
