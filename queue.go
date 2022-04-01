@@ -4,14 +4,14 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
-type queueStruct struct {
+type QueueStruct struct {
 	db      *leveldb.DB
 	datadir string
 	closed  bool
 }
 
-func getQueue(datadir string) (q *queueStruct) {
-	q = &queueStruct{}
+func getQueue(datadir string) (q *QueueStruct) {
+	q = &QueueStruct{}
 
 	db, err := leveldb.OpenFile(datadir, nil)
 	Panicerr(err)
@@ -22,14 +22,14 @@ func getQueue(datadir string) (q *queueStruct) {
 	return
 }
 
-func (m *queueStruct) Close() {
+func (m *QueueStruct) Close() {
 	err := m.db.Close()
 	Panicerr(err)
 
 	m.closed = true
 }
 
-func (m *queueStruct) Destroy() {
+func (m *QueueStruct) Destroy() {
 	if !m.closed {
 		m.Close()
 	}
@@ -46,7 +46,7 @@ type NamedQueueStruct struct {
 }
 
 // Will not clean the data already exists
-func (m *queueStruct) New(queueName ...string) *NamedQueueStruct {
+func (m *QueueStruct) New(queueName ...string) *NamedQueueStruct {
 	q := &NamedQueueStruct{}
 
 	n := ""
