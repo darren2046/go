@@ -22,7 +22,7 @@ func TestTelegram(t *testing.T) {
 
 	// for _, chat := range tg.Chats() {
 	// 	Lg.Trace(chat.Type, chat.Title, chat.Username)
-	// 	if chat.Username == "hao1234bot" {
+	// 	if chat.Username == "ququququ" {
 	// 		chat.Send("test")
 	// 	}
 	// 	// if chat.Title == "test" {
