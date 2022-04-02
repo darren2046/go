@@ -358,12 +358,16 @@ type TelegramMessageStruct struct {
 }
 
 func (m *TelegramChatStruct) History(limit int32) (resmsgs []*TelegramMessageStruct) {
+	return historyMessage(m.tg, getInputPeer(m.Obj), limit)
+}
+
+func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32) (resmsgs []*TelegramMessageStruct) {
 	params := mtproto.TL_messages_getHistory{
-		Peer:  m.GetPeer(),
+		Peer:  inputPeer,
 		Limit: limit,
 	}
 
-	res := m.tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
+	res := tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
 
 	var msgs []mtproto.TL
 	var musers []mtproto.TL
@@ -449,8 +453,9 @@ func (m *TelegramChatStruct) History(limit int32) (resmsgs []*TelegramMessageStr
 	return
 }
 
-func (m *TelegramChatStruct) GetPeer() (inputPeer mtproto.TL) {
-	switch peer := m.Obj.(type) {
+func getInputPeer(Obj mtproto.TL) (inputPeer mtproto.TL) {
+	// Lg.Debug(m.Obj)
+	switch peer := Obj.(type) {
 	case mtproto.TL_user:
 		inputPeer = mtproto.TL_inputPeerUser{UserID: peer.ID, AccessHash: peer.AccessHash}
 	case mtproto.TL_chat:
@@ -468,7 +473,7 @@ func (m *TelegramChatStruct) GetPeer() (inputPeer mtproto.TL) {
 func (m *TelegramChatStruct) Send(text string) {
 	params := mtproto.TL_messages_sendMessage{
 		RandomID: Int64(Time.Now()),
-		Peer:     m.GetPeer(),
+		Peer:     getInputPeer(m.Obj),
 		Message:  text,
 	}
 
@@ -479,4 +484,31 @@ func (m *TelegramChatStruct) Send(text string) {
 	if !Repr(res).Has(text) {
 		Panicerr("可能发送消息失败？")
 	}
+}
+
+func (m *TelegramStruct) getPeerByUsername(username string) mtproto.TL {
+	params := mtproto.TL_contacts_resolveUsername{
+		Username: username,
+	}
+
+	r := m.tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
+	rs := r.(mtproto.TL_contacts_resolvedPeer)
+	if len(rs.Chats) != 0 {
+		return rs.Chats[0]
+	} else if len(rs.Users) != 0 {
+		return rs.Users[0]
+	} else {
+		Panicerr("未找到这个username相关的peer")
+		return nil
+	}
+}
+
+func (m *TelegramStruct) GetHistoryByUsername(username string, limit int32) (resmsgs []*TelegramMessageStruct) {
+	return historyMessage(
+		m.tg,
+		getInputPeer(
+			m.getPeerByUsername(username),
+		),
+		limit,
+	)
 }

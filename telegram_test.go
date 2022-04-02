@@ -20,15 +20,17 @@ func TestTelegram(t *testing.T) {
 	// Lg.Trace(tg)
 	// Lg.Trace()
 
-	for _, chat := range tg.Chats() {
-		Lg.Trace(chat.Type, chat.Title, chat.Username)
-		if chat.Username == "hao1234bot" {
-			chat.Send("test")
-		}
-		// if chat.Title == "test" {
-		// 	for _, msg := range chat.History(3) {
-		// 		Lg.Debug(msg)
-		// 	}
-		// }
-	}
+	// for _, chat := range tg.Chats() {
+	// 	Lg.Trace(chat.Type, chat.Title, chat.Username)
+	// 	if chat.Username == "hao1234bot" {
+	// 		chat.Send("test")
+	// 	}
+	// 	// if chat.Title == "test" {
+	// 	// 	for _, msg := range chat.History(3) {
+	// 	// 		Lg.Debug(msg)
+	// 	// 	}
+	// 	// }
+	// }
+
+	Lg.Debug(tg.GetHistoryByUsername("username", 1))
 }
