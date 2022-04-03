@@ -22,7 +22,7 @@ func TestTelegram(t *testing.T) {
 
 	// for _, chat := range tg.Chats() {
 	// 	Lg.Trace(chat.Type, chat.Title, chat.Username)
-	// 	if chat.Username == "ququququ" {
+	// 	if chat.Username == "hao1234bot" {
 	// 		chat.Send("test")
 	// 	}
 	// 	// if chat.Title == "test" {
@@ -32,5 +32,7 @@ func TestTelegram(t *testing.T) {
 	// 	// }
 	// }
 
-	Lg.Debug(tg.GetHistoryByUsername("username", 1))
+	p := tg.ResolvePeerByUsername("dibai918")
+	Lg.Debug(p)
+	Lg.Debug(p.History(1))
 }

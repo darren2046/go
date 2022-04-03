@@ -295,6 +295,7 @@ type tgUserData struct {
 	FirstName, LastName   string
 	PhoneNumber, LangCode string
 	IsBot                 bool
+	AccessHash            int64
 }
 
 func (u *tgUserData) Equals(other *mtproto.TL_user) bool {
@@ -369,6 +370,8 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32) (r
 
 	res := tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
 
+	// Lg.Debug(res)
+
 	var msgs []mtproto.TL
 	var musers []mtproto.TL
 	var mchats []mtproto.TL
@@ -405,6 +408,7 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32) (r
 			PhoneNumber: tgUser.Phone,
 			LangCode:    tgUser.LangCode,
 			IsBot:       tgUser.Bot,
+			AccessHash:  tgUser.AccessHash,
 		}
 		// Lg.Debug("====> User:", newUser)
 	}
@@ -435,19 +439,23 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32) (r
 		msgMap := tgObjToMap(msg)
 		msgMap["_TL_LAYER"] = mtproto.TL_Layer
 
-		//Lg.Debug("====>Msg:", msg)
+		// Lg.Debug("====>MsgMap:", msgMap)
 
 		if Str(msgMap["Message"]) == "" {
 			continue
 		}
-		resmsgs = append(resmsgs, &TelegramMessageStruct{
+		tms := &TelegramMessageStruct{
 			Message:     Str(msgMap["Message"]),
-			Chat:        tgchatdatas[Int64(StringMap(msgMap["PeerID"])["ChatID"])],
+			Chat:        tgchatdatas[Int64(StringMap(msgMap["PeerID"])["ChatID"])], // ChannelID
 			User:        tguserdatas[Int64(StringMap(msgMap["FromID"])["UserID"])],
 			Time:        Int64(msgMap["Date"]),
 			ReplyMarkup: StringMap(msgMap["ReplyMarkup"]),
 			Entities:    InterfaceArray(msgMap["Entities"]),
-		})
+		}
+		if tms.Chat == nil {
+			tms.Chat = tgchatdatas[Int64(StringMap(msgMap["PeerID"])["ChannelID"])]
+		}
+		resmsgs = append(resmsgs, tms)
 	}
 
 	return
@@ -486,28 +494,63 @@ func (m *TelegramChatStruct) Send(text string) {
 	}
 }
 
-func (m *TelegramStruct) getPeerByUsername(username string) mtproto.TL {
+// --------- get history by username
+
+type TelegramPeerResolved struct {
+	tg  *tgclient.TGClient
+	Obj mtproto.TL
+	// 加上其它peer的信息，例如id，title，username，members之类的
+	Type       string // user,channel(group也是channel), 具体是group还是channel需要获取里面的历史消息的时候可以看到
+	Name       string // channel和group的话就是title的值，user的话就是FirstName+LastName
+	Username   string // 就是ID，可以@的那个
+	ID         int64  // 可以用来发起聊天的telegram的这个对象的ID
+	AccessHash int64  // 有时候手动构造inputpeer的时候有用
+}
+
+func (m *TelegramStruct) ResolvePeerByUsername(username string) *TelegramPeerResolved {
 	params := mtproto.TL_contacts_resolveUsername{
 		Username: username,
 	}
 
 	r := m.tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
+
+	// Lg.Debug(r)
+
 	rs := r.(mtproto.TL_contacts_resolvedPeer)
+
+	tgpr := &TelegramPeerResolved{
+		tg: m.tg,
+	}
 	if len(rs.Chats) != 0 {
-		return rs.Chats[0]
+		tgpr.Obj = rs.Chats[0]
+		tgpr.Type = "channel"
+		// 有测试group和channel都是TL_channel
+		rss := rs.Chats[0].(mtproto.TL_channel)
+		tgpr.AccessHash = rss.AccessHash
+		tgpr.Name = rss.Title
+		tgpr.Username = username
+		tgpr.ID = rss.ID
 	} else if len(rs.Users) != 0 {
-		return rs.Users[0]
+		tgpr.Obj = rs.Users[0]
+		tgpr.Type = "user"
+
+		rss := rs.Users[0].(mtproto.TL_user)
+		tgpr.AccessHash = rss.AccessHash
+		tgpr.Name = rss.FirstName + " " + rss.LastName
+		tgpr.Username = username
+		tgpr.ID = rss.ID
 	} else {
 		Panicerr("未找到这个username相关的peer")
 		return nil
 	}
+	return tgpr
 }
 
-func (m *TelegramStruct) GetHistoryByUsername(username string, limit int32) (resmsgs []*TelegramMessageStruct) {
+func (m *TelegramPeerResolved) History(limit int32) (resmsgs []*TelegramMessageStruct) {
 	return historyMessage(
 		m.tg,
 		getInputPeer(
-			m.getPeerByUsername(username),
+			m.Obj,
 		),
 		limit,
 	)
