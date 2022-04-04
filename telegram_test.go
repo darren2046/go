@@ -32,7 +32,7 @@ func TestTelegram(t *testing.T) {
 	// 	// }
 	// }
 
-	p := tg.ResolvePeerByUsername("gangbangman666")
+	p := tg.ResolvePeerByUsername("zfzzzshou")
 	// Lg.Debug(p)
 	Lg.Debug(p.History(10))
 }

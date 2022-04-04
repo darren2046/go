@@ -522,13 +522,13 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, of
 		msgMap := tgObjToMap(msg)
 		msgMap["_TL_LAYER"] = mtproto.TL_Layer
 
-		Lg.Debug("====>MsgMap:", msgMap)
+		// Lg.Debug("====>MsgMap:", msgMap)
 
 		fileInfo := tgGetMessageMediaFileInfo(msg) // 即使客户端发送一条消息多个图片，这里也会是每个消息一个图片，多个消息就是了
 
 		// 如果一条消息，没有消息内容，没有文件，没有action，就跳过
 		if Str(msgMap["Message"]) == "" && fileInfo == nil && !Map(msgMap).Has("Action") {
-			Lg.Debug("====>Msg:", msgMap)
+			// Lg.Debug("====>Msg:", msgMap)
 			continue
 		}
 		tms := &TelegramMessageStruct{
