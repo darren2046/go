@@ -357,28 +357,103 @@ type TelegramMessageStruct struct {
 	ReplyMarkup map[string]interface{}
 	Entities    []interface{}
 	ID          int64
+	File        *TelegramFileInfo
+	Action      string
 }
 
-// 从这个message的id为offset的message开始获取limit条message，包括offset这个id的message本身。
 // 不设置offset则获取最新的limit条数据
+// 设置了offset的话，例如如果设置offset的id是4，那就是从id小于4的message开始往上获取limit个数据。（不包括id为4的message）
 func (m *TelegramChatStruct) History(limit int32, offset ...int32) (resmsgs []*TelegramMessageStruct) {
 	return historyMessage(m.tg, getInputPeer(m.Obj), limit, offset...)
+}
+
+type TelegramFileInfo struct {
+	InputLocation mtproto.TL
+	DcID          int32
+	Size          int32
+	FName         string
+}
+
+// findBestPhotoSize returns largest photo size of images.
+// Usually it is the last size-object. But SOME TIMES Sizes aray is reversed.
+func findBestPhotoSize(photo mtproto.TL_photo) *mtproto.TL_photoSize {
+	var bestSize *mtproto.TL_photoSize
+	for _, sizeTL := range photo.Sizes {
+		if size, ok := sizeTL.(mtproto.TL_photoSize); ok {
+			if bestSize == nil || size.Size > bestSize.Size {
+				bestSize = &size
+			}
+		}
+	}
+	return bestSize
+}
+
+func tgGetMessageMediaFileInfo(msgTL mtproto.TL) *TelegramFileInfo {
+	msg, ok := msgTL.(mtproto.TL_message)
+	if !ok {
+		return nil
+	}
+	switch media := msg.Media.(type) {
+	case mtproto.TL_messageMediaPhoto:
+		if _, ok := media.Photo.(mtproto.TL_photoEmpty); ok {
+			// Lg.Error("got 'photoEmpty' in media of message #", msg.ID)
+			return nil
+		}
+		photo := media.Photo.(mtproto.TL_photo)
+		size := findBestPhotoSize(photo)
+		if size == nil {
+			// Lg.Error("could not found suitable image size of message #", msg.ID)
+			Panicerr("image size search failed")
+		}
+		return &TelegramFileInfo{
+			InputLocation: mtproto.TL_inputPhotoFileLocation{
+				ID:            photo.ID,
+				AccessHash:    photo.AccessHash,
+				FileReference: photo.FileReference,
+				ThumbSize:     size.Type,
+			},
+			Size:  size.Size,
+			DcID:  photo.DcID,
+			FName: "photo.jpg",
+		}
+	case mtproto.TL_messageMediaDocument:
+		doc := media.Document.(mtproto.TL_document)
+		fname := ""
+		for _, attrTL := range doc.Attributes {
+			if nameAttr, ok := attrTL.(mtproto.TL_documentAttributeFilename); ok {
+				fname = nameAttr.FileName
+				break
+			}
+		}
+		return &TelegramFileInfo{
+			InputLocation: mtproto.TL_inputDocumentFileLocation{
+				ID:            doc.ID,
+				AccessHash:    doc.AccessHash,
+				FileReference: doc.FileReference,
+			},
+			Size:  doc.Size,
+			DcID:  doc.DcID,
+			FName: fname,
+		}
+	default:
+		return nil
+	}
 }
 
 func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, offset ...int32) (resmsgs []*TelegramMessageStruct) {
 	params := mtproto.TL_messages_getHistory{
 		Peer:  inputPeer,
 		Limit: limit, // 当前offset开始往上取的条数
-		// OffsetID: 4,     // 从上往下的消息的offset，不设置默认最后。例如如果设置offset的id是4，那就是从id3开始往上获取limit个数据。
+		// OffsetID: 4,     // offset的消息的ID，不设置默认最后。例如如果设置offset的id是4，那就是从id3开始往上获取limit个数据。
 	}
 
 	if len(offset) != 0 {
-		params.OffsetID = offset[0] + limit
+		params.OffsetID = offset[0]
 	}
 
 	res := tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
 
-	// Lg.Debug(res)
+	Lg.Debug(res)
 
 	var msgs []mtproto.TL
 	var musers []mtproto.TL
@@ -447,9 +522,13 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, of
 		msgMap := tgObjToMap(msg)
 		msgMap["_TL_LAYER"] = mtproto.TL_Layer
 
-		// Lg.Debug("====>MsgMap:", msgMap)
+		Lg.Debug("====>MsgMap:", msgMap)
 
-		if Str(msgMap["Message"]) == "" {
+		fileInfo := tgGetMessageMediaFileInfo(msg) // 即使客户端发送一条消息多个图片，这里也会是每个消息一个图片，多个消息就是了
+
+		// 如果一条消息，没有消息内容，没有文件，没有action，就跳过
+		if Str(msgMap["Message"]) == "" && fileInfo == nil && !Map(msgMap).Has("Action") {
+			Lg.Debug("====>Msg:", msgMap)
 			continue
 		}
 		tms := &TelegramMessageStruct{
@@ -458,11 +537,26 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, of
 			User:        tguserdatas[Int64(StringMap(msgMap["FromID"])["UserID"])],
 			Time:        Int64(msgMap["Date"]),
 			ReplyMarkup: StringMap(msgMap["ReplyMarkup"]),
-			Entities:    InterfaceArray(msgMap["Entities"]),
 			ID:          Int64(msgMap["ID"]),
+		}
+		if Map(msgMap).Has("Entities") {
+			tms.Entities = InterfaceArray(msgMap["Entities"])
 		}
 		if tms.Chat == nil {
 			tms.Chat = tgchatdatas[Int64(StringMap(msgMap["PeerID"])["ChannelID"])]
+		}
+		if fileInfo != nil {
+			tms.File = fileInfo
+		}
+		if Map(msgMap).Has("Action") {
+			tms.Action = String(StringMap(msgMap["Action"])["_"]).Replace("TL_messageAction", "").S
+		}
+		if tms.User == nil {
+			if Map(msgMap).Has("PeerID") {
+				if Map(StringMap(msgMap["PeerID"])).Has("UserID") {
+					tms.User = tguserdatas[Int64(StringMap(msgMap["PeerID"])["UserID"])]
+				}
+			}
 		}
 		resmsgs = append(resmsgs, tms)
 	}
@@ -555,8 +649,8 @@ func (m *TelegramStruct) ResolvePeerByUsername(username string) *TelegramPeerRes
 	return tgpr
 }
 
-// 从这个message的id为offset的message开始获取limit条message，包括offset这个id的message本身。
 // 不设置offset则获取最新的limit条数据
+// 设置了offset的话，例如如果设置offset的id是4，那就是从id小于4的message开始往上获取limit个数据。（不包括id为4的message）
 func (m *TelegramPeerResolved) History(limit int32, offset ...int32) (resmsgs []*TelegramMessageStruct) {
 	return historyMessage(
 		m.tg,
