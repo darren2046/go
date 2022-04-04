@@ -356,16 +356,24 @@ type TelegramMessageStruct struct {
 	Time        int64
 	ReplyMarkup map[string]interface{}
 	Entities    []interface{}
+	ID          int64
 }
 
-func (m *TelegramChatStruct) History(limit int32) (resmsgs []*TelegramMessageStruct) {
-	return historyMessage(m.tg, getInputPeer(m.Obj), limit)
+// 从这个message的id为offset的message开始获取limit条message，包括offset这个id的message本身。
+// 不设置offset则获取最新的limit条数据
+func (m *TelegramChatStruct) History(limit int32, offset ...int32) (resmsgs []*TelegramMessageStruct) {
+	return historyMessage(m.tg, getInputPeer(m.Obj), limit, offset...)
 }
 
-func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32) (resmsgs []*TelegramMessageStruct) {
+func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, offset ...int32) (resmsgs []*TelegramMessageStruct) {
 	params := mtproto.TL_messages_getHistory{
 		Peer:  inputPeer,
-		Limit: limit,
+		Limit: limit, // 当前offset开始往上取的条数
+		// OffsetID: 4,     // 从上往下的消息的offset，不设置默认最后。例如如果设置offset的id是4，那就是从id3开始往上获取limit个数据。
+	}
+
+	if len(offset) != 0 {
+		params.OffsetID = offset[0] + limit
 	}
 
 	res := tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
@@ -451,6 +459,7 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32) (r
 			Time:        Int64(msgMap["Date"]),
 			ReplyMarkup: StringMap(msgMap["ReplyMarkup"]),
 			Entities:    InterfaceArray(msgMap["Entities"]),
+			ID:          Int64(msgMap["ID"]),
 		}
 		if tms.Chat == nil {
 			tms.Chat = tgchatdatas[Int64(StringMap(msgMap["PeerID"])["ChannelID"])]
@@ -504,7 +513,7 @@ type TelegramPeerResolved struct {
 	Name       string // channel和group的话就是title的值，user的话就是FirstName+LastName
 	Username   string // 就是ID，可以@的那个
 	ID         int64  // 可以用来发起聊天的telegram的这个对象的ID
-	AccessHash int64  // 有时候手动构造inputpeer的时候有用
+	AccessHash int64  // 有时候手动构造inputpeer的时候有用, TL_user, TL_channel的时候， TL_chat不用这个。
 }
 
 func (m *TelegramStruct) ResolvePeerByUsername(username string) *TelegramPeerResolved {
@@ -546,12 +555,15 @@ func (m *TelegramStruct) ResolvePeerByUsername(username string) *TelegramPeerRes
 	return tgpr
 }
 
-func (m *TelegramPeerResolved) History(limit int32) (resmsgs []*TelegramMessageStruct) {
+// 从这个message的id为offset的message开始获取limit条message，包括offset这个id的message本身。
+// 不设置offset则获取最新的limit条数据
+func (m *TelegramPeerResolved) History(limit int32, offset ...int32) (resmsgs []*TelegramMessageStruct) {
 	return historyMessage(
 		m.tg,
 		getInputPeer(
 			m.Obj,
 		),
 		limit,
+		offset...,
 	)
 }

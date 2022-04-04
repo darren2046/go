@@ -175,8 +175,10 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*table) Render() string
     * func Telegram(AppID int32, AppHash string, config ...TelegramConfig) \*Telegram
         * func (m \*Telegram) Chats() []\*TelegramChat 
-            * func (m \*TelegramChat) History(limit int32) (resmsgs []\*tgMessage)
+            * func (m \*TelegramChat) History(limit int32, offset ...int32) (resmsgs []\*tgMessage)
             * func (m \*TelegramChat) Send(text string)
+        * func (m \*TelegramStruct) ResolvePeerByUsername(username string) \*TelegramPeerResolved
+            * func (m \*TelegramPeerResolved) History(limit int32, offset ...int32) (resmsgs []\*TelegramMessageStruct)
     * func TelegramBot(string) \*telegramBot
         * func (m \*telegramBot) SetChatID(chatid int64) \*telegramBot
         * func (m \*telegramBot) SendFile(path string) tgbotapi.Message
