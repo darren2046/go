@@ -9,7 +9,7 @@ func TestTelegram(t *testing.T) {
 	AppID := Int32(ident.Split(",")[0].Strip().S)
 	AppHash := ident.Split(",")[1].Strip().S
 	Lg.Trace(AppID, AppHash)
-	tg := getTelegram(
+	tg := Tools.Telegram(
 		AppID,
 		AppHash,
 		TelegramConfig{

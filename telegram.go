@@ -453,7 +453,7 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, of
 
 	res := tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
 
-	Lg.Debug(res)
+	// Lg.Debug(res)
 
 	var msgs []mtproto.TL
 	var musers []mtproto.TL
