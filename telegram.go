@@ -680,18 +680,8 @@ type TelegramInputPeer struct {
 	tg        *tgclient.TGClient
 }
 
-// Type可以是user,chat,channel
+// Type可以是user,chat,channel(group)
 func (m *TelegramStruct) NewInputPeer(Type string, id int64, accesshash ...int64) *TelegramInputPeer {
-	// switch peer := Obj.(type) {
-	// case mtproto.TL_user:
-	// 	inputPeer = mtproto.TL_inputPeerUser{UserID: peer.ID, AccessHash: peer.AccessHash}
-	// case mtproto.TL_chat:
-	// 	inputPeer = mtproto.TL_inputPeerChat{ChatID: peer.ID}
-	// case mtproto.TL_channel:
-	// 	inputPeer = mtproto.TL_inputPeerChannel{ChannelID: peer.ID, AccessHash: peer.AccessHash}
-	// default:
-	// 	panic("未知的mtproto.TL类型")
-	// }
 	var inputPeer mtproto.TL
 	if Type == "user" {
 		if len(accesshash) == 0 {
@@ -700,7 +690,7 @@ func (m *TelegramStruct) NewInputPeer(Type string, id int64, accesshash ...int64
 		inputPeer = mtproto.TL_inputPeerUser{UserID: id, AccessHash: accesshash[0]}
 	} else if Type == "chat" {
 		inputPeer = mtproto.TL_inputPeerChat{ChatID: id}
-	} else if Type == "channel" {
+	} else if Type == "channel" || Type == "group" {
 		if len(accesshash) == 0 {
 			Panicerr("需要accesshash")
 		}
