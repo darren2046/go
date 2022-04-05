@@ -441,6 +441,9 @@ func tgGetMessageMediaFileInfo(msgTL mtproto.TL) *TelegramFileInfo {
 }
 
 func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, offset ...int32) (resmsgs []*TelegramMessageStruct) {
+	if limit > 100 {
+		Panicerr("不支持大于100条以上数据的获取，即使设置大于100，服务器也只返回100条")
+	}
 	params := mtproto.TL_messages_getHistory{
 		Peer:  inputPeer,
 		Limit: limit, // 当前offset开始往上取的条数
@@ -619,7 +622,15 @@ func (m *TelegramStruct) ResolvePeerByUsername(username string) *TelegramPeerRes
 
 	// Lg.Debug(r)
 
-	rs := r.(mtproto.TL_contacts_resolvedPeer)
+	var rs mtproto.TL_contacts_resolvedPeer
+	switch rrr := r.(type) {
+	case mtproto.TL_contacts_resolvedPeer:
+		rs = rrr
+	default:
+		// Lg.Error("貌似有错，以下是服务器的返回")
+		// Lg.Debug(r)
+		Panicerr(r)
+	}
 
 	tgpr := &TelegramPeerResolved{
 		tg: m.tg,
@@ -657,6 +668,55 @@ func (m *TelegramPeerResolved) History(limit int32, offset ...int32) (resmsgs []
 		getInputPeer(
 			m.Obj,
 		),
+		limit,
+		offset...,
+	)
+}
+
+// -------- 手动设置inputpeer -------
+
+type TelegramInputPeer struct {
+	inputPeer mtproto.TL
+	tg        *tgclient.TGClient
+}
+
+// Type可以是user,chat,channel
+func (m *TelegramStruct) NewInputPeer(Type string, id int64, accesshash ...int64) *TelegramInputPeer {
+	// switch peer := Obj.(type) {
+	// case mtproto.TL_user:
+	// 	inputPeer = mtproto.TL_inputPeerUser{UserID: peer.ID, AccessHash: peer.AccessHash}
+	// case mtproto.TL_chat:
+	// 	inputPeer = mtproto.TL_inputPeerChat{ChatID: peer.ID}
+	// case mtproto.TL_channel:
+	// 	inputPeer = mtproto.TL_inputPeerChannel{ChannelID: peer.ID, AccessHash: peer.AccessHash}
+	// default:
+	// 	panic("未知的mtproto.TL类型")
+	// }
+	var inputPeer mtproto.TL
+	if Type == "user" {
+		if len(accesshash) == 0 {
+			Panicerr("需要accesshash")
+		}
+		inputPeer = mtproto.TL_inputPeerUser{UserID: id, AccessHash: accesshash[0]}
+	} else if Type == "chat" {
+		inputPeer = mtproto.TL_inputPeerChat{ChatID: id}
+	} else if Type == "channel" {
+		if len(accesshash) == 0 {
+			Panicerr("需要accesshash")
+		}
+		inputPeer = mtproto.TL_inputPeerChannel{ChannelID: id, AccessHash: accesshash[0]}
+	}
+
+	return &TelegramInputPeer{
+		inputPeer: inputPeer,
+		tg:        m.tg,
+	}
+}
+
+func (m *TelegramInputPeer) History(limit int32, offset ...int32) (resmsgs []*TelegramMessageStruct) {
+	return historyMessage(
+		m.tg,
+		m.inputPeer,
 		limit,
 		offset...,
 	)

@@ -20,6 +20,7 @@ func TestTelegram(t *testing.T) {
 	// Lg.Trace(tg)
 	// Lg.Trace()
 
+	// 列出chat
 	// for _, chat := range tg.Chats() {
 	// 	Lg.Trace(chat.Type, chat.Title, chat.Username)
 	// 	if chat.Username == "zzzbot" {
@@ -32,7 +33,12 @@ func TestTelegram(t *testing.T) {
 	// 	// }
 	// }
 
-	p := tg.ResolvePeerByUsername("zfzzzshou")
+	// 根据username获取历史记录
+	// p := tg.ResolvePeerByUsername("12345678910")
 	// Lg.Debug(p)
-	Lg.Debug(p.History(10))
+	// Lg.Debug(p.History(10))
+
+	// 根据id和accesshash获取历史记录
+	p := tg.NewInputPeer("channel", 1234567890, -987654321)
+	Lg.Trace(len(p.History(100)))
 }
