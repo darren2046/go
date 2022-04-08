@@ -5,6 +5,10 @@ This is a toolkit that provide a lot of function or object that make programing 
 # Index
 
 * Tools
+    * func Elasticsearch(baseurl string) \*Elasticsearch
+        * func (m \*Elasticsearch) Collection(name string) \*ElasticsearchCollection
+            * func (m \*ElasticsearchCollection) Index(id interface{}, data map[string]interface{}) 
+            * func (m \*ElasticsearchCollection) Search(key string, value string, page int, pagesize int, cfg ...ElasticsearchSearchingConfigStruct) \*ElasticsearchSearchedResult
     * func Lock() \*lock
         * func (*lock) Acquire() 
         * func (*lock) Release() 

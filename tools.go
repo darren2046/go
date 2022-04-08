@@ -38,6 +38,7 @@ type toolsStruct struct {
 	Queue                  func(datadir string) (q *QueueStruct)
 	Jieba                  func() *JiebaStruct
 	Telegram               func(AppID int32, AppHash string, config ...TelegramConfig) *TelegramStruct
+	Elasticsearch          func(baseurl string) *ElasticsearchStruct
 }
 
 var Tools toolsStruct
@@ -81,5 +82,6 @@ func init() {
 		Queue:                  getQueue,
 		Telegram:               getTelegram,
 		Jieba:                  getJieba,
+		Elasticsearch:          getElasticsearch,
 	}
 }

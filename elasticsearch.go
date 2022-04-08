@@ -1,0 +1,117 @@
+package golanglibs
+
+import (
+	"encoding/json"
+)
+
+type ElasticsearchStruct struct {
+	baseurl string
+}
+
+func getElasticsearch(baseurl string) *ElasticsearchStruct {
+	return &ElasticsearchStruct{baseurl: baseurl}
+}
+
+type ElasticsearchCollectionStruct struct {
+	baseurl string
+}
+
+func (m *ElasticsearchStruct) Collection(name string) *ElasticsearchCollectionStruct {
+	return &ElasticsearchCollectionStruct{baseurl: String(m.baseurl).Strip("/").S + "/" + name}
+}
+
+// id是唯一的字符串
+func (m *ElasticsearchCollectionStruct) Index(id interface{}, data map[string]interface{}) {
+	r := httpPutJSON(m.baseurl+"/_doc/"+Str(id), data, HttpConfig{TimeoutRetryTimes: -1})
+	if r.StatusCode != 201 && r.StatusCode != 200 {
+		Lg.Debug(r)
+		Panicerr("插入到Elasticsearch出错: 状态码不是201或者200")
+	}
+}
+
+type ElasticsearchSearchingConfigStruct struct {
+	OrderByKey   string // （可选）根据document里面的这个key排序
+	OrderByOrder string // （可选）可选desc或者asc, 默认asc
+	Highlight    string // （可选）这个字段里面的value，如果有搜索到关键字则插入html标签以高亮。
+}
+
+type ElasticsearchSearchResultStruct struct {
+	Total int
+	Data  map[int]map[string]interface{}
+}
+
+type ElasticsearchSearchedResult struct {
+	Took     int  `json:"took"`
+	TimedOut bool `json:"timed_out"`
+	Hits     struct {
+		Total struct {
+			Value    int    `json:"value"`
+			Relation string `json:"relation"`
+		} `json:"total"`
+		//MaxScore interface{} `json:"max_score"`
+		Hits []struct {
+			ID string `json:"_id"`
+			// Score  interface{}            `json:"_score"`
+			Source map[string]interface{} `json:"_source"`
+			// Sort   []int                  `json:"sort"`
+		} `json:"hits"`
+	} `json:"hits"`
+}
+
+func (m *ElasticsearchCollectionStruct) Search(key string, value string, page int, pagesize int, cfg ...ElasticsearchSearchingConfigStruct) *ElasticsearchSearchedResult {
+	startfrom := (page - 1) * pagesize
+
+	query := map[string]interface{}{
+		"query": map[string]interface{}{
+			"match_phrase": map[string]interface{}{
+				key: map[string]interface{}{
+					"query": value,
+					"slop":  100,
+				},
+			},
+		},
+		"from": startfrom,
+		"size": pagesize,
+	}
+
+	if len(cfg) != 0 {
+		if cfg[0].OrderByKey != "" {
+			var order string
+			if cfg[0].OrderByOrder != "" {
+				order = cfg[0].OrderByOrder
+			} else {
+				order = "asc"
+			}
+			query["sort"] = []map[string]interface{}{
+				{
+					cfg[0].OrderByKey: map[string]interface{}{
+						"order": order,
+					},
+				},
+			}
+		}
+
+		if cfg[0].Highlight != "" {
+			query["highlight"] = map[string]interface{}{
+				"fields": map[string]interface{}{
+					cfg[0].Highlight: map[string]interface{}{},
+				},
+			}
+		}
+	}
+
+	// Lg.Trace(Json.Dumps(query))
+	// Lg.Trace(m.baseurl)
+
+	r := Http.PostJSON(m.baseurl+"/_search", query)
+	// Lg.Debug(r)
+	if r.StatusCode != 200 {
+		Panicerr("在Elasticsearch中搜寻出错：" + r.Content.S)
+	}
+
+	res := ElasticsearchSearchedResult{}
+	err := json.Unmarshal([]byte(r.Content.S), &res)
+	Panicerr(err)
+
+	return &res
+}
