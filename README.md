@@ -9,6 +9,7 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*Elasticsearch) Collection(name string) \*ElasticsearchCollection
             * func (m \*ElasticsearchCollection) Index(id interface{}, data map[string]interface{}) 
             * func (m \*ElasticsearchCollection) Search(key string, value string, page int, pagesize int, cfg ...ElasticsearchSearchingConfigStruct) \*ElasticsearchSearchedResult
+            * func (m \*ElasticsearchCollectionStruct) Delete(id interface{})
     * func Lock() \*lock
         * func (*lock) Acquire() 
         * func (*lock) Release() 
@@ -464,6 +465,7 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func PutJSON(uri string, json interface{}, args ...interface{}) httpResp
     * func Put(uri string, args ...interface{}) httpResp
     * func PutRaw(uri string, body string, args ...interface{}) httpResp
+    * func Delete(uri string, args ...interface{}) httpResp
 * Json
     * func Dumps(v interface{}, pretty ...bool) string
     * func Loads(str string) map[string]interface{}

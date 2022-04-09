@@ -21,6 +21,7 @@ type httpStruct struct {
 	PutJSON  func(uri string, json interface{}, args ...interface{}) *httpResp
 	Put      func(uri string, args ...interface{}) *httpResp
 	PutRaw   func(uri string, body string, args ...interface{}) *httpResp
+	Delete   func(uri string, args ...interface{}) *httpResp
 }
 
 var Http httpStruct
@@ -36,6 +37,7 @@ func init() {
 		PutJSON:  httpPutJSON,
 		Put:      httpPut,
 		PutRaw:   httpPutRaw,
+		Delete:   httpDelete,
 	}
 }
 
@@ -218,6 +220,12 @@ func httpPost(uri string, args ...interface{}) *httpResp {
 func httpGet(uri string, args ...interface{}) *httpResp {
 	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
 		return req.Get(uri, header, param)
+	})
+}
+
+func httpDelete(uri string, args ...interface{}) *httpResp {
+	return initHttpRequest(uri, args...).doRequest(func(uri string, header http.Header, param req.Param) (*req.Resp, error) {
+		return req.Delete(uri, header, param)
 	})
 }
 

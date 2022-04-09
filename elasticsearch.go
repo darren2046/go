@@ -115,3 +115,11 @@ func (m *ElasticsearchCollectionStruct) Search(key string, value string, page in
 
 	return &res
 }
+
+func (m *ElasticsearchCollectionStruct) Delete(id interface{}) {
+	r := Http.Delete(m.baseurl + "/_doc/" + Str(id))
+	if r.StatusCode != 200 {
+		Lg.Debug(r)
+		Panicerr("在elasticsearch删除id为\"" + Str(id) + "\"的文档出错")
+	}
+}
