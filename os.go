@@ -88,7 +88,7 @@ type StdinInterface interface {
 }
 
 func getStdin() *fileIOStruct {
-	return &fileIOStruct{fd: os.Stdin, mode: "r"}
+	return &fileIOStruct{fd: os.Stdin, mode: "r", lock: getLock()}
 }
 
 // ---- stdout
@@ -98,7 +98,7 @@ type StdoutInterface interface {
 }
 
 func getStdout() *fileIOStruct {
-	return &fileIOStruct{fd: os.Stdin, mode: "w"}
+	return &fileIOStruct{fd: os.Stdin, mode: "w", lock: getLock()}
 }
 
 func unlink(filename string) {
