@@ -76,7 +76,8 @@ func (m *fileIOStruct) Close() {
 	m.fd.Close()
 }
 
-// str can be string, *StringStruct, []byte
+// str can be string, *StringStruct, []byte。
+// 如果是其它的就会被调用Str()强制转换成字符串
 func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 	m.lock.Acquire()
 	defer m.lock.Release()
@@ -88,6 +89,8 @@ func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 		buf = []byte(vv.S)
 	case []byte:
 		buf = vv
+	default:
+		buf = []byte(Str(str))
 	}
 	m.fd.Write(buf)
 	return m
