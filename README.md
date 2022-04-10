@@ -8,8 +8,8 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func Elasticsearch(baseurl string) \*Elasticsearch
         * func (m \*Elasticsearch) Collection(name string) \*ElasticsearchCollection
             * func (m \*ElasticsearchCollection) Index(id interface{}, data map[string]interface{}) 
-            * func (m \*ElasticsearchCollection) Search(key string, value string, page int, pagesize int, cfg ...ElasticsearchSearchingConfigStruct) \*ElasticsearchSearchedResult
-            * func (m \*ElasticsearchCollectionStruct) Delete(id interface{})
+            * func (m \*ElasticsearchCollection) Search(key string, value string, page int, pagesize int, cfg ...ElasticsearchSearchingConfig) \*ElasticsearchSearchedResult
+            * func (m \*ElasticsearchCollection) Delete(id interface{})
     * func Lock() \*lock
         * func (*lock) Acquire() 
         * func (*lock) Release() 
@@ -90,9 +90,9 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*progressBar) Clear()
     * func [PrometheusClient](#toolsprometheusclient)(string) \*prometheusClient
         * func (m \*prometheusClient) Query(query string, time ...float64) (res []prometheusResult) 
-    * func [PrometheusMetricServer](#toolsprometheusmetricserver)(listenAddr string, path ...string) \*prometheusMetricServerStruct
-        * func (m \*prometheusMetricServerStruct) NewCounter(name string, help string) prometheus.Counter
-        * func (m \*prometheusMetricServerStruct) NewGauge(name string, help string) prometheus.Gauge
+    * func [PrometheusMetricServer](#toolsprometheusmetricserver)(listenAddr string, path ...string) \*prometheusMetricServer
+        * func (m \*prometheusMetricServer) NewCounter(name string, help string) prometheus.Counter
+        * func (m \*prometheusMetricServer) NewGauge(name string, help string) prometheus.Gauge
     * func [MySQL](#toolsmysql)(string, int, string, string, string, ...DatabaseConfig) \*database
     * func SQLite(string) \*database
         * func (m \*database) Query(sql string, args ...interface{}) []gorose.Data
@@ -182,8 +182,8 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*Telegram) Chats() []\*TelegramChat 
             * func (m \*TelegramChat) History(limit int32, offset ...int32) (resmsgs []\*tgMessage)
             * func (m \*TelegramChat) Send(text string)
-        * func (m \*TelegramStruct) ResolvePeerByUsername(username string) \*TelegramPeerResolved
-            * func (m \*TelegramPeerResolved) History(limit int32, offset ...int32) (resmsgs []\*TelegramMessageStruct)
+        * func (m \*Telegram) ResolvePeerByUsername(username string) \*TelegramPeerResolved
+            * func (m \*TelegramPeerResolved) History(limit int32, offset ...int32) (resmsgs []\*TelegramMessage)
     * func TelegramBot(string) \*telegramBot
         * func (m \*telegramBot) SetChatID(chatid int64) \*telegramBot
         * func (m \*telegramBot) SendFile(path string) tgbotapi.Message
@@ -518,7 +518,12 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func ProgressAlive(pid int) bool
     * func GoroutineID() int64
     * func Unlink(filename string)
-
+    * Stdin
+        * func Readlines() chan *String
+        * func Readline() *String
+        * func Read(num ...int) *String
+    * Stdout
+        * Write(str interface{}) *fileIO
 Others
 
 * func [Open](#open)(filePath string) *fileIO
@@ -1339,7 +1344,7 @@ func main() {
 * 参数读取优先级, 首先命令行指定, 其次环境变量, 然后读配置文件, 如果都没有, 就使用内置的默认值
 
 ```go
-type argStruct struct {
+type arg struct {
 	InCluster      bool
 	ConfigFile     string
 	Namespace      string
@@ -1348,7 +1353,7 @@ type argStruct struct {
 }
 
 func main() {
-	args := new(argStruct)
+	args := new(arg)
 	a := Argparser("kubernetes的pod程序崩溃通知程序")
 	args.InCluster = a.GetBool("", "InCluster", "false", "是否在集群内部, 如果不在集群内部需要指定config文件")
 	args.ConfigFile = a.Get("", "ConfigFile", "", "如果不在集群内部, 需要指定配置文件")

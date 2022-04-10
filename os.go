@@ -41,6 +41,8 @@ type osStruct struct {
 	ProgressAlive   func(pid int) bool
 	GoroutineID     func() int64
 	Unlink          func(filename string)
+	Stdin           StdinInterface
+	Stdout          StdoutInterface
 }
 
 var Os osStruct
@@ -72,7 +74,31 @@ func init() {
 		ProgressAlive:   progressAlive,
 		GoroutineID:     goroutineID,
 		Unlink:          unlink,
+		Stdin:           getStdin(),
+		Stdout:          getStdout(),
 	}
+}
+
+// ----- stdin
+
+type StdinInterface interface {
+	Readlines() chan *StringStruct
+	Readline() *StringStruct
+	Read(num ...int) *StringStruct
+}
+
+func getStdin() *fileIOStruct {
+	return &fileIOStruct{fd: os.Stdin, mode: "r"}
+}
+
+// ---- stdout
+
+type StdoutInterface interface {
+	Write(str interface{}) *fileIOStruct
+}
+
+func getStdout() *fileIOStruct {
+	return &fileIOStruct{fd: os.Stdin, mode: "w"}
 }
 
 func unlink(filename string) {
