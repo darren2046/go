@@ -8,7 +8,7 @@ import (
 
 func Str(v interface{}) (res string) {
 	switch vv := v.(type) {
-	case *stringStruct:
+	case *StringStruct:
 		res = cast.ToString(vv.S)
 	default:
 		res = cast.ToString(v)

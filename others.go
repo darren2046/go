@@ -20,7 +20,7 @@ func Ord(char string) int {
 	return int(r)
 }
 
-func Repr(obj interface{}) *stringStruct {
+func Repr(obj interface{}) *StringStruct {
 	return String(reprlib.String(obj))
 }
 
@@ -116,7 +116,7 @@ func Typeof(v interface{}) string {
 	return reflect.TypeOf(v).String()
 }
 
-func Input(prompt string, defaultValue ...string) *stringStruct {
+func Input(prompt string, defaultValue ...string) *StringStruct {
 	fmt.Print(prompt)
 	var input string
 	fmt.Scanln(&input)

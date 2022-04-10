@@ -13,7 +13,7 @@ func getSystemProgressCPUUsage() (res map[int64]progressCPUUsageStruct) {
 	pg := make(map[string]float64)
 	res = make(map[int64]progressCPUUsageStruct)
 
-	var line *stringStruct
+	var line *StringStruct
 	for _, line = range String(Open("/proc/stat").Read().S).Split("\n") {
 		if String("cpu ").In(line.S) {
 			break

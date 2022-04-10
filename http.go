@@ -46,7 +46,7 @@ type HttpParam map[string]interface{}
 
 type httpResp struct {
 	Headers    map[string]string
-	Content    *stringStruct
+	Content    *StringStruct
 	StatusCode int
 	URL        string
 }

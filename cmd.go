@@ -9,11 +9,11 @@ import (
 )
 
 type cmdStruct struct {
-	GetOutput                func(command string, timeoutSecond ...interface{}) *stringStruct
-	GetStatusOutput          func(command string, timeoutSecond ...interface{}) (int, *stringStruct)
-	GetOutputWithShell       func(command string, timeoutSecond ...interface{}) *stringStruct
-	GetStatusOutputWithShell func(command string, timeoutSecond ...interface{}) (int, *stringStruct)
-	Tail                     func(command string) chan *stringStruct
+	GetOutput                func(command string, timeoutSecond ...interface{}) *StringStruct
+	GetStatusOutput          func(command string, timeoutSecond ...interface{}) (int, *StringStruct)
+	GetOutputWithShell       func(command string, timeoutSecond ...interface{}) *StringStruct
+	GetStatusOutputWithShell func(command string, timeoutSecond ...interface{}) (int, *StringStruct)
+	Tail                     func(command string) chan *StringStruct
 	Exists                   func(cmd string) bool
 	Which                    func(cmd string) (path string)
 }
@@ -47,7 +47,7 @@ func cmdExists(cmd string) bool {
 
 type execCmdStruct struct {
 	buf string
-	out chan *stringStruct
+	out chan *StringStruct
 }
 
 func (m *execCmdStruct) Write(p []byte) (n int, err error) {
@@ -66,8 +66,8 @@ func (m *execCmdStruct) Write(p []byte) (n int, err error) {
 	return len(p), nil
 }
 
-func tailCmdOutput(command string) chan *stringStruct {
-	w := execCmdStruct{out: make(chan *stringStruct, 9999)}
+func tailCmdOutput(command string) chan *StringStruct {
+	w := execCmdStruct{out: make(chan *StringStruct, 9999)}
 	go func() {
 		cmd := exec.Command("/bin/bash", "-c", command)
 		cmd.Stdin = os.Stdin
@@ -87,14 +87,14 @@ func tailCmdOutput(command string) chan *stringStruct {
 	return w.out
 }
 
-func getOutputWithShell(command string, timeoutSecond ...interface{}) *stringStruct {
+func getOutputWithShell(command string, timeoutSecond ...interface{}) *StringStruct {
 	_, o := getStatusOutputWithShell(command, timeoutSecond...)
 	return o
 }
 
 // subprocess.getstautsoutput()
 // command.getstatusoutput()
-func getStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int, *stringStruct) {
+func getStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int, *StringStruct) {
 	q := rune(0)
 	parts := strings.FieldsFunc(command, func(r rune) bool {
 		switch {
@@ -170,14 +170,14 @@ func getStatusOutputWithShell(command string, timeoutSecond ...interface{}) (int
 	return statuscode, String(output)
 }
 
-func getOutput(command string, timeoutSecond ...interface{}) *stringStruct {
+func getOutput(command string, timeoutSecond ...interface{}) *StringStruct {
 	_, o := getStatusOutput(command, timeoutSecond...)
 	return o
 }
 
 // subprocess.getstautsoutput()
 // command.getstatusoutput()
-func getStatusOutput(command string, timeoutSecond ...interface{}) (int, *stringStruct) {
+func getStatusOutput(command string, timeoutSecond ...interface{}) (int, *StringStruct) {
 	q := rune(0)
 	parts := strings.FieldsFunc(command, func(r rune) bool {
 		switch {

@@ -18,12 +18,12 @@ type fileIOStruct struct {
 	lock   *LockStruct
 }
 
-func (m *fileIOStruct) Readlines() chan *stringStruct {
+func (m *fileIOStruct) Readlines() chan *StringStruct {
 	if m.reader == nil {
 		m.reader = bufio.NewReader(m.fd)
 	}
 
-	lines := make(chan *stringStruct)
+	lines := make(chan *StringStruct)
 
 	go func() {
 		m.lock.Acquire()
@@ -48,7 +48,7 @@ func (m *fileIOStruct) Readlines() chan *stringStruct {
 	return lines
 }
 
-func (m *fileIOStruct) Readline() *stringStruct {
+func (m *fileIOStruct) Readline() *StringStruct {
 	m.lock.Acquire()
 	defer m.lock.Release()
 
@@ -76,7 +76,7 @@ func (m *fileIOStruct) Close() {
 	m.fd.Close()
 }
 
-// str can be string, *stringStruct, []byte
+// str can be string, *StringStruct, []byte
 func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 	m.lock.Acquire()
 	defer m.lock.Release()
@@ -84,7 +84,7 @@ func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 	switch vv := str.(type) {
 	case string:
 		buf = []byte(vv)
-	case *stringStruct:
+	case *StringStruct:
 		buf = []byte(vv.S)
 	case []byte:
 		buf = vv
@@ -93,7 +93,7 @@ func (m *fileIOStruct) Write(str interface{}) *fileIOStruct {
 	return m
 }
 
-func (m *fileIOStruct) Read(num ...int) *stringStruct {
+func (m *fileIOStruct) Read(num ...int) *StringStruct {
 	m.lock.Acquire()
 	defer m.lock.Release()
 

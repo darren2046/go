@@ -15,30 +15,30 @@ import (
 	"golang.org/x/exp/utf8string"
 )
 
-type stringStruct struct {
+type StringStruct struct {
 	S string
 }
 
-func String(s interface{}) *stringStruct {
-	return &stringStruct{S: Str(s)}
+func String(s interface{}) *StringStruct {
+	return &StringStruct{S: Str(s)}
 }
 
 // Return the final string
-func (s *stringStruct) Get() string {
+func (s *StringStruct) Get() string {
 	return s.S
 }
 
 // Return the substring of the string
-func (s *stringStruct) Sub(start, end int) *stringStruct {
+func (s *StringStruct) Sub(start, end int) *StringStruct {
 	s.S = s.sub(start, end)
 	return s
 }
 
-func (s *stringStruct) Has(substr string) bool {
+func (s *StringStruct) Has(substr string) bool {
 	return strings.Contains(s.S, substr)
 }
 
-func (s *stringStruct) sub(start, end int) string {
+func (s *StringStruct) sub(start, end int) string {
 	startStrIdx := 0
 	i := 0
 	for j := range s.S {
@@ -54,12 +54,12 @@ func (s *stringStruct) sub(start, end int) string {
 }
 
 // Return the length of the string
-func (s *stringStruct) Len() int {
+func (s *StringStruct) Len() int {
 	return len(s.S)
 }
 
 // Reverse the string
-func (s *stringStruct) Reverse() *stringStruct {
+func (s *StringStruct) Reverse() *StringStruct {
 	runes := []rune(s.S)
 	for i, j := 0, len(runes)-1; i < j; i, j = i+1, j-1 {
 		runes[i], runes[j] = runes[j], runes[i]
@@ -69,7 +69,7 @@ func (s *stringStruct) Reverse() *stringStruct {
 }
 
 // Split the string with specific length
-func (s *stringStruct) Chunk(length int) (res []*stringStruct) {
+func (s *StringStruct) Chunk(length int) (res []*StringStruct) {
 	start := 0
 	for s.Len() > start {
 		substr := s.sub(start, start+length)
@@ -80,18 +80,18 @@ func (s *stringStruct) Chunk(length int) (res []*stringStruct) {
 }
 
 // Calculate the length of a UTF-8 string
-func (s *stringStruct) Utf8Len() int {
+func (s *StringStruct) Utf8Len() int {
 	return utf8.RuneCountInString(s.S)
 }
 
 // Repeat a string
-func (s *stringStruct) Repeat(count int) *stringStruct {
+func (s *StringStruct) Repeat(count int) *StringStruct {
 	s.S = strings.Repeat(s.S, count)
 	return s
 }
 
 // Shuffle a string
-func (s *stringStruct) Shuffle() *stringStruct {
+func (s *StringStruct) Shuffle() *StringStruct {
 	runes := []rune(s.S)
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
 	ss := make([]rune, len(runes))
@@ -102,27 +102,27 @@ func (s *stringStruct) Shuffle() *stringStruct {
 	return s
 }
 
-func (s *stringStruct) Index(substr string) int {
+func (s *StringStruct) Index(substr string) int {
 	return strings.Index(s.S, substr)
 }
 
-func (s *stringStruct) Replace(oldText, newText interface{}) *stringStruct {
+func (s *StringStruct) Replace(oldText, newText interface{}) *StringStruct {
 	s.S = strings.ReplaceAll(s.S, Str(oldText), Str(newText))
 	return s
 }
 
-func (s *stringStruct) Upper() *stringStruct {
+func (s *StringStruct) Upper() *StringStruct {
 	s.S = strings.ToUpper(s.S)
 	return s
 }
 
-func (s *stringStruct) Lower() *stringStruct {
+func (s *StringStruct) Lower() *StringStruct {
 	s.S = strings.ToLower(s.S)
 	return s
 }
 
-// pieces can be []string or []*stringStruct
-func (s *stringStruct) Join(pieces interface{}) *stringStruct {
+// pieces can be []string or []*StringStruct
+func (s *StringStruct) Join(pieces interface{}) *StringStruct {
 	var buf bytes.Buffer
 	arr := reflect.ValueOf(pieces)
 	l := arr.Len()
@@ -131,7 +131,7 @@ func (s *stringStruct) Join(pieces interface{}) *stringStruct {
 		pie := arr.Index(i).Interface()
 
 		switch vv := pie.(type) {
-		case *stringStruct:
+		case *StringStruct:
 			buf.WriteString(vv.S)
 		case string:
 			buf.WriteString(vv)
@@ -146,7 +146,7 @@ func (s *stringStruct) Join(pieces interface{}) *stringStruct {
 	return s
 }
 
-func (s *stringStruct) Strip(characterMask ...string) *stringStruct {
+func (s *StringStruct) Strip(characterMask ...string) *StringStruct {
 	if len(characterMask) == 0 {
 		s.S = strings.TrimSpace(s.S)
 	} else {
@@ -155,8 +155,8 @@ func (s *stringStruct) Strip(characterMask ...string) *stringStruct {
 	return s
 }
 
-func (s *stringStruct) Split(sep ...string) []*stringStruct {
-	var a []*stringStruct
+func (s *StringStruct) Split(sep ...string) []*StringStruct {
+	var a []*StringStruct
 	if len(sep) != 0 {
 		for _, v := range strings.Split(s.S, sep[0]) {
 			a = append(a, String(v).Strip())
@@ -172,8 +172,8 @@ func (s *stringStruct) Split(sep ...string) []*stringStruct {
 	return a
 }
 
-func (s *stringStruct) Utf8Split() []*stringStruct {
-	var a []*stringStruct
+func (s *StringStruct) Utf8Split() []*StringStruct {
+	var a []*StringStruct
 
 	for _, v := range s.S {
 		if String(string(v)).Strip().Get() != "" {
@@ -184,11 +184,11 @@ func (s *stringStruct) Utf8Split() []*stringStruct {
 	return a
 }
 
-func (s *stringStruct) Count(substr string) int {
+func (s *StringStruct) Count(substr string) int {
 	return strings.Count(s.S, substr)
 }
 
-func (s *stringStruct) EndsWith(substr string) (res bool) {
+func (s *StringStruct) EndsWith(substr string) (res bool) {
 	if len(substr) <= len(s.S) && s.S[len(s.S)-len(substr):] == substr {
 		res = true
 	} else {
@@ -197,7 +197,7 @@ func (s *stringStruct) EndsWith(substr string) (res bool) {
 	return
 }
 
-func (s *stringStruct) StartsWith(substr string) (res bool) {
+func (s *StringStruct) StartsWith(substr string) (res bool) {
 	if len(substr) <= len(s.S) && s.S[:len(substr)] == substr {
 		res = true
 	} else {
@@ -206,8 +206,8 @@ func (s *stringStruct) StartsWith(substr string) (res bool) {
 	return
 }
 
-func (s *stringStruct) Splitlines(strip ...bool) []*stringStruct {
-	var a []*stringStruct
+func (s *StringStruct) Splitlines(strip ...bool) []*StringStruct {
+	var a []*StringStruct
 	tostrip := false
 	if len(strip) != 0 {
 		tostrip = strip[0]
@@ -223,9 +223,9 @@ func (s *stringStruct) Splitlines(strip ...bool) []*stringStruct {
 	return a
 }
 
-func (s *stringStruct) In(str interface{}) bool {
+func (s *StringStruct) In(str interface{}) bool {
 	switch vv := str.(type) {
-	case *stringStruct:
+	case *StringStruct:
 		return vv.Index(s.S) != -1
 	case string:
 		return String(vv).Index(s.S) != -1
@@ -235,7 +235,7 @@ func (s *stringStruct) In(str interface{}) bool {
 	return false
 }
 
-func (s *stringStruct) LStrip(characterMask ...string) *stringStruct {
+func (s *StringStruct) LStrip(characterMask ...string) *StringStruct {
 	if len(characterMask) == 0 {
 		s.S = strings.TrimLeftFunc(s.S, unicode.IsSpace)
 	}
@@ -243,7 +243,7 @@ func (s *stringStruct) LStrip(characterMask ...string) *stringStruct {
 	return s
 }
 
-func (s *stringStruct) RStrip(characterMask ...string) *stringStruct {
+func (s *StringStruct) RStrip(characterMask ...string) *StringStruct {
 	if len(characterMask) == 0 {
 		s.S = strings.TrimRightFunc(s.S, unicode.IsSpace)
 	}
@@ -251,7 +251,7 @@ func (s *stringStruct) RStrip(characterMask ...string) *stringStruct {
 	return s
 }
 
-func (ss *stringStruct) Isdigit() bool {
+func (ss *StringStruct) Isdigit() bool {
 	str := ss.S
 	if str == "" {
 		return false
@@ -293,7 +293,7 @@ func (ss *stringStruct) Isdigit() bool {
 	return true
 }
 
-func (s *stringStruct) HasChinese() bool {
+func (s *StringStruct) HasChinese() bool {
 	var count int
 	for _, v := range s.S {
 		if unicode.Is(unicode.Han, v) {
@@ -304,7 +304,7 @@ func (s *stringStruct) HasChinese() bool {
 	return count > 0
 }
 
-func (s *stringStruct) Filter(charts ...string) *stringStruct {
+func (s *StringStruct) Filter(charts ...string) *StringStruct {
 	var res string
 	strb := []byte(s.S)
 	var chartsb []byte
@@ -322,12 +322,12 @@ func (s *stringStruct) Filter(charts ...string) *stringStruct {
 	return s
 }
 
-func (s *stringStruct) RemoveHtmlTag() *stringStruct {
+func (s *StringStruct) RemoveHtmlTag() *StringStruct {
 	s.S = striphtmltags.StripTags(s.S)
 	return s
 }
 
-func (s *stringStruct) RemoveNonUTF8Character() *stringStruct {
+func (s *StringStruct) RemoveNonUTF8Character() *StringStruct {
 	if !utf8.ValidString(s.S) {
 		v := make([]rune, 0, len(s.S))
 		for i, r := range s.S {
@@ -344,15 +344,15 @@ func (s *stringStruct) RemoveNonUTF8Character() *stringStruct {
 	return s
 }
 
-func (s *stringStruct) DetectLanguage() string {
+func (s *StringStruct) DetectLanguage() string {
 	return whatlanggo.Detect(s.S).Lang.String()
 }
 
-func (s *stringStruct) IsAscii() bool {
+func (s *StringStruct) IsAscii() bool {
 	return utf8string.NewString(s.S).IsASCII()
 }
 
-func (s *stringStruct) RegexFindAll(pattern string, multiline ...bool) (res [][]*stringStruct) {
+func (s *StringStruct) RegexFindAll(pattern string, multiline ...bool) (res [][]*StringStruct) {
 	if len(multiline) > 0 && multiline[0] {
 		pattern = "(?s)" + pattern
 	}
@@ -360,7 +360,7 @@ func (s *stringStruct) RegexFindAll(pattern string, multiline ...bool) (res [][]
 	Panicerr(err)
 
 	for _, i := range r.FindAllStringSubmatch(s.S, -1) {
-		var arr []*stringStruct
+		var arr []*StringStruct
 		for _, j := range i {
 			arr = append(arr, String(j))
 		}
@@ -369,17 +369,17 @@ func (s *stringStruct) RegexFindAll(pattern string, multiline ...bool) (res [][]
 	return
 }
 
-func (s *stringStruct) RegexReplace(pattern string, newstring string) *stringStruct {
+func (s *StringStruct) RegexReplace(pattern string, newstring string) *StringStruct {
 	r, err := regexp.Compile(pattern)
 	Panicerr(err)
 	s.S = r.ReplaceAllString(s.S, newstring)
 	return s
 }
 
-func (s *stringStruct) JsonXPath() *xpathJsonStruct {
+func (s *StringStruct) JsonXPath() *xpathJsonStruct {
 	return getXPathJson(s.S)
 }
 
-func (s *stringStruct) XPath() *xpathStruct {
+func (s *StringStruct) XPath() *xpathStruct {
 	return getXPath(s.S)
 }

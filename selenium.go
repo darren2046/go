@@ -145,7 +145,7 @@ func (c *seleniumElementStruct) Click() *seleniumElementStruct {
 	return c
 }
 
-func (c *seleniumElementStruct) Text() *stringStruct {
+func (c *seleniumElementStruct) Text() *StringStruct {
 	s, err := c.element.Text()
 	Panicerr(err)
 	return String(s)

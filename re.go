@@ -3,7 +3,7 @@ package golanglibs
 import "regexp"
 
 type reStruct struct {
-	FindAll func(pattern string, text string, multiline ...bool) [][]*stringStruct
+	FindAll func(pattern string, text string, multiline ...bool) [][]*StringStruct
 	Replace func(pattern string, newstring string, text string) string
 }
 
@@ -16,7 +16,7 @@ func init() {
 	}
 }
 
-func refindAll(pattern string, text string, multiline ...bool) (res [][]*stringStruct) {
+func refindAll(pattern string, text string, multiline ...bool) (res [][]*StringStruct) {
 	if len(multiline) > 0 && multiline[0] {
 		pattern = "(?s)" + pattern
 	}
@@ -24,7 +24,7 @@ func refindAll(pattern string, text string, multiline ...bool) (res [][]*stringS
 	Panicerr(err)
 
 	for _, i := range r.FindAllStringSubmatch(text, -1) {
-		var arr []*stringStruct
+		var arr []*StringStruct
 		for _, j := range i {
 			arr = append(arr, String(j))
 		}

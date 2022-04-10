@@ -19,12 +19,12 @@ type statikFileStruct struct {
 	reader *bufio.Reader
 }
 
-func (m *statikFileStruct) Readlines() chan *stringStruct {
+func (m *statikFileStruct) Readlines() chan *StringStruct {
 	if m.reader == nil {
 		m.reader = bufio.NewReader(m.fd)
 	}
 
-	lines := make(chan *stringStruct)
+	lines := make(chan *StringStruct)
 
 	go func() {
 		for {
@@ -47,7 +47,7 @@ func (m *statikFileStruct) Readlines() chan *stringStruct {
 	return lines
 }
 
-func (m *statikFileStruct) Readline() *stringStruct {
+func (m *statikFileStruct) Readline() *StringStruct {
 	b := make([]byte, 1)
 
 	line := ""
@@ -72,7 +72,7 @@ func (m *statikFileStruct) Close() {
 	m.fd.Close()
 }
 
-func (m *statikFileStruct) Read(num ...int) *stringStruct {
+func (m *statikFileStruct) Read(num ...int) *StringStruct {
 	var bytes []byte
 	var err error
 	if len(num) == 0 {
