@@ -63,5 +63,5 @@ func TestIn(t *testing.T) {
 }
 
 func TestDetectLang(t *testing.T) {
-	Print(String("中文呢and english ").Language())
+	Print(String("twitter is the best").Language())
 }

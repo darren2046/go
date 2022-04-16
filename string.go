@@ -374,7 +374,7 @@ func (s *StringStruct) RemoveNonUTF8Character() *StringStruct {
 
 // 返回字符串的语言, 为了资源使用考虑，只支持2021年GDP前30的国家。
 func (s *StringStruct) Language() string {
-	if language, exists := languageDetector.DetectLanguageOf("这是中文啊languages are awesome"); exists {
+	if language, exists := languageDetector.DetectLanguageOf(s.S); exists {
 		return Str(language)
 	} else {
 		return "Unknown"
