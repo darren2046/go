@@ -53,6 +53,7 @@ require (
 	github.com/mozillazg/go-pinyin v0.19.0
 	github.com/nats-io/nats.go v1.13.1-0.20211122170419-d7c1d78a50fc
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
+	github.com/pemistahl/lingua-go v1.0.5
 	github.com/pkg/sftp v1.13.4
 	github.com/pquerna/otp v1.3.0
 	github.com/prometheus/client_golang v0.9.3
@@ -72,7 +73,6 @@ require (
 	github.com/xtaci/kcp-go v5.4.20+incompatible
 	github.com/xtaci/smux v1.5.16
 	github.com/xuri/excelize/v2 v2.4.1
-	github.com/yanyiwu/gojieba v1.1.2
 	gitlab.com/toby3d/telegraph v1.2.1
 	go.uber.org/ratelimit v0.2.0
 	golang.org/x/crypto v0.0.0-20211215153901-e495a2d5b3d3

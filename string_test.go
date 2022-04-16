@@ -61,3 +61,7 @@ func TestIn(t *testing.T) {
 	Print(String("a").In(String("abc"))) // true
 	Print(String("a").In(String("def"))) // false
 }
+
+func TestDetectLang(t *testing.T) {
+	Print(String("中文呢and english ").Language())
+}

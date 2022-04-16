@@ -10,10 +10,38 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/abadojack/whatlanggo"
 	"github.com/denisbrodbeck/striphtmltags"
+	"github.com/pemistahl/lingua-go"
 	"golang.org/x/exp/utf8string"
 )
+
+var languageDetector lingua.LanguageDetector
+
+func init() {
+	languages := []lingua.Language{
+		lingua.English,
+		lingua.French,
+		lingua.German,
+		lingua.Spanish,
+		lingua.Chinese,
+		lingua.Hindi,
+		lingua.Italian,
+		lingua.Korean,
+		lingua.Russian,
+		lingua.Indonesian,
+		lingua.Arabic,
+		lingua.Turkish,
+		lingua.Polish,
+		lingua.Swedish,
+		lingua.Thai,
+		lingua.Malay,
+		lingua.Vietnamese,
+	}
+
+	languageDetector = lingua.NewLanguageDetectorBuilder().
+		FromLanguages(languages...).
+		Build()
+}
 
 type StringStruct struct {
 	S string
@@ -344,9 +372,13 @@ func (s *StringStruct) RemoveNonUTF8Character() *StringStruct {
 	return s
 }
 
-// 返回字符串的语言
+// 返回字符串的语言, 为了资源使用考虑，只支持2021年GDP前30的国家。
 func (s *StringStruct) Language() string {
-	return whatlanggo.Detect(s.S).Lang.String()
+	if language, exists := languageDetector.DetectLanguageOf("这是中文啊languages are awesome"); exists {
+		return Str(language)
+	} else {
+		return "Unknown"
+	}
 }
 
 func (s *StringStruct) IsAscii() bool {
