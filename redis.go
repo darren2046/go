@@ -16,6 +16,8 @@ type RedisStruct struct {
 
 type RedisConfig struct {
 	NetworkErrorRetryTimes int
+	Database               int
+	Password               string
 }
 
 // 用来过滤报错的信息， 如果包含有如下的某一个， 就判断为是网络错误
@@ -25,12 +27,17 @@ var redisNetworkErrorStrings = []string{
 	"connection refused",
 }
 
-func getRedis(host string, port int, password string, db int, cfg ...RedisConfig) *RedisStruct {
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     host + ":" + Str(port),
-		Password: password,
-		DB:       db,
-	})
+func getRedis(host string, port int, cfg ...RedisConfig) *RedisStruct {
+	rop := &redis.Options{
+		Addr: host + ":" + Str(port),
+	}
+
+	if len(cfg) != 0 {
+		rop.Password = cfg[0].Password
+		rop.DB = cfg[0].Database
+	}
+
+	rdb := redis.NewClient(rop)
 	r := &RedisStruct{ctx: context.Background(), Rdb: rdb}
 	r.Ping()
 
@@ -168,7 +175,7 @@ func (m *RedisLockStruct) Acquire() {
 		if b {
 			return
 		} else {
-			sleep(0.1)
+			sleep(0.2)
 		}
 	}
 }
