@@ -344,7 +344,8 @@ func (s *StringStruct) RemoveNonUTF8Character() *StringStruct {
 	return s
 }
 
-func (s *StringStruct) DetectLanguage() string {
+// 返回字符串的语言
+func (s *StringStruct) Language() string {
 	return whatlanggo.Detect(s.S).Lang.String()
 }
 

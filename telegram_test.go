@@ -40,5 +40,5 @@ func TestTelegram(t *testing.T) {
 
 	// 根据id和accesshash获取历史记录
 	p := tg.NewInputPeer("channel", 1234567890, -987654321)
-	Lg.Trace(len(p.History(100)))
+	Lg.Trace(len(p.History(1)))
 }

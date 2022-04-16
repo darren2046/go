@@ -600,6 +600,32 @@ func (m *TelegramChatStruct) Send(text string) {
 	}
 }
 
+func (m *TelegramChatStruct) botcallbackbutton() {
+	params := mtproto.TL_messages_getBotCallbackAnswer{
+		Data: []uint8{
+			0x73, 0x68, 0x6f, 0x72, 0x74, 0x65, 0x6e, 0x3a, 0x36, 0x32, 0x35, 0x39, 0x63, 0x66, 0x63, 0x33,
+			0x66, 0x36, 0x32, 0x33, 0x39, 0x65, 0x65, 0x34, 0x39, 0x37, 0x35, 0x38, 0x30, 0x65, 0x30, 0x64,
+		},
+		MsgID: 417724,
+		Peer:  getInputPeer(m.Obj),
+		Flags: 0,
+		Game:  true,
+	}
+
+	res := m.tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
+
+	Lg.Debug(res)
+
+	/*
+		Always
+
+		mtproto.TL_rpc_error{
+			ErrorCode:    400,
+			ErrorMessage: "DATA_INVALID",
+		}
+	*/
+}
+
 // --------- get history by username
 
 type TelegramPeerResolved struct {
