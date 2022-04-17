@@ -596,8 +596,10 @@ func (m *TelegramChatStruct) Send(text string) {
 	switch res.(type) {
 	case mtproto.TL_rpc_error:
 		Panicerr("发送消息错误：" + Repr(res).S)
-	default:
+	case mtproto.TL_updates:
 		return
+	default:
+		Panicerr("这是啥情况?:\n" + Repr(res).S)
 	}
 }
 
