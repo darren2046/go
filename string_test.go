@@ -65,3 +65,9 @@ func TestIn(t *testing.T) {
 func TestDetectLang(t *testing.T) {
 	Print(String("twitter is the best").Language())
 }
+
+func TestSimilar(t *testing.T) {
+	s1 := `wSw                                                                                                                            https://t.me/+iHw67EKzDNtlZjk1`
+	s2 := "iNZ                                                                                                                             https://t.me/+iHw67EKzDNtlZjk1"
+	Print(String(s1).Similar(s2))
+}

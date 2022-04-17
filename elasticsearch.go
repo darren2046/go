@@ -30,9 +30,10 @@ func (m *ElasticsearchCollectionStruct) Index(id interface{}, data map[string]in
 }
 
 type ElasticsearchSearchingConfigStruct struct {
-	OrderByKey   string // （可选）根据document里面的这个key排序
-	OrderByOrder string // （可选）可选desc或者asc, 默认asc
-	Highlight    string // （可选）这个字段里面的value，如果有搜索到关键字则插入html标签以高亮。
+	OrderByKey   string // 根据document里面的这个key排序
+	OrderByOrder string // 可选desc或者asc, 默认asc
+	Highlight    string // 这个字段里面的value，如果有搜索到关键字则插入html标签以高亮。
+	Fuzzy        bool   // 是否模糊搜索，如果为false则所有的词都必须要出现才行
 }
 
 type ElasticsearchSearchResultStruct struct {
@@ -59,19 +60,58 @@ type ElasticsearchSearchedResult struct {
 }
 
 func (m *ElasticsearchCollectionStruct) Search(key string, value string, page int, pagesize int, cfg ...ElasticsearchSearchingConfigStruct) *ElasticsearchSearchedResult {
+	value = String(value).
+		Replace("{", "\\{").
+		Replace("}", "\\}").
+		Replace("/", "\\/").
+		S
+
+	if page*pagesize > 10000 {
+		Panicerr("偏移量不能超过10000: page * pagesize = " + Str(page*pagesize))
+	}
+
 	startfrom := (page - 1) * pagesize
 
-	query := map[string]interface{}{
-		"query": map[string]interface{}{
-			"match_phrase": map[string]interface{}{
-				key: map[string]interface{}{
-					"query": value,
-					"slop":  100,
+	var query map[string]interface{}
+
+	if len(cfg) != 0 {
+		if !cfg[0].Fuzzy {
+			query = map[string]interface{}{
+				"query": map[string]interface{}{
+					"match_phrase": map[string]interface{}{
+						key: map[string]interface{}{
+							"query": value,
+							"slop":  100,
+						},
+					},
+				},
+				"from": startfrom,
+				"size": pagesize,
+			}
+		} else {
+			query = map[string]interface{}{
+				"query": map[string]interface{}{
+					"query_string": map[string]interface{}{
+						"query": value,
+					},
+				},
+				"from": startfrom,
+				"size": pagesize,
+			}
+		}
+	} else {
+		query = map[string]interface{}{
+			"query": map[string]interface{}{
+				"match_phrase": map[string]interface{}{
+					key: map[string]interface{}{
+						"query": value,
+						"slop":  100,
+					},
 				},
 			},
-		},
-		"from": startfrom,
-		"size": pagesize,
+			"from": startfrom,
+			"size": pagesize,
+		}
 	}
 
 	if len(cfg) != 0 {
@@ -112,6 +152,8 @@ func (m *ElasticsearchCollectionStruct) Search(key string, value string, page in
 	res := ElasticsearchSearchedResult{}
 	err := json.Unmarshal([]byte(r.Content.S), &res)
 	Panicerr(err)
+
+	// Lg.Debug(res)
 
 	return &res
 }
