@@ -476,7 +476,7 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, of
 		musers = messages.Users
 		mchats = messages.Chats
 	default:
-		panic("未知的消息类型")
+		panic("未知的消息类型:" + Repr(res).S)
 	}
 
 	tguserdatas := make(map[int64]*tgUserData)
@@ -484,7 +484,7 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, of
 	for _, userTL := range musers {
 		tgUser, ok := userTL.(mtproto.TL_user)
 		if !ok {
-			panic("未知的tgUserTL")
+			panic("未知的tgUserTL:" + Repr(userTL).S)
 		}
 		tguserdatas[tgUser.ID] = &tgUserData{
 			ID:          tgUser.ID,
@@ -512,7 +512,7 @@ func historyMessage(tg *tgclient.TGClient, inputPeer mtproto.TL, limit int32, of
 		case mtproto.TL_channelForbidden:
 			newChat = &tgChatData{ID: c.ID, Title: c.Title, IsChannel: !c.Megagroup}
 		default:
-			panic("未知的chat类型")
+			panic("未知的chat类型:" + Repr(chatTL).S)
 		}
 
 		tgchatdatas[newChat.ID] = newChat
@@ -577,7 +577,7 @@ func getInputPeer(Obj mtproto.TL) (inputPeer mtproto.TL) {
 	case mtproto.TL_channel:
 		inputPeer = mtproto.TL_inputPeerChannel{ChannelID: peer.ID, AccessHash: peer.AccessHash}
 	default:
-		panic("未知的mtproto.TL类型")
+		panic("未知的mtproto.TL类型:" + Repr(Obj).S)
 	}
 	return
 }
