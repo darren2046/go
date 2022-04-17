@@ -593,10 +593,11 @@ func (m *TelegramChatStruct) Send(text string) {
 
 	res := m.tg.SendSyncRetry(params, time.Second, 0, 30*time.Second)
 
-	// fmt.Println(Repr(res).S)
-
-	if !Repr(res).Has(text) {
-		Panicerr("可能发送消息失败？")
+	switch res.(type) {
+	case mtproto.TL_rpc_error:
+		Panicerr("发送消息错误：" + Repr(res).S)
+	default:
+		return
 	}
 }
 
