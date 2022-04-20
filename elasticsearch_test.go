@@ -6,11 +6,22 @@ import (
 
 func TestElasticsearch(t *testing.T) {
 	es := getElasticsearch("http://192.168.168.18:9200")
-	co := es.Collection("telegram_history_content")
-	// co.Index(1, map[string]interface{}{
-	// 	"id":    1,
-	// 	"title": "Chinese copywriting for Chinese audience",
-	// })
-	co.Search("text", `fhs 下浮\{出U\}  @peii_usdt`, 1000, 10, ElasticsearchSearchingConfigStruct{Fuzzy: true})
+
+	idx := "test"
+	es.Delete(idx)
+	// Time.Sleep(10)
+
+	co := es.Collection(idx)
+
+	co.Index(1, map[string]interface{}{
+		"id":   1,
+		"text": `test string`,
+	})
+
+	co.Refresh()
+	// Time.Sleep(10)
+
+	eres := co.Search("text", `test string`, 1, 1, ElasticsearchSearchingConfigStruct{Fuzzy: true})
+	Lg.Debug(eres)
 	// co.Delete(1)
 }

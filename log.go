@@ -245,3 +245,7 @@ func (m *logStruct) show(t string, level string, msg string, position string) {
 		m.lock.Release()
 	}
 }
+
+func (m *logStruct) LogToScreen(TurnOn bool) {
+	m.displayOnTerminal = TurnOn
+}

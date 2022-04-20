@@ -12,6 +12,11 @@ func getElasticsearch(baseurl string) *ElasticsearchStruct {
 	return &ElasticsearchStruct{baseurl: baseurl}
 }
 
+func (m *ElasticsearchStruct) Delete(IndexName string) {
+	r := httpDelete(String(m.baseurl).Strip("/").S + "/" + IndexName)
+	Lg.Debug(r)
+}
+
 type ElasticsearchCollectionStruct struct {
 	baseurl string
 }
@@ -21,12 +26,23 @@ func (m *ElasticsearchStruct) Collection(name string) *ElasticsearchCollectionSt
 }
 
 // id是唯一的字符串
-func (m *ElasticsearchCollectionStruct) Index(id interface{}, data map[string]interface{}) {
-	r := httpPutJSON(m.baseurl+"/_doc/"+Str(id), data, HttpConfig{TimeoutRetryTimes: -1})
+func (m *ElasticsearchCollectionStruct) Index(id interface{}, data map[string]interface{}, refresh ...bool) {
+	var url string
+	if len(refresh) != 0 && refresh[0] {
+		url = m.baseurl + "/_doc/" + Str(id) + "?refresh"
+	} else {
+		url = m.baseurl + "/_doc/" + Str(id)
+	}
+	r := httpPutJSON(url, data, HttpConfig{TimeoutRetryTimes: -1})
 	if r.StatusCode != 201 && r.StatusCode != 200 {
 		Lg.Debug(r)
 		Panicerr("插入到Elasticsearch出错: 状态码不是201或者200")
 	}
+}
+
+func (m *ElasticsearchCollectionStruct) Refresh() {
+	r := httpPost(m.baseurl+"/_refresh", HttpConfig{TimeoutRetryTimes: -1})
+	Lg.Debug(r)
 }
 
 type ElasticsearchSearchingConfigStruct struct {
@@ -60,12 +76,6 @@ type ElasticsearchSearchedResult struct {
 }
 
 func (m *ElasticsearchCollectionStruct) Search(key string, value string, page int, pagesize int, cfg ...ElasticsearchSearchingConfigStruct) *ElasticsearchSearchedResult {
-	value = String(value).
-		Replace("{", "\\{").
-		Replace("}", "\\}").
-		Replace("/", "\\/").
-		S
-
 	if page*pagesize > 10000 {
 		Panicerr("偏移量不能超过10000: page * pagesize = " + Str(page*pagesize))
 	}
@@ -91,8 +101,8 @@ func (m *ElasticsearchCollectionStruct) Search(key string, value string, page in
 		} else {
 			query = map[string]interface{}{
 				"query": map[string]interface{}{
-					"query_string": map[string]interface{}{
-						"query": value,
+					"match": map[string]interface{}{
+						key: value,
 					},
 				},
 				"from": startfrom,
@@ -140,7 +150,7 @@ func (m *ElasticsearchCollectionStruct) Search(key string, value string, page in
 		}
 	}
 
-	// Lg.Trace(Json.Dumps(query))
+	Lg.Trace(Json.Dumps(query))
 	// Lg.Trace(m.baseurl)
 
 	r := Http.PostJSON(m.baseurl+"/_search", query)
