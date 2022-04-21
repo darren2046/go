@@ -10,9 +10,16 @@ This is a toolkit that provide a lot of function or object that make programing 
             * func (m \*ElasticsearchCollection) Index(id interface{}, data map[string]interface{}) 
             * func (m \*ElasticsearchCollection) Search(key string, value string, page int, pagesize int, cfg ...ElasticsearchSearchingConfig) \*ElasticsearchSearchedResult
             * func (m \*ElasticsearchCollection) Delete(id interface{})
+            * func (m \*ElasticsearchCollection) Refresh()
+        * func(m \*Elasticsearch) Delete(collection string)
     * func Lock() \*lock
-        * func (*lock) Acquire() 
-        * func (*lock) Release() 
+        * func (\*lock) Acquire() 
+        * func (\*lock) Release() 
+    * func RWLock() *RWLock 
+        func (m \*RWLock) RAcquire() 
+        func (m \*RWLock) RRelease() 
+        func (m \*RWLock) WAcquire() 
+        func (m \*RWLock) WRelease() 
     * func AliDNS(string, string) \*alidns
         * func (m \*alidns) Total() (TotalCount int64) 
         * func (m \*alidns) List(PageSize int64, PageNumber int64) (res []alidnsDomainInfo) 

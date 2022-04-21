@@ -67,15 +67,7 @@ func TestDetectLang(t *testing.T) {
 }
 
 func TestSimilar(t *testing.T) {
-	s1 := `aio新手体验，
-	A8哈希II超级活动，✈ @A8A8A88888
-		   代理高扶持II最新 II牛牛II即将上线
-			  尽情期待II我们A8客户II永久享受II我们的II高级待遇
-	   详情II咨询上面客服II  ✈ @A8hash8868`
-	s2 := `oaj新手体验，
-	A8哈希II超级活动，✈ @A8A8A88888
-		   代理高扶持II最新 II牛牛II即将上线
-			  尽情期待II我们A8客户II永久享受II我们的II高级待遇
-	   详情II咨询上面客服II  ✈ @A8hash8868`
+	s1 := `675`
+	s2 := `987yu8y7uhu`
 	Print(String(s1).Similar(s2))
 }

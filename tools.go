@@ -2,6 +2,7 @@ package golanglibs
 
 type toolsStruct struct {
 	Lock                   func() *LockStruct
+	RWLock                 func() *RWLockStruct
 	AliDNS                 func(accessKeyID string, accessKeySecret string) *alidnsStruct
 	Chart                  *chartStruct
 	CloudflareDNS          func(key string, email string) *cloudflareStruct
@@ -45,6 +46,7 @@ var Tools toolsStruct
 
 func init() {
 	Tools = toolsStruct{
+		RWLock:                 getRWLock,
 		Lock:                   getLock,
 		AliDNS:                 getAlidns,
 		Chart:                  &chartstruct,

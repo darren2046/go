@@ -57,7 +57,7 @@ func strftime(format string, timestamp interface{}) string {
 }
 
 func sleep(t interface{}) {
-	time.Sleep(Time.TimeDuration(t))
+	time.Sleep(getTimeDuration(t))
 }
 
 func plural(count int, singular string) (result string) {

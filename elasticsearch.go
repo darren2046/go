@@ -14,7 +14,11 @@ func getElasticsearch(baseurl string) *ElasticsearchStruct {
 
 func (m *ElasticsearchStruct) Delete(IndexName string) {
 	r := httpDelete(String(m.baseurl).Strip("/").S + "/" + IndexName)
-	Lg.Debug(r)
+	// Lg.Debug(r)
+	if r.StatusCode != 200 {
+		Lg.Debug(r)
+		Panicerr("删除索引\"" + IndexName + "\"失败")
+	}
 }
 
 type ElasticsearchCollectionStruct struct {
