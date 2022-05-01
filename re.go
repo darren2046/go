@@ -31,14 +31,15 @@ func init() {
 	go func() {
 		for {
 			sleep(120)
+			reRWLock.WAcquire()
+			// for 循环的时候这个map不能修改否则就是
 			for k, v := range reCompiledPatternMap {
 				// 120秒清一次正则的缓存
 				if v.time < timeNowInTimestamp()-120 {
-					reRWLock.WAcquire()
 					delete(reCompiledPatternMap, k)
-					reRWLock.WRelease()
 				}
 			}
+			reRWLock.WRelease()
 		}
 	}()
 }

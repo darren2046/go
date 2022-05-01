@@ -154,7 +154,9 @@ This is a toolkit that provide a lot of function or object that make programing 
         * func (m \*Redis) GetLock(key string, timeoutsec int) \*RedisLock
             * func (m \*RedisLock) Acquire()
             * func (m \*RedisLock) Release()
-    * func [Selenium](#toolsselenium)(string) \*selenium
+    * func [SeleniumLocal](#toolsselenium)() \*selenium 
+    * func SeleniumRemote (serverURL string) \*selenium
+        * func (c \*selenium) PageSource() string
         * func (c \*selenium) Close()
         * func (c \*selenium) Cookie() (co string)
         * func (c \*selenium) Url() string

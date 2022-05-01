@@ -12,23 +12,8 @@ type seleniumStruct struct {
 	driver  selenium.WebDriver
 }
 
-// browser can be chrome or firefox
-// chrome ==> chromedriver
-// firefox ==> geckodriver
-func getSelenium(url string, browser ...string) *seleniumStruct {
-
-	var browserv string = "chrome"
-
-	drivermap := map[string]string{
-		"chrome":  "chromedriver",
-		"firefox": "geckodriver",
-	}
-
-	if len(browser) != 0 {
-		browserv = browser[0]
-	}
-	// firefoxDriverPath = "/usr/local/bin/geckodriver"
-	driverPath, err := exec.LookPath(drivermap[browserv])
+func getSeleniumLocal() *seleniumStruct {
+	driverPath, err := exec.LookPath("chromedriver")
 	Panicerr(err)
 	servicePort := Int(randint(30000, 65535))
 
@@ -37,22 +22,12 @@ func getSelenium(url string, browser ...string) *seleniumStruct {
 	}
 	// selenium.SetDebug(true)
 	var service *selenium.Service
-	if browserv == "firefox" {
-		service, err = selenium.NewGeckoDriverService(driverPath, servicePort, opts...)
-		Panicerr(err)
-	} else if browserv == "chrome" {
-		service, err = selenium.NewChromeDriverService(driverPath, servicePort, opts...)
-		Panicerr(err)
-	}
-
-	Lg.Trace(browserv)
-
-	// Connect to the WebDriver instance running locally.
-	caps := selenium.Capabilities{"browserName": "firefox"}
-	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", servicePort))
+	service, err = selenium.NewChromeDriverService(driverPath, servicePort, opts...)
 	Panicerr(err)
 
-	err = wd.Get(url)
+	// Connect to the WebDriver instance running locally.
+	caps := selenium.Capabilities{"browserName": "chrome"}
+	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", servicePort))
 	Panicerr(err)
 
 	return &seleniumStruct{
@@ -61,8 +36,37 @@ func getSelenium(url string, browser ...string) *seleniumStruct {
 	}
 }
 
+func getSeleniumRemote(serverURL string) *seleniumStruct {
+	// Connect to the WebDriver instance running locally.
+	caps := selenium.Capabilities{"browserName": "chrome"}
+
+	if String(serverURL).EndsWith("/") {
+		serverURL = String(serverURL).Strip("/").S
+	}
+
+	if !String(serverURL).EndsWith("/wd/hub") {
+		serverURL = serverURL + "/wd/hub"
+	}
+
+	wd, err := selenium.NewRemote(caps, serverURL)
+	Panicerr(err)
+
+	return &seleniumStruct{
+		service: nil,
+		driver:  wd,
+	}
+}
+
+func (c *seleniumStruct) Get(url string) *seleniumStruct {
+	err := c.driver.Get(url)
+	Panicerr(err)
+	return c
+}
+
 func (c *seleniumStruct) Close() {
-	c.service.Stop()
+	if c.service != nil {
+		c.service.Stop()
+	}
 	c.driver.Close()
 }
 
@@ -131,6 +135,12 @@ func (c *seleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStru
 			return &seleniumElementStruct{element: we}
 		}
 	}
+}
+
+func (c *seleniumStruct) PageSource() string {
+	source, err := c.driver.PageSource()
+	Panicerr(err)
+	return source
 }
 
 func (c *seleniumElementStruct) Clear() *seleniumElementStruct {
