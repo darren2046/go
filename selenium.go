@@ -123,6 +123,9 @@ type seleniumElementStruct struct {
 func (c *seleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStruct {
 	if len(nowait) != 0 && nowait[0] {
 		we, err := c.driver.FindElement(selenium.ByXPATH, xpath)
+		if String("no such element").In(Str(err)) {
+			return nil
+		}
 		Panicerr(err)
 		return &seleniumElementStruct{element: we}
 	} else {
