@@ -86,6 +86,12 @@ func (c *seleniumStruct) Url() string {
 	return u
 }
 
+func (c *seleniumStruct) Title() string {
+	u, err := c.driver.Title()
+	Panicerr(err)
+	return u
+}
+
 func (c *seleniumStruct) ScrollRight(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy("+Str(pixel)+",0);", []interface{}{})
 	Panicerr(err)
