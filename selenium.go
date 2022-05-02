@@ -161,6 +161,12 @@ func (c *seleniumElementStruct) Text() *StringStruct {
 	return String(s)
 }
 
+func (c *seleniumElementStruct) Attribute(name string) *StringStruct {
+	s, err := c.element.GetAttribute(name)
+	Panicerr(err)
+	return String(s)
+}
+
 func (c *seleniumElementStruct) Input(s string) *seleniumElementStruct {
 	err := c.element.SendKeys(s)
 	Panicerr(err)
