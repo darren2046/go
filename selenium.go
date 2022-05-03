@@ -7,12 +7,12 @@ import (
 	"github.com/tebeka/selenium"
 )
 
-type seleniumStruct struct {
+type SeleniumStruct struct {
 	service *selenium.Service
 	driver  selenium.WebDriver
 }
 
-func getSeleniumLocal() *seleniumStruct {
+func getSeleniumLocal() *SeleniumStruct {
 	driverPath, err := exec.LookPath("chromedriver")
 	Panicerr(err)
 	servicePort := Int(randint(30000, 65535))
@@ -30,13 +30,13 @@ func getSeleniumLocal() *seleniumStruct {
 	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", servicePort))
 	Panicerr(err)
 
-	return &seleniumStruct{
+	return &SeleniumStruct{
 		service: service,
 		driver:  wd,
 	}
 }
 
-func getSeleniumRemote(serverURL string) *seleniumStruct {
+func getSeleniumRemote(serverURL string) *SeleniumStruct {
 	// Connect to the WebDriver instance running locally.
 	caps := selenium.Capabilities{"browserName": "chrome"}
 
@@ -51,26 +51,26 @@ func getSeleniumRemote(serverURL string) *seleniumStruct {
 	wd, err := selenium.NewRemote(caps, serverURL)
 	Panicerr(err)
 
-	return &seleniumStruct{
+	return &SeleniumStruct{
 		service: nil,
 		driver:  wd,
 	}
 }
 
-func (c *seleniumStruct) Get(url string) *seleniumStruct {
+func (c *SeleniumStruct) Get(url string) *SeleniumStruct {
 	err := c.driver.Get(url)
 	Panicerr(err)
 	return c
 }
 
-func (c *seleniumStruct) Close() {
+func (c *SeleniumStruct) Close() {
 	if c.service != nil {
 		c.service.Stop()
 	}
 	c.driver.Close()
 }
 
-func (c *seleniumStruct) Cookie() (co string) {
+func (c *SeleniumStruct) Cookie() (co string) {
 	cookies, err := c.driver.GetCookies()
 	Panicerr(err)
 	var coo []string
@@ -80,39 +80,39 @@ func (c *seleniumStruct) Cookie() (co string) {
 	return String(";").Join(coo).Get()
 }
 
-func (c *seleniumStruct) Url() string {
+func (c *SeleniumStruct) Url() string {
 	u, err := c.driver.CurrentURL()
 	Panicerr(err)
 	return u
 }
 
-func (c *seleniumStruct) Title() string {
+func (c *SeleniumStruct) Title() string {
 	u, err := c.driver.Title()
 	Panicerr(err)
 	return u
 }
 
-func (c *seleniumStruct) ScrollRight(pixel int) {
+func (c *SeleniumStruct) ScrollRight(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy("+Str(pixel)+",0);", []interface{}{})
 	Panicerr(err)
 }
 
-func (c *seleniumStruct) ScrollLeft(pixel int) {
+func (c *SeleniumStruct) ScrollLeft(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy("+Str(pixel*-1)+",0);", []interface{}{})
 	Panicerr(err)
 }
 
-func (c *seleniumStruct) ScrollUp(pixel int) {
+func (c *SeleniumStruct) ScrollUp(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy(0, "+Str(pixel*-1)+");", []interface{}{})
 	Panicerr(err)
 }
 
-func (c *seleniumStruct) ScrollDown(pixel int) {
+func (c *SeleniumStruct) ScrollDown(pixel int) {
 	_, err := c.driver.ExecuteScript("window.scrollBy(0, "+Str(pixel)+");", []interface{}{})
 	Panicerr(err)
 }
 
-func (c *seleniumStruct) ResizeWindow(width int, height int) *seleniumStruct {
+func (c *SeleniumStruct) ResizeWindow(width int, height int) *SeleniumStruct {
 	cur, err := c.driver.CurrentWindowHandle()
 	Panicerr(err)
 
@@ -126,7 +126,7 @@ type seleniumElementStruct struct {
 	element selenium.WebElement
 }
 
-func (c *seleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStruct {
+func (c *SeleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStruct {
 	if len(nowait) != 0 && nowait[0] {
 		we, err := c.driver.FindElement(selenium.ByXPATH, xpath)
 		if String("no such element").In(Str(err)) {
@@ -146,7 +146,7 @@ func (c *seleniumStruct) Find(xpath string, nowait ...bool) *seleniumElementStru
 	}
 }
 
-func (c *seleniumStruct) PageSource() string {
+func (c *SeleniumStruct) PageSource() string {
 	source, err := c.driver.PageSource()
 	Panicerr(err)
 	return source
