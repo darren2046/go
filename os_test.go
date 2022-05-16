@@ -7,5 +7,6 @@ func TestBasename(t *testing.T) {
 }
 
 func TestChmod(t *testing.T) {
-	Os.Chmod("os.go", 644)
+	Open("testfile", "w").Write("test").Close()
+	Os.Chmod("testfile", 755)
 }

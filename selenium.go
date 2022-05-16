@@ -2,7 +2,9 @@ package golanglibs
 
 import (
 	"fmt"
+	"net/http"
 	"os/exec"
+	"time"
 
 	"github.com/tebeka/selenium"
 )
@@ -25,10 +27,16 @@ func getSeleniumLocal() *SeleniumStruct {
 	service, err = selenium.NewChromeDriverService(driverPath, servicePort, opts...)
 	Panicerr(err)
 
+	selenium.HTTPClient = &http.Client{
+		Timeout: time.Duration(60 * time.Second),
+	}
+
 	// Connect to the WebDriver instance running locally.
 	caps := selenium.Capabilities{"browserName": "chrome"}
 	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", servicePort))
 	Panicerr(err)
+
+	// wd.SetPageLoadTimeout(time.Duration(60 * time.Second))
 
 	return &SeleniumStruct{
 		service: service,
@@ -59,6 +67,12 @@ func getSeleniumRemote(serverURL string) *SeleniumStruct {
 
 func (c *SeleniumStruct) Get(url string) *SeleniumStruct {
 	err := c.driver.Get(url)
+	Panicerr(err)
+	return c
+}
+
+func (c *SeleniumStruct) Refresh() *SeleniumStruct {
+	err := c.driver.Refresh()
 	Panicerr(err)
 	return c
 }

@@ -5,6 +5,13 @@ This is a toolkit that provide a lot of function or object that make programing 
 # Index
 
 * Tools
+    * func LevelDB(datadir string) (l \*LevelDB) 
+        * func (m \*LevelDB) Close() 
+        * func (m \*LevelDB) Destroy() 
+        * func (m \*LevelDB) Exists(key string) bool 
+        * func (m \*LevelDB) Get(key string) string 
+        * func (m \*LevelDB) Set(key string, value string) 
+        * func (m \*LevelDB) Delete(key string) 
     * func Elasticsearch(baseurl string) \*Elasticsearch
         * func (m \*Elasticsearch) Collection(name string) \*ElasticsearchCollection
             * func (m \*ElasticsearchCollection) Index(id interface{}, data map[string]interface{}) 

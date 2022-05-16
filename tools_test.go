@@ -24,3 +24,11 @@ func TestNats(t *testing.T) {
 // 	Print(jieba.Cut("我来到北京清华大学"))
 // 	Print(jieba.Cut("Running tool: /usr/local/bin/go test -timeout 30s -run ^TestJieba$ github.com/ChaunceyShannon/golanglibs"))
 // }
+
+func TestLevelDB(t *testing.T) {
+	ldb := Tools.LevelDB("leveldb")
+	ldb.Set("key", "value")
+	Print(ldb.Get("key"))
+	ldb.Delete("key")
+	ldb.Destroy()
+}
