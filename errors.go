@@ -14,6 +14,10 @@ func fmtDebugStack(msg string, stack string) string {
 	//lg.debug("msg:", msg)
 	//lg.debug("stack:", stack)
 
+	if stack == "" {
+		return msg
+	}
+
 	blackFileList := []string{
 		"lib.go",
 		"stack.go",

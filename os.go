@@ -113,6 +113,10 @@ func goroutineID() int64 {
 		stk = strings.TrimPrefix(string(buf[:n]), "goroutine ")
 	)
 
+	if n == 0 {
+		panic(fmt.Errorf("can not get goroutine id"))
+	}
+
 	idField := strings.Fields(stk)[0]
 	id, err := strconv.Atoi(idField)
 	if err != nil {
