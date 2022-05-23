@@ -176,6 +176,7 @@ func (m *logStruct) Debug(args ...interface{}) {
 
 func (m *logStruct) show(t string, level string, msg string, position string) {
 	if Array(m.level).Has(level) {
+		// Print(position)
 		var strMsg string
 		if m.json {
 			strMsg = jsonDumps(map[string]string{
@@ -186,19 +187,28 @@ func (m *logStruct) show(t string, level string, msg string, position string) {
 		} else {
 			msg = String(msg).Replace("\n", "\n                      ").Get()
 			if m.color {
+				var goroutineid string
+				Try(func() {
+					goroutineid = fmt.Sprintf(" %3v", Os.GoroutineID())
+				})
+				if position != "??:1" {
+					position = " (" + position + ")"
+				} else {
+					position = ""
+				}
 				if level == "ERRO" {
-					strMsg = color.RedString(t + fmt.Sprintf(" %3v", Os.GoroutineID()) + " [" + level + "] (" + position + ") " + msg)
+					strMsg = color.RedString(t + goroutineid + " [" + level + "]" + position + " " + msg)
 				} else if level == "WARN" {
-					strMsg = color.YellowString(t + fmt.Sprintf(" %3v", Os.GoroutineID()) + " [" + level + "] (" + position + ") " + msg)
+					strMsg = color.YellowString(t + goroutineid + " [" + level + "]" + position + " " + msg)
 				} else if level == "INFO" {
-					strMsg = color.HiBlueString(t + fmt.Sprintf(" %3v", Os.GoroutineID()) + " [" + level + "] (" + position + ") " + msg)
+					strMsg = color.HiBlueString(t + goroutineid + " [" + level + "]" + position + " " + msg)
 				} else if level == "TRAC" {
-					strMsg = color.MagentaString(t + fmt.Sprintf(" %3v", Os.GoroutineID()) + " [" + level + "] (" + position + ") " + msg)
+					strMsg = color.MagentaString(t + goroutineid + " [" + level + "]" + position + " " + msg)
 				} else if level == "DEBU" {
-					strMsg = color.HiCyanString(t + fmt.Sprintf(" %3v", Os.GoroutineID()) + " [" + level + "] (" + position + ") " + msg)
+					strMsg = color.HiCyanString(t + goroutineid + " [" + level + "]" + position + " " + msg)
 				}
 			} else {
-				strMsg = t + "[" + level + "] (" + position + ") " + msg
+				strMsg = t + " [" + level + "]" + position + " " + msg
 			}
 		}
 
