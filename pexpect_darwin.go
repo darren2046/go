@@ -39,7 +39,7 @@ func (m *PexpectStruct) LogToStdout(enable ...bool) {
 	m.logToStdout = e
 }
 
-func (m *PexpectStruct) GetLog() *stringStruct {
+func (m *PexpectStruct) GetLog() *StringStruct {
 	return String(m.bufall)
 }
 
@@ -79,7 +79,7 @@ func pexpect(command string) *PexpectStruct {
 		isAlive: true,
 	}
 
-	if !CmdExists(parts[0]) {
+	if !cmdExists(parts[0]) {
 		Panicerr("Command not exists")
 	}
 
