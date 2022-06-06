@@ -10,19 +10,19 @@ import (
 )
 
 func (m *PexpectStruct) Sendline(msg string) {
-	_, err := m.ptmx.Write([]byte(msg + "\n"))
+	_, err := m.Ptmx.Write([]byte(msg + "\n"))
 	Panicerr(err)
 }
 
 func (m *PexpectStruct) Close() {
 	m.isAlive = false
-	m.ptmx.Close()
-	m.cmd.Process.Signal(os.Kill)
-	m.cmd.Wait()
+	m.Ptmx.Close()
+	m.Cmd.Process.Signal(os.Kill)
+	m.Cmd.Wait()
 }
 
 func (m *PexpectStruct) ExitCode() int {
-	return m.cmd.ProcessState.ExitCode()
+	return m.Cmd.ProcessState.ExitCode()
 }
 
 func (m *PexpectStruct) IsAlive() bool {
@@ -48,7 +48,7 @@ func (m *PexpectStruct) ClearLog() {
 }
 
 func (m *PexpectStruct) Wait() {
-	m.cmd.Wait()
+	m.Cmd.Wait()
 }
 
 func pexpect(command string) *PexpectStruct {
@@ -79,16 +79,16 @@ func pexpect(command string) *PexpectStruct {
 		isAlive: true,
 	}
 
-	if !cmdExists(parts[0]) {
+	if !CmdExists(parts[0]) {
 		Panicerr("Command not exists")
 	}
 
-	cmd := exec.Command(parts[0], parts[1:]...)
+	Cmd := exec.Command(parts[0], parts[1:]...)
 
-	m.cmd = cmd
+	m.Cmd = Cmd
 
 	var err error
-	m.ptmx, err = pty.StartWithSize(cmd, &pty.Winsize{
+	m.Ptmx, err = pty.StartWithSize(Cmd, &pty.Winsize{
 		Rows: 60,
 		Cols: 1024,
 	})
@@ -97,7 +97,7 @@ func pexpect(command string) *PexpectStruct {
 	go func() {
 		buf := make([]byte, 4096)
 		for {
-			n, err := m.ptmx.Read(buf)
+			n, err := m.Ptmx.Read(buf)
 			if err != nil {
 				break
 			}

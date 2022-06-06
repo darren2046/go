@@ -17,11 +17,20 @@ func TestSelenium(t *testing.T) {
 	// sn.Find(`//*[@id="password"]`).Clear().Input("SqKhvbRbA4jYBPCN")
 	// Lg.Trace("登录")
 	// sn.Find(`/html/body/div[1]/div[1]/div[1]/div[2]/form/center/div/input`).Click()
+	// sn := Tools.SeleniumRemote("http://192.168.168.22:4444").Get("https://projectkorra.com/forum/forums/general-discussion.15").ResizeWindow(1300, 1000)
+	// defer sn.Close()
+	// el := sn.Find("/html/body/div[1]/div[4]/div/div[2]/div/div[2]/div/div[2]/div[2]/div/div[1]/div[1]/div[2]/div[1]/a")
+	// Lg.Trace(el.Attribute("href"))
 
-	sn := Tools.SeleniumRemote("http://192.168.168.22:4444").Get("https://projectkorra.com/forum/forums/general-discussion.15").ResizeWindow(1300, 1000)
+	sn := Tools.SeleniumLocal()
 	defer sn.Close()
 
-	el := sn.Find("/html/body/div[1]/div[4]/div/div[2]/div/div[2]/div/div[2]/div[2]/div/div[1]/div[1]/div[2]/div[1]/a")
+	go sn.Get("http://www.gshadow.com/Aban/index.php?name=Forums&file=viewtopic&t=5110").ResizeWindow(1300, 1000)
 
-	Lg.Trace(el.Attribute("href"))
+	Time.Sleep(15)
+
+	Print(1)
+	sn.Get("http://google.com")
+
+	Print(sn.Title())
 }
