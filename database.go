@@ -162,16 +162,16 @@ func (m *DatabaseStruct) Execute(sql string) int64 {
 	return res
 }
 
-type databaseOrmStruct struct {
+type DatabaseOrmStruct struct {
 	orm    gorose.IOrm
 	db     *DatabaseStruct
 	driver string
 	table  string
 }
 
-func (m *DatabaseStruct) Table(tbname string) *databaseOrmStruct {
+func (m *DatabaseStruct) Table(tbname string) *DatabaseOrmStruct {
 	orm := m.engin.NewOrm()
-	return &databaseOrmStruct{
+	return &DatabaseOrmStruct{
 		orm:    orm.Table("`" + tbname + "`"),
 		driver: m.driver,
 		table:  tbname,
@@ -187,7 +187,7 @@ func (m *DatabaseStruct) RenameTable(oldTableName string, newTableNname string) 
 	}
 }
 
-func (m *databaseOrmStruct) Fields(items ...string) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) Fields(items ...string) *DatabaseOrmStruct {
 	var i []string
 	for _, v := range items {
 		i = append(i, "`"+v+"`")
@@ -196,52 +196,52 @@ func (m *databaseOrmStruct) Fields(items ...string) *databaseOrmStruct {
 	return m
 }
 
-func (m *databaseOrmStruct) Where(key string, operator string, value interface{}) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) Where(key string, operator string, value interface{}) *DatabaseOrmStruct {
 	m.orm.Where(key, operator, value)
 	return m
 }
 
-func (m *databaseOrmStruct) WhereIn(key string, value []interface{}) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) WhereIn(key string, value []interface{}) *DatabaseOrmStruct {
 	m.orm.WhereIn(key, value)
 	return m
 }
 
-func (m *databaseOrmStruct) WhereNotIn(key string, value []interface{}) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) WhereNotIn(key string, value []interface{}) *DatabaseOrmStruct {
 	m.orm.WhereNotIn(key, value)
 	return m
 }
 
-func (m *databaseOrmStruct) WhereNull(columnName string) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) WhereNull(columnName string) *DatabaseOrmStruct {
 	m.orm.WhereNull(columnName)
 	return m
 }
 
-func (m *databaseOrmStruct) WhereNotNull(columnName string) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) WhereNotNull(columnName string) *DatabaseOrmStruct {
 	m.orm.WhereNotNull(columnName)
 	return m
 }
 
-func (m *databaseOrmStruct) OrWhere(key string, operator string, value interface{}) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) OrWhere(key string, operator string, value interface{}) *DatabaseOrmStruct {
 	m.orm.OrWhere(key, operator, value)
 	return m
 }
 
-func (m *databaseOrmStruct) OrWhereIn(key string, value []interface{}) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) OrWhereIn(key string, value []interface{}) *DatabaseOrmStruct {
 	m.orm.OrWhereIn(key, value)
 	return m
 }
 
-func (m *databaseOrmStruct) Orderby(item ...string) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) Orderby(item ...string) *DatabaseOrmStruct {
 	m.orm.OrderBy(String(" ").Join(item).Get())
 	return m
 }
 
-func (m *databaseOrmStruct) Limit(number int) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) Limit(number int) *DatabaseOrmStruct {
 	m.orm.Limit(number)
 	return m
 }
 
-func (m *databaseOrmStruct) Get() (res []gorose.Data) {
+func (m *DatabaseOrmStruct) Get() (res []gorose.Data) {
 	var err error
 	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		res, err = m.orm.Get()
@@ -263,12 +263,12 @@ func (m *databaseOrmStruct) Get() (res []gorose.Data) {
 	return
 }
 
-func (m *databaseOrmStruct) Paginate(pagesize int, page int) []gorose.Data {
+func (m *DatabaseOrmStruct) Paginate(pagesize int, page int) []gorose.Data {
 	offset := pagesize * (page - 1)
 	return m.Limit(pagesize).Offset(offset).Get()
 }
 
-func (m *databaseOrmStruct) First() (res gorose.Data) {
+func (m *DatabaseOrmStruct) First() (res gorose.Data) {
 	var err error
 	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		res, err = m.orm.First()
@@ -286,11 +286,11 @@ func (m *databaseOrmStruct) First() (res gorose.Data) {
 	return
 }
 
-func (m *databaseOrmStruct) Find(id int) gorose.Data {
+func (m *DatabaseOrmStruct) Find(id int) gorose.Data {
 	return m.Where("id", "=", id).First()
 }
 
-func (m *databaseOrmStruct) Count() (res int64) {
+func (m *DatabaseOrmStruct) Count() (res int64) {
 	var err error
 	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		res, err = m.orm.Count()
@@ -302,7 +302,7 @@ func (m *databaseOrmStruct) Count() (res int64) {
 	return
 }
 
-func (m *databaseOrmStruct) Exists() (res bool) {
+func (m *DatabaseOrmStruct) Exists() (res bool) {
 	if len(m.Fields("id").First()) == 0 {
 		res = false
 	} else {
@@ -312,29 +312,29 @@ func (m *databaseOrmStruct) Exists() (res bool) {
 	return
 }
 
-func (m *databaseOrmStruct) Chunk(limit int, callback func([]gorose.Data) error) {
+func (m *DatabaseOrmStruct) Chunk(limit int, callback func([]gorose.Data) error) {
 	err := m.orm.Chunk(limit, callback)
 	Panicerr(err)
 }
 
-func (m *databaseOrmStruct) BuildSQL() (string, []interface{}) {
+func (m *DatabaseOrmStruct) BuildSQL() (string, []interface{}) {
 	sql, param, err := m.orm.BuildSql()
 	Panicerr(err)
 
 	return sql, param
 }
 
-func (m *databaseOrmStruct) Data(data interface{}) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) Data(data interface{}) *DatabaseOrmStruct {
 	m.orm.Data(data)
 	return m
 }
 
-func (m *databaseOrmStruct) Offset(offset int) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) Offset(offset int) *DatabaseOrmStruct {
 	m.orm.Offset(offset)
 	return m
 }
 
-func (m *databaseOrmStruct) InsertGetID() (num int64) {
+func (m *DatabaseOrmStruct) InsertGetID() (num int64) {
 	var err error
 	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		num, err = m.orm.InsertGetId()
@@ -346,7 +346,7 @@ func (m *databaseOrmStruct) InsertGetID() (num int64) {
 	return
 }
 
-func (m *databaseOrmStruct) Insert() (num int64) {
+func (m *DatabaseOrmStruct) Insert() (num int64) {
 	var err error
 	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		num, err = m.orm.Insert()
@@ -358,7 +358,7 @@ func (m *databaseOrmStruct) Insert() (num int64) {
 	return
 }
 
-func (m *databaseOrmStruct) Update(data ...interface{}) (num int64) {
+func (m *DatabaseOrmStruct) Update(data ...interface{}) (num int64) {
 	var err error
 	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		num, err = m.orm.Update(data...)
@@ -370,7 +370,7 @@ func (m *databaseOrmStruct) Update(data ...interface{}) (num int64) {
 	return
 }
 
-func (m *databaseOrmStruct) Delete() (num int64) {
+func (m *DatabaseOrmStruct) Delete() (num int64) {
 	var err error
 	doDatabaseThingsAndHandleNetworkError(m.db.networkErrorRetryTimes, func() error {
 		num, err = m.orm.Delete()
@@ -397,7 +397,7 @@ func (m *DatabaseStruct) Tables() (res []string) {
 	return
 }
 
-func (m *DatabaseStruct) CreateTable(tableName string, engineName ...string) *databaseOrmStruct {
+func (m *DatabaseStruct) CreateTable(tableName string, engineName ...string) *DatabaseOrmStruct {
 	if !Array(m.Tables()).Has(tableName) {
 		if len(engineName) != 0 && m.driver != "mysql" {
 			Panicerr("SQLite不支持设定存储引擎")
@@ -415,11 +415,11 @@ func (m *DatabaseStruct) CreateTable(tableName string, engineName ...string) *da
 	return m.Table(tableName)
 }
 
-func (m *databaseOrmStruct) DropTable() int64 {
+func (m *DatabaseOrmStruct) DropTable() int64 {
 	return m.db.Execute("DROP TABLE `" + m.table + "`")
 }
 
-func (m *databaseOrmStruct) TruncateTable() (status int64) {
+func (m *DatabaseOrmStruct) TruncateTable() (status int64) {
 	if m.driver == "mysql" {
 		status = m.db.Execute("TRUNCATE TABLE `" + m.table + "`")
 	} else {
@@ -428,7 +428,7 @@ func (m *databaseOrmStruct) TruncateTable() (status int64) {
 	return
 }
 
-func (m *databaseOrmStruct) AddColumn(columnName string, columnType string, defaultValue ...string) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) AddColumn(columnName string, columnType string, defaultValue ...string) *DatabaseOrmStruct {
 	// lg.debug(columnName, m.columns())
 	if !Map(m.Columns()).Has(columnName) {
 		if !Array([]string{"int", "float", "string", "text", "datetime", "blob"}).Has(columnType) {
@@ -472,7 +472,7 @@ func (m *databaseOrmStruct) AddColumn(columnName string, columnType string, defa
 	return m
 }
 
-func (m *databaseOrmStruct) DropColumn(columnName string) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) DropColumn(columnName string) *DatabaseOrmStruct {
 	if Map(m.Columns()).Has(columnName) {
 		if m.driver == "mysql" {
 			m.db.Execute("ALTER TABLE `" + m.table + "`  DROP " + columnName)
@@ -483,7 +483,7 @@ func (m *databaseOrmStruct) DropColumn(columnName string) *databaseOrmStruct {
 	return m
 }
 
-func (m *databaseOrmStruct) AddIndex(columnName ...string) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) AddIndex(columnName ...string) *DatabaseOrmStruct {
 	if !m.IndexExists(columnName...) {
 		columns := "`" + String("`,`").Join(columnName).Get() + "`"
 		indexName := "idx_" + String("_").Join(columnName).Get()
@@ -496,7 +496,7 @@ func (m *databaseOrmStruct) AddIndex(columnName ...string) *databaseOrmStruct {
 	return m
 }
 
-func (m *databaseOrmStruct) IndexExists(columnName ...string) (exists bool) {
+func (m *DatabaseOrmStruct) IndexExists(columnName ...string) (exists bool) {
 	indexName := "idx_" + String("_").Join(columnName).Get()
 	if m.driver == "mysql" {
 		for _, v := range m.db.Query("SHOW INDEX FROM `" + m.table + "`") {
@@ -512,7 +512,7 @@ func (m *databaseOrmStruct) IndexExists(columnName ...string) (exists bool) {
 	return
 }
 
-func (m *databaseOrmStruct) DropIndex(columnName ...string) *databaseOrmStruct {
+func (m *DatabaseOrmStruct) DropIndex(columnName ...string) *DatabaseOrmStruct {
 	indexName := "idx_" + String("_").Join(columnName).Get()
 	if m.driver == "mysql" {
 		m.db.Execute("ALTER TABLE `" + m.table + "` DROP INDEX " + indexName)
@@ -522,7 +522,7 @@ func (m *databaseOrmStruct) DropIndex(columnName ...string) *databaseOrmStruct {
 	return m
 }
 
-func (m *databaseOrmStruct) Columns() (res map[string]string) {
+func (m *DatabaseOrmStruct) Columns() (res map[string]string) {
 	res = make(map[string]string)
 
 	if m.driver == "mysql" {
