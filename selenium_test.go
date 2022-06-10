@@ -22,15 +22,17 @@ func TestSelenium(t *testing.T) {
 	// el := sn.Find("/html/body/div[1]/div[4]/div/div[2]/div/div[2]/div/div[2]/div[2]/div/div[1]/div[1]/div[2]/div[1]/a")
 	// Lg.Trace(el.Attribute("href"))
 
-	sn := Tools.SeleniumLocal()
-	defer sn.Close()
+	// sn := Tools.SeleniumLocal()
+	// defer sn.Close()
+	// go sn.Get("http://www.gshadow.com/Aban/index.php?name=Forums&file=viewtopic&t=5110").ResizeWindow(1300, 1000)
+	// Time.Sleep(15)
+	// Print(1)
+	// sn.Get("http://google.com")
+	// Print(sn.Title())
 
-	go sn.Get("http://www.gshadow.com/Aban/index.php?name=Forums&file=viewtopic&t=5110").ResizeWindow(1300, 1000)
-
-	Time.Sleep(15)
-
-	Print(1)
-	sn.Get("http://google.com")
-
-	Print(sn.Title())
+	sn := Tools.SeleniumRemote("http://localhost:22222/wd/hub")
+	// Print(sn.GetSession())
+	sn.SetSession("fa8ad2c197992ea57fa0eea2d0185405")
+	// sn.Get("https://google.com")
+	sn.Find("/html/body/div[1]/div[3]/form/div[1]/div[1]/div[1]/div/div[2]/input").Input("abc")
 }

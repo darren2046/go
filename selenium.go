@@ -63,6 +63,14 @@ func getSeleniumRemote(serverURL string) *SeleniumStruct {
 	}
 }
 
+func (c *SeleniumStruct) GetSession() string {
+	return c.driver.SessionID()
+}
+
+func (c *SeleniumStruct) SetSession(SessionID string) {
+	c.driver.SwitchSession(SessionID)
+}
+
 func (c *SeleniumStruct) Get(url string) *SeleniumStruct {
 	err := c.driver.Get(url)
 	Panicerr(err)
