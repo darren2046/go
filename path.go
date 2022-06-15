@@ -18,10 +18,10 @@ type pathStruct struct {
 	IsSymlink func(path string) bool
 }
 
-var pathstruct pathStruct
+var pathstruct *pathStruct
 
 func init() {
-	pathstruct = pathStruct{
+	pathstruct = &pathStruct{
 		Exists:    pathExists,
 		IsFile:    pathIsFile,
 		IsDir:     pathIsDir,

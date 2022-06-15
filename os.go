@@ -59,7 +59,7 @@ func init() {
 		Copy:            copyFile,
 		Rename:          rename,
 		Move:            move,
-		Path:            &pathstruct,
+		Path:            pathstruct,
 		System:          system,
 		SystemWithShell: systemWithShell,
 		Hostname:        gethostname,
