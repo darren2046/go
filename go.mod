@@ -1,4 +1,4 @@
-module github.com/ChaunceyShannon/golanglibs
+module github.com/darren2046/go
 
 go 1.17
 
