@@ -1,6 +1,6 @@
 module github.com/darren2046/go
 
-go 1.17
+go 1.18
 
 require (
 	github.com/3bl3gamer/tgclient v0.138.0
