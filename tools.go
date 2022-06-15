@@ -42,6 +42,7 @@ type toolsStruct struct {
 	Telegram               func(AppID int32, AppHash string, config ...TelegramConfig) *TelegramStruct
 	Elasticsearch          func(baseurl string) *ElasticsearchStruct
 	LevelDB                func(datadir string) (l *LevelDBStruct)
+	CSV                    *csvStruct
 }
 
 var Tools toolsStruct
@@ -89,5 +90,6 @@ func init() {
 		Jieba:                  getJieba,
 		Elasticsearch:          getElasticsearch,
 		LevelDB:                getLevelDB,
+		CSV:                    csvstruct,
 	}
 }
