@@ -1,7 +1,7 @@
 package main
 
 import (
-	. "github.com/ChaunceyShannon/golanglibs"
+	. "github.com/darren2046/go"
 )
 
 var currentlimiting []*PexpectStruct

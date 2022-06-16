@@ -60,6 +60,7 @@ func (m *csvReaderStruct) Read() (res map[string]string) {
 		Panicerr("數據的個數跟表頭的個數不同")
 	}
 
+	res = make(map[string]string)
 	for i := range row {
 		res[m.headers[i]] = row[i]
 	}
@@ -103,14 +104,26 @@ type csvWriterStruct struct {
 // mode可以是a或者w，跟打開文件一樣
 // 如果是w的話會需要優先設置header才能wirte數據
 func getCSVWriter(fpath string, mode string) *csvWriterStruct {
-	fd := Open(fpath, mode).fd
+	headers := []string{}
+	if mode == "a" {
+		fd := Open(fpath).fd
 
+		reader := csv.NewReader(fd)
+		var err error
+		headers, err = reader.Read()
+		if err != nil {
+			Panicerr("Error while reading headers:" + Str(err))
+		}
+	}
+
+	fd := Open(fpath, mode).fd
 	writer := csv.NewWriter(fd)
 	return &csvWriterStruct{
 		writer:  writer,
 		fd:      fd,
 		isclose: false,
-		headers: []string{},
+		headers: headers,
+		mode:    mode,
 	}
 }
 
@@ -129,6 +142,7 @@ func (m *csvWriterStruct) SetHeaders(headers []string) {
 
 	if m.mode == "w" && (len(m.headers) == 0 || len(m.headers) != len(headers)) {
 		m.writer.Write(headers)
+		m.writer.Flush()
 	}
 	m.headers = headers
 }
@@ -138,7 +152,7 @@ func (m *csvWriterStruct) Write(record map[string]string) {
 		Panicerr("文件已關閉")
 	}
 
-	if m.mode == "w" && len(m.headers) == 0 {
+	if len(m.headers) == 0 {
 		Panicerr("需要先設置表頭，請使用SetHeader()方法設置")
 	}
 	row := []string{}
@@ -150,10 +164,12 @@ func (m *csvWriterStruct) Write(record map[string]string) {
 		}
 	}
 	err := m.writer.Write(row)
+	m.writer.Flush()
 	Panicerr(err)
 }
 
 func (m *csvWriterStruct) Close() {
 	m.isclose = true
+	m.writer.Flush()
 	m.fd.Close()
 }

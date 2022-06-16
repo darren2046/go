@@ -5,6 +5,16 @@ This is a toolkit that provide a lot of function or object that make programing 
 # Index
 
 * Tools
+    * CSV
+        * func Reader(fpath string) *csvReader 
+            * func (m *csvReader) Read() (res map[string]string) 
+            * func (m *csvReader) Readrows() chan map[string]string 
+            * func (m *csvReader) Close() 
+        * func Writer(fpath string, mode string) *csvWriter 
+            * func (m *csvWriter) Flush() 
+            * func (m *csvWriter) SetHeaders(headers []string) 
+            * func (m *csvWriter) Write(record map[string]string) 
+            * func (m *csvWriter) Close() 
     * func LevelDB(datadir string) (l \*LevelDB) 
         * func (m \*LevelDB) Close() 
         * func (m \*LevelDB) Destroy() 
