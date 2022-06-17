@@ -18,22 +18,6 @@ type pathStruct struct {
 	IsSymlink func(path string) bool
 }
 
-var pathstruct *pathStruct
-
-func init() {
-	pathstruct = &pathStruct{
-		Exists:    pathExists,
-		IsFile:    pathIsFile,
-		IsDir:     pathIsDir,
-		Basename:  pathBasename,
-		Basedir:   pathBasedir,
-		Dirname:   pathDirname,
-		Join:      pathJoin,
-		Abspath:   abspath,
-		IsSymlink: pathIsSymlink,
-	}
-}
-
 func pathIsSymlink(path string) bool {
 	fi, err := os.Lstat(path)
 	Panicerr(err)
