@@ -70,6 +70,9 @@ func (m *logStruct) SetLogFile(path string, maxLogFileCount int, logFileSizeInMB
 		mkdir(m.logDir)
 	}
 
+	if !String(Os.Path.Basename(path)).Has(".") {
+		path = path + ".log"
+	}
 	f := String(Os.Path.Basename(path)).Split(".")
 	m.logFileName = String(".").Join(f[:len(f)-1]).Get()
 	m.logFileSuffix = f[len(f)-1].S
@@ -137,7 +140,7 @@ func (m *logStruct) Info(args ...interface{}) {
 	msg := String(" ").Join(msgarr).Get()
 
 	_, file, no, _ := runtime.Caller(1)
-	Print("dddd", Os.Path.Basename, file, no)
+	// Print("dddd", Os.Path.Basename, file, no)
 	position := Os.Path.Basename(file) + ":" + Str(no)
 
 	m.show(t, level, msg, position)
