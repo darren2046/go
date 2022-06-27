@@ -168,6 +168,16 @@ func (m *csvWriterStruct) Write(record map[string]string) {
 	Panicerr(err)
 }
 
+func (m *csvWriterStruct) WriteRow(row []string) {
+	if m.isclose {
+		Panicerr("文件已关闭")
+	}
+
+	err := m.writer.Write(row)
+	m.writer.Flush()
+	Panicerr(err)
+}
+
 func (m *csvWriterStruct) Close() {
 	m.isclose = true
 	m.writer.Flush()
