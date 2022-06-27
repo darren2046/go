@@ -5,7 +5,6 @@ go 1.18
 require (
 	github.com/3bl3gamer/tgclient v0.138.0
 	github.com/Go-ini/ini v1.66.2
-	github.com/abadojack/whatlanggo v1.0.1
 	github.com/alecthomas/chroma v0.9.4
 	github.com/alecthomas/repr v0.0.0-20210801044451-80ca428c5142
 	github.com/alexeyco/simpletable v1.0.0
