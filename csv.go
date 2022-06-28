@@ -147,7 +147,7 @@ func (m *csvWriterStruct) SetHeaders(headers []string) {
 	m.headers = headers
 }
 
-func (m *csvWriterStruct) Write(record map[string]string) {
+func (m *csvWriterStruct) Write(record map[string]interface{}) {
 	if m.isclose {
 		Panicerr("文件已關閉")
 	}
@@ -158,7 +158,7 @@ func (m *csvWriterStruct) Write(record map[string]string) {
 	row := []string{}
 	for _, field := range m.headers {
 		if Map(record).Has(field) {
-			row = append(row, record[field])
+			row = append(row, Str(record[field]))
 		} else {
 			row = append(row, "")
 		}
