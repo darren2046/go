@@ -37,12 +37,11 @@ func (m *QueueStruct) Destroy() {
 }
 
 type NamedQueueStruct struct {
-	head  int64
-	tail  int64
-	db    *leveldb.DB
-	glock *LockStruct
-	plock *LockStruct
-	name  string
+	head int64
+	tail int64
+	db   *leveldb.DB
+	lock *LockStruct
+	name string
 }
 
 // Will not clean the data already exists
@@ -71,20 +70,22 @@ func (m *QueueStruct) New(queueName ...string) *NamedQueueStruct {
 	}
 
 	q.db = m.db
-	q.glock = Tools.Lock()
-	q.plock = Tools.Lock()
+	q.lock = Tools.Lock()
 	q.name = n
 
 	return q
 }
 
 func (m *NamedQueueStruct) Size() int64 {
+	m.lock.Acquire()
+	defer m.lock.Release()
+
 	return m.tail - m.head
 }
 
 func (m *NamedQueueStruct) Get(nonblock ...bool) string {
-	m.glock.Acquire()
-	defer m.glock.Release()
+	m.lock.Acquire()
+	defer m.lock.Release()
 
 	if m.head == m.tail {
 		if len(nonblock) != 0 && nonblock[0] {
@@ -115,8 +116,8 @@ func (m *NamedQueueStruct) Put(value string) {
 		Panicerr("value can not be empty")
 	}
 
-	m.plock.Acquire()
-	defer m.plock.Release()
+	m.lock.Acquire()
+	defer m.lock.Release()
 
 	err := m.db.Put([]byte(Str(m.tail)), []byte(value), nil)
 	Panicerr(err)
