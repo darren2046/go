@@ -16,10 +16,10 @@ var reCompiledPatternMap map[string]*reCompiledPatternStruct
 
 var Re reStruct
 
-var reRWLock *RWLockStruct
+var reCacheLock *LockStruct
 
 func init() {
-	reRWLock = getRWLock()
+	reCacheLock = getLock()
 
 	reCompiledPatternMap = make(map[string]*reCompiledPatternStruct)
 
@@ -31,7 +31,7 @@ func init() {
 	go func() {
 		for {
 			sleep(120)
-			reRWLock.WAcquire()
+			reCacheLock.Acquire()
 			// for 循环的时候这个map不能修改否则就是
 			for k, v := range reCompiledPatternMap {
 				// 120秒清一次正则的缓存
@@ -39,7 +39,7 @@ func init() {
 					delete(reCompiledPatternMap, k)
 				}
 			}
-			reRWLock.WRelease()
+			reCacheLock.Release()
 		}
 	}()
 }
@@ -49,8 +49,8 @@ func refindAll(pattern string, text string, multiline ...bool) (res [][]*StringS
 		pattern = "(?s)" + pattern
 	}
 
-	reRWLock.RAcquire()
-	defer reRWLock.RRelease()
+	reCacheLock.Acquire()
+	defer reCacheLock.Release()
 
 	if _, ok := reCompiledPatternMap[pattern]; !ok {
 		r, err := regexp.Compile(pattern)
