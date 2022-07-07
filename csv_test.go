@@ -8,7 +8,7 @@ import (
 func TestCSV(t *testing.T) {
 	w := Tools.CSV.Writer("test.csv", "w")
 	w.SetHeaders([]string{"first", "second", "third"})
-	w.Write(map[string]string{
+	w.Write(map[string]interface{}{
 		"first":  "aaaaa",
 		"second": "bbbbb",
 		"third":  "ccccc",
@@ -19,7 +19,7 @@ func TestCSV(t *testing.T) {
 	Os.System("cat test.csv")
 
 	w = Tools.CSV.Writer("test.csv", "a")
-	w.Write(map[string]string{
+	w.Write(map[string]interface{}{
 		"first":  "11111",
 		"second": "22222",
 		"third":  "33333",
