@@ -31,6 +31,8 @@ type alidnsRecord struct {
 	Type string
 }
 
+// `getAlidns` returns a pointer to an `alidnsStruct` which contains the `client` and the `accessKeyID`
+// and `accessKeySecret` used to create the `client`
 func getAlidns(accessKeyID string, accessKeySecret string) *alidnsStruct {
 	config := &openapi.Config{
 		AccessKeyId:     &accessKeyID,
