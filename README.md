@@ -115,11 +115,11 @@ This is a toolkit that provide a lot of function or object that make programing 
     * func [PrometheusClient](#toolsprometheusclient)(string) \*prometheusClient
         * func (m \*prometheusClient) Query(query string, time ...float64) (res []prometheusResult) 
     * func [PrometheusMetricServer](#toolsprometheusmetricserver)(listenAddr string, path ...string) \*prometheusMetricServer
-        * func (m \*prometheusMetricServer) NewCounter(name string, help string) *PrometheusCounter 
+        * func (m \*prometheusMetricServer) NewCounter(name string, help string) \*PrometheusCounter 
             * func (m \*PrometheusCounter) Add(num float64) 
         * func (m \*prometheusMetricServer) NewCounterWithLabel(name string, label []string, help string) \*PrometheusCounterVec 
             * func (m \*PrometheusCounterVec) Add(num float64, label map[string]string) 
-        * func (m \*prometheusMetricServer) NewGauge(name string, help string) prometheus.Gauge 
+        * func (m \*prometheusMetricServer) NewGauge(name string, help string) \*PrometheusGauge
             * func (m \*PrometheusGauge) Set(num float64) 
         * func (m \*prometheusMetricServer) NewGaugeWithLabel(name string, label []string, help string) \*PrometheusGaugeVec 
             * func (m \*PrometheusGaugeVec) Set(num float64, label map[string]string) 

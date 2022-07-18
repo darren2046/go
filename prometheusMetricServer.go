@@ -68,13 +68,13 @@ func (m *PrometheusGaugeStruct) Set(num float64) {
 	m.p.Set(num)
 }
 
-func (m *prometheusMetricServerStruct) NewGauge(name string, help string) prometheus.Gauge {
+func (m *prometheusMetricServerStruct) NewGauge(name string, help string) *PrometheusGaugeStruct {
 	pgauge := prometheus.NewGauge(prometheus.GaugeOpts{
 		Name: name,
 		Help: help,
 	})
 	prometheus.MustRegister(pgauge)
-	return pgauge
+	return &PrometheusGaugeStruct{p: pgauge}
 }
 
 type PrometheusGaugeVecStruct struct {
