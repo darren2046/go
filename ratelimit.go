@@ -2,16 +2,16 @@ package golanglibs
 
 import "go.uber.org/ratelimit"
 
-type rateLimitStruct struct {
+type RateLimitStruct struct {
 	rl ratelimit.Limiter
 }
 
-func getRateLimit(rate int) *rateLimitStruct {
-	return &rateLimitStruct{
+func getRateLimit(rate int) *RateLimitStruct {
+	return &RateLimitStruct{
 		rl: ratelimit.New(rate),
 	}
 }
 
-func (m *rateLimitStruct) Take() {
+func (m *RateLimitStruct) Take() {
 	m.rl.Take()
 }

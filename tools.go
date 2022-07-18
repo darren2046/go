@@ -21,7 +21,7 @@ type toolsStruct struct {
 	MySQL                  func(host string, port int, user string, password string, db string, cfg ...DatabaseConfig) *DatabaseStruct
 	SQLite                 func(dbpath string) *DatabaseStruct
 	RabbitMQ               func(rabbitMQURL string, queueName string) *rabbitConnectionStruct
-	RateLimit              func(rate int) *rateLimitStruct
+	RateLimit              func(rate int) *RateLimitStruct
 	Redis                  func(host string, port int, cfg ...RedisConfig) *RedisStruct
 	SeleniumLocal          func() *SeleniumStruct
 	SeleniumRemote         func(serverURL string) *SeleniumStruct
