@@ -10,8 +10,12 @@ type RateLimitStruct struct {
 // It creates a new rate limiter with a rate of `rate` and returns a pointer to a `RateLimitStruct`
 // If the rate is 0 then no limit
 func getRateLimit(rate int) *RateLimitStruct {
+	var rl ratelimit.Limiter
+	if rate != 0 {
+		rl = ratelimit.New(rate)
+	}
 	return &RateLimitStruct{
-		rl:    ratelimit.New(rate),
+		rl:    rl,
 		limit: rate,
 	}
 }
