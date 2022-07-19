@@ -6,19 +6,16 @@ type QueueStruct struct {
 	closed bool
 }
 
-func getQueue(dbpath string) (q *QueueStruct) {
+func getQueue(db *DatabaseStruct) (q *QueueStruct) {
 	q = &QueueStruct{}
 
-	q.db = Tools.SQLite(dbpath)
-	q.dbpath = dbpath
+	q.db = db
 
 	return
 }
 
 func (m *QueueStruct) Close() {
 	m.db.Close()
-	unlink(m.dbpath)
-
 	m.closed = true
 }
 

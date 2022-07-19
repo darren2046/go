@@ -5,7 +5,7 @@ import (
 )
 
 func TestQueue(t *testing.T) {
-	qb := getQueue("data")
+	qb := getQueue(Tools.SQLite("data.db"))
 
 	qn := qb.New()
 
@@ -25,4 +25,5 @@ func TestQueue(t *testing.T) {
 	}
 
 	qb.Close()
+	Os.Unlink("data.db")
 }
