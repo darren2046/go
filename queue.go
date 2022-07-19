@@ -1,51 +1,29 @@
 package golanglibs
 
-import (
-	"github.com/syndtr/goleveldb/leveldb"
-)
-
 type QueueStruct struct {
-	db      *leveldb.DB
-	datadir string
-	closed  bool
-	nqrv    map[string]*NamedQueueRuntimeVarsStruct
+	db     *DatabaseStruct
+	dbpath string
+	closed bool
 }
 
-type NamedQueueRuntimeVarsStruct struct {
-	head int64
-	tail int64
-	lock *LockStruct
-}
-
-func getQueue(datadir string) (q *QueueStruct) {
+func getQueue(dbpath string) (q *QueueStruct) {
 	q = &QueueStruct{}
 
-	db, err := leveldb.OpenFile(datadir, nil)
-	Panicerr(err)
-
-	q.db = db
-	q.datadir = datadir
-	q.nqrv = make(map[string]*NamedQueueRuntimeVarsStruct)
+	q.db = Tools.SQLite(dbpath)
+	q.dbpath = dbpath
 
 	return
 }
 
 func (m *QueueStruct) Close() {
-	err := m.db.Close()
-	Panicerr(err)
+	m.db.Close()
+	unlink(m.dbpath)
 
 	m.closed = true
 }
 
-func (m *QueueStruct) Destroy() {
-	if !m.closed {
-		m.Close()
-	}
-	Os.Unlink(m.datadir)
-}
-
 type NamedQueueStruct struct {
-	db   *leveldb.DB
+	db   *DatabaseStruct
 	name string
 	tq   *QueueStruct // Top Queue
 }
@@ -54,32 +32,13 @@ type NamedQueueStruct struct {
 func (m *QueueStruct) New(queueName ...string) *NamedQueueStruct {
 	q := &NamedQueueStruct{}
 
-	n := ""
+	n := "__empty__name__queue__"
 	if len(queueName) != 0 {
 		n = queueName[0]
 	}
 
-	if !Map(m.nqrv).Has(n) {
-		m.nqrv[n] = &NamedQueueRuntimeVarsStruct{}
-	}
-
-	status, err := m.db.Has([]byte(n+"_head"), nil)
-	Panicerr(err)
-	if status {
-		head, err := m.db.Get([]byte(n+"_head"), nil)
-		Panicerr(err)
-		m.nqrv[n].head = Int64(Str(head))
-	}
-
-	status, err = m.db.Has([]byte(n+"_tail"), nil)
-	Panicerr(err)
-	if status {
-		tail, err := m.db.Get([]byte(n+"_tail"), nil)
-		Panicerr(err)
-		m.nqrv[n].tail = Int64(Str(tail))
-	}
-
-	m.nqrv[n].lock = Tools.Lock()
+	m.db.CreateTable(n).
+		AddColumn("data", "text")
 
 	q.db = m.db
 	q.name = n
@@ -89,38 +48,26 @@ func (m *QueueStruct) New(queueName ...string) *NamedQueueStruct {
 }
 
 func (m *NamedQueueStruct) Size() int64 {
-	m.tq.nqrv[m.name].lock.Acquire()
-	defer m.tq.nqrv[m.name].lock.Release()
-
-	return m.tq.nqrv[m.name].tail - m.tq.nqrv[m.name].head
+	return m.db.Table(m.name).Count()
 }
 
+// 线程不安全
 func (m *NamedQueueStruct) Get(nonblock ...bool) string {
-	m.tq.nqrv[m.name].lock.Acquire()
-	defer m.tq.nqrv[m.name].lock.Release()
-
-	if m.tq.nqrv[m.name].head == m.tq.nqrv[m.name].tail {
+	r := m.db.Table(m.name).First()
+	if len(r) == 0 {
 		if len(nonblock) != 0 && nonblock[0] {
 			return ""
 		} else {
-			for m.tq.nqrv[m.name].head == m.tq.nqrv[m.name].tail {
+			r = m.db.Table(m.name).First()
+			for len(r) == 0 {
 				Time.Sleep(0.1)
 			}
 		}
 	}
 
-	value, err := m.db.Get([]byte(m.name+"_"+Str(m.tq.nqrv[m.name].head)), nil)
-	Panicerr(err)
+	m.db.Table(m.name).Where("id", "=", Int(r["id"])).Delete()
 
-	err = m.db.Delete([]byte(m.name+"_"+Str(m.tq.nqrv[m.name].head)), nil)
-	Panicerr(err)
-
-	m.tq.nqrv[m.name].head += 1
-
-	err = m.db.Put([]byte(m.name+"_head"), []byte(Str(m.tq.nqrv[m.name].head)), nil)
-	Panicerr(err)
-
-	return Str(value)
+	return Base64.Decode(Str(r["data"]))
 }
 
 func (m *NamedQueueStruct) Put(value string) {
@@ -128,14 +75,8 @@ func (m *NamedQueueStruct) Put(value string) {
 		Panicerr("value can not be empty")
 	}
 
-	m.tq.nqrv[m.name].lock.Acquire()
-	defer m.tq.nqrv[m.name].lock.Release()
-
-	err := m.db.Put([]byte(m.name+"_"+Str(m.tq.nqrv[m.name].tail)), []byte(value), nil)
-	Panicerr(err)
-
-	m.tq.nqrv[m.name].tail += 1
-
-	err = m.db.Put([]byte(m.name+"_tail"), []byte(Str(m.tq.nqrv[m.name].tail)), nil)
-	Panicerr(err)
+	m.db.Table(m.name).
+		Data(map[string]interface{}{
+			"data": Base64.Encode(value),
+		}).Insert()
 }

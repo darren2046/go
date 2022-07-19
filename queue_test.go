@@ -16,23 +16,13 @@ func TestQueue(t *testing.T) {
 	if qn.Size() != 1 {
 		t.Error("Size not correct")
 	}
-	qb.Close()
 
-	qq := getQueue("data")
-	qm := qq.New()
-	if qm.Size() != 1 {
-		t.Error("Size not correct")
-	}
-	if qm.Get() != "value1" {
+	if qn.Get() != "value1" {
 		t.Error("value not correct")
 	}
-	if qm.Size() != 0 {
+	if qn.Size() != 0 {
 		t.Error("Size not correct")
 	}
 
-	qq.Destroy()
-
-	if Os.Path.Exists("data") {
-		t.Error("Faild")
-	}
+	qb.Close()
 }
