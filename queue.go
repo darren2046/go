@@ -2,7 +2,6 @@ package golanglibs
 
 type QueueStruct struct {
 	db     *DatabaseStruct
-	dbpath string
 	closed bool
 }
 
@@ -29,9 +28,9 @@ type NamedQueueStruct struct {
 func (m *QueueStruct) New(queueName ...string) *NamedQueueStruct {
 	q := &NamedQueueStruct{}
 
-	n := "__empty__name__queue__"
+	n := "__queue__empty__name__"
 	if len(queueName) != 0 {
-		n = queueName[0]
+		n = "__queue__name__" + queueName[0]
 	}
 
 	m.db.CreateTable(n).
