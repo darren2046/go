@@ -1,8 +1,7 @@
 package golanglibs
 
 type QueueStruct struct {
-	db     *DatabaseStruct
-	closed bool
+	db *DatabaseStruct
 }
 
 func getQueue(db *DatabaseStruct) (q *QueueStruct) {
@@ -11,11 +10,6 @@ func getQueue(db *DatabaseStruct) (q *QueueStruct) {
 	q.db = db
 
 	return
-}
-
-func (m *QueueStruct) Close() {
-	m.db.Close()
-	m.closed = true
 }
 
 type NamedQueueStruct struct {
