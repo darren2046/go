@@ -27,8 +27,10 @@ func (m *QueueStruct) New(queueName ...string) *NamedQueueStruct {
 		n = "__queue__name__" + queueName[0]
 	}
 
-	m.db.CreateTable(n).
-		AddColumn("data", "text")
+	if !Array(m.db.Tables()).Has(n) {
+		m.db.CreateTable(n).
+			AddColumn("data", "text")
+	}
 
 	q.db = m.db
 	q.name = n
