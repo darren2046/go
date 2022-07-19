@@ -109,10 +109,10 @@ func (m *NamedQueueStruct) Get(nonblock ...bool) string {
 		}
 	}
 
-	value, err := m.db.Get([]byte(Str(m.tq.nqrv[m.name].head)), nil)
+	value, err := m.db.Get([]byte(m.name+"_"+Str(m.tq.nqrv[m.name].head)), nil)
 	Panicerr(err)
 
-	err = m.db.Delete([]byte(Str(m.tq.nqrv[m.name].head)), nil)
+	err = m.db.Delete([]byte(m.name+"_"+Str(m.tq.nqrv[m.name].head)), nil)
 	Panicerr(err)
 
 	m.tq.nqrv[m.name].head += 1
@@ -131,7 +131,7 @@ func (m *NamedQueueStruct) Put(value string) {
 	m.tq.nqrv[m.name].lock.Acquire()
 	defer m.tq.nqrv[m.name].lock.Release()
 
-	err := m.db.Put([]byte(Str(m.tq.nqrv[m.name].tail)), []byte(value), nil)
+	err := m.db.Put([]byte(m.name+"_"+Str(m.tq.nqrv[m.name].tail)), []byte(value), nil)
 	Panicerr(err)
 
 	m.tq.nqrv[m.name].tail += 1
