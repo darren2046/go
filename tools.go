@@ -37,7 +37,7 @@ type toolsStruct struct {
 	Xlsx                   func(path string) *xlsxStruct
 	XPath                  func(htmlString string) *xpathStruct
 	Sysinfo                *sysinfoStruct
-	Queue                  func(datadir string) (q *QueueStruct)
+	Queue                  func(db *DatabaseStruct) (q *QueueStruct)
 	Jieba                  func() *JiebaStruct
 	Telegram               func(AppID int32, AppHash string, config ...TelegramConfig) *TelegramStruct
 	Elasticsearch          func(baseurl string) *ElasticsearchStruct
