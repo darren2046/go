@@ -24,6 +24,5 @@ func TestQueue(t *testing.T) {
 		t.Error("Size not correct")
 	}
 
-	qb.Close()
 	Os.Unlink("data.db")
 }

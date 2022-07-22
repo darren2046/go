@@ -179,6 +179,11 @@ This is a toolkit that provide a lot of function or object that make programing 
             * func (m \*RedisLock) Release()
     * func [SeleniumLocal](#toolsselenium)() \*selenium 
     * func SeleniumRemote (serverURL string) \*selenium
+        * func (c \*Selenium) GetSession() string 
+        * func (c \*Selenium) SetSession(SessionID string) 
+        * func (c \*Selenium) Get(url string) \*Selenium 
+        * func (c \*Selenium) Refresh() \*Selenium 
+        * func (c \*Selenium) Title() string 
         * func (c \*selenium) PageSource() string
         * func (c \*selenium) Close()
         * func (c \*selenium) Cookie() (co string)
@@ -195,6 +200,7 @@ This is a toolkit that provide a lot of function or object that make programing 
             * func (c \*seleniumElement) Input(s string) \*seleniumElement
             * func (c \*seleniumElement) Submit() \*seleniumElement
             * func (c \*seleniumElement) PressEnter() \*seleniumElement
+            * func (c \*seleniumElement) Attribute(name string) \*String 
     * func [SSH](#toolsssh)(string, string, string, int) \*ssh
         * func (m \*ssh) Close()
         * func (m \*ssh) Exec(cmd string) (output string, status int)
@@ -1376,7 +1382,7 @@ func main() {
 * 参数读取优先级, 首先命令行指定, 其次环境变量, 然后读配置文件, 如果都没有, 就使用内置的默认值
 
 ```go
-type arg struct {
+type arg  {
 	InCluster      bool
 	ConfigFile     string
 	Namespace      string

@@ -12,49 +12,48 @@ type SeleniumStruct struct {
 	driver  selenium.WebDriver
 }
 
-func getSeleniumLocal() *SeleniumStruct {
-	driverPath, err := exec.LookPath("chromedriver")
-	Panicerr(err)
-	servicePort := Int(randint(30000, 65535))
+func getSelenium(serverURL ...string) *SeleniumStruct {
+	if len(serverURL) == 0 {
+		driverPath, err := exec.LookPath("chromedriver")
+		Panicerr(err)
+		servicePort := Int(randint(30000, 65535))
 
-	opts := []selenium.ServiceOption{
-		// selenium.Output(os.Stderr), // Output debug information to STDERR.
+		opts := []selenium.ServiceOption{
+			// selenium.Output(os.Stderr), // Output debug information to STDERR.
+		}
+		// selenium.SetDebug(true)
+		var service *selenium.Service
+		service, err = selenium.NewChromeDriverService(driverPath, servicePort, opts...)
+		Panicerr(err)
+
+		// selenium.HTTPClient = &http.Client{
+		// 	Timeout: time.Duration(60 * time.Second),
+		// }
+
+		// Connect to the WebDriver instance running locally.
+		caps := selenium.Capabilities{"browserName": "chrome"}
+		wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", servicePort))
+		Panicerr(err)
+
+		// wd.SetPageLoadTimeout(time.Duration(60 * time.Second))
+
+		return &SeleniumStruct{
+			service: service,
+			driver:  wd,
+		}
 	}
-	// selenium.SetDebug(true)
-	var service *selenium.Service
-	service, err = selenium.NewChromeDriverService(driverPath, servicePort, opts...)
-	Panicerr(err)
-
-	// selenium.HTTPClient = &http.Client{
-	// 	Timeout: time.Duration(60 * time.Second),
-	// }
-
-	// Connect to the WebDriver instance running locally.
-	caps := selenium.Capabilities{"browserName": "chrome"}
-	wd, err := selenium.NewRemote(caps, fmt.Sprintf("http://localhost:%d/wd/hub", servicePort))
-	Panicerr(err)
-
-	// wd.SetPageLoadTimeout(time.Duration(60 * time.Second))
-
-	return &SeleniumStruct{
-		service: service,
-		driver:  wd,
-	}
-}
-
-func getSeleniumRemote(serverURL string) *SeleniumStruct {
 	// Connect to the WebDriver instance running locally.
 	caps := selenium.Capabilities{"browserName": "chrome"}
 
 	if String(serverURL).EndsWith("/") {
-		serverURL = String(serverURL).Strip("/").S
+		serverURL[0] = String(serverURL[0]).Strip("/").S
 	}
 
 	if !String(serverURL).EndsWith("/wd/hub") {
-		serverURL = serverURL + "/wd/hub"
+		serverURL[0] = serverURL[0] + "/wd/hub"
 	}
 
-	wd, err := selenium.NewRemote(caps, serverURL)
+	wd, err := selenium.NewRemote(caps, serverURL[0])
 	Panicerr(err)
 
 	return &SeleniumStruct{

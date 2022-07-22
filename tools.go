@@ -23,8 +23,7 @@ type toolsStruct struct {
 	RabbitMQ               func(rabbitMQURL string, queueName string) *rabbitConnectionStruct
 	RateLimit              func(rate int) *RateLimitStruct
 	Redis                  func(host string, port int, cfg ...RedisConfig) *RedisStruct
-	SeleniumLocal          func() *SeleniumStruct
-	SeleniumRemote         func(serverURL string) *SeleniumStruct
+	Selenium               func(serverURL ...string) *SeleniumStruct
 	SSH                    func(user string, pass string, host string, port int) *sshStruct
 	StatikOpen             func(path string) *statikFileStruct
 	Table                  func(header ...string) *tableStruct
@@ -71,8 +70,7 @@ func init() {
 		RabbitMQ:               getRabbitMQ,
 		RateLimit:              getRateLimit,
 		Redis:                  getRedis,
-		SeleniumLocal:          getSeleniumLocal,
-		SeleniumRemote:         getSeleniumRemote,
+		Selenium:               getSelenium,
 		SSH:                    getSSH,
 		StatikOpen:             statikOpen,
 		Table:                  getTable,
