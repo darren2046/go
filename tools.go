@@ -29,7 +29,7 @@ type toolsStruct struct {
 	Table                  func(header ...string) *tableStruct
 	TelegramBot            func(token string) *TelegramBotStruct
 	Telegraph              func(AuthorName string) *telegraphStruct
-	URL                    func(url string) *urlStruct
+	URL                    func(url string) *UrlStruct
 	TTLCache               func(ttlsecond interface{}) *ttlCacheStruct
 	VNC                    func(server string, cfg ...VNCCfg) *VNCStruct
 	WebSocket              func(url string) *websocketStruct

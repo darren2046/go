@@ -2,7 +2,7 @@ package golanglibs
 
 import "net/url"
 
-type urlComponents struct {
+type UrlComponents struct {
 	Schema   string
 	Host     string
 	Port     string
@@ -13,15 +13,15 @@ type urlComponents struct {
 	Fragment string
 }
 
-type urlStruct struct {
+type UrlStruct struct {
 	url string
 }
 
-func getUrl(url string) *urlStruct {
-	return &urlStruct{url: url}
+func getUrl(url string) *UrlStruct {
+	return &UrlStruct{url: url}
 }
 
-func (u *urlStruct) Parse() *urlComponents {
+func (u *UrlStruct) Parse() *UrlComponents {
 	uu, err := url.Parse(u.url)
 	Panicerr(err)
 
@@ -40,7 +40,7 @@ func (u *urlStruct) Parse() *urlComponents {
 		port = uu.Port()
 	}
 
-	return &urlComponents{
+	return &UrlComponents{
 		Schema:   uu.Scheme,
 		Host:     uu.Hostname(),
 		Port:     port,
@@ -52,11 +52,11 @@ func (u *urlStruct) Parse() *urlComponents {
 	}
 }
 
-func (u *urlStruct) Encode() string {
+func (u *UrlStruct) Encode() string {
 	return url.QueryEscape(u.url)
 }
 
-func (u *urlStruct) Decode() string {
+func (u *UrlStruct) Decode() string {
 	str, err := url.QueryUnescape(u.url)
 	Panicerr(err)
 	return str

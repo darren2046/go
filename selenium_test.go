@@ -30,7 +30,7 @@ func TestSelenium(t *testing.T) {
 	// sn.Get("http://google.com")
 	// Print(sn.Title())
 
-	sn := Tools.SeleniumRemote("http://localhost:22222/wd/hub")
+	sn := Tools.Selenium("http://localhost:22222/wd/hub")
 	// Print(sn.GetSession())
 	sn.SetSession("fa8ad2c197992ea57fa0eea2d0185405")
 	// sn.Get("https://google.com")
